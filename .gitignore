@@ -2,6 +2,9 @@
 web/data/dashboard.json
 web/data/geo-cache.json
 
+# Log files (sample fail2ban logs for testing)
+logs/
+
 # Temporary files
 *.tmp
 *.log
