@@ -290,10 +290,6 @@
       xAxis: {
         type: 'category',
         data: dates,
-        name: t('charts.date'),
-        nameLocation: 'middle',
-        nameGap: 22,
-        nameTextStyle: { color: colors.text, fontSize: 11 },
         axisLine: { lineStyle: { color: colors.grid } },
         axisTick: { lineStyle: { color: colors.grid } },
         axisLabel: {

@@ -451,9 +451,22 @@ body {
 /* --- Heatmap --- */
 .heatmap-container {
   width: 100%;
-  min-height: 250px;
+  min-height: 260px;
   height: 300px;
   flex: 1;
+}
+
+/* --- Section Row: Jail Stats + Heatmap side-by-side --- */
+.section-row-two {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-lg);
+}
+
+/* --- Jail Stats Chart Height --- */
+.section-jail-stats .chart-container {
+  min-height: 280px;
+  height: 320px;
 }
 
 /* --- Log List --- */
@@ -833,8 +846,14 @@ body {
 
   /* Full-width sections */
   .section-stats-cards,
+  .section-top-ips,
   .section-log-list {
     grid-column: 1 / -1;
+  }
+
+  .section-row-two {
+    grid-column: 1 / -1;
+    grid-template-columns: repeat(2, 1fr);
   }
 
   .jail-report-card__stats {
@@ -858,11 +877,16 @@ body {
 
   /* Full-width sections */
   .section-stats-cards,
+  .section-top-ips,
   .section-timeline-chart,
   .section-trend-chart,
   .section-world-map,
   .section-log-list,
   .section-per-jail-report {
+    grid-column: 1 / -1;
+  }
+
+  .section-row-two {
     grid-column: 1 / -1;
   }
 
@@ -885,11 +909,16 @@ body {
 
   /* Full-width sections */
   .section-stats-cards,
+  .section-top-ips,
   .section-timeline-chart,
   .section-trend-chart,
   .section-world-map,
   .section-log-list,
   .section-per-jail-report {
+    grid-column: 1 / -1;
+  }
+
+  .section-row-two {
     grid-column: 1 / -1;
   }
 
