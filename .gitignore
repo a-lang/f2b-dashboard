@@ -6,8 +6,8 @@ web/data/geo-cache.json
 *.tmp
 *.log
 
-# Evidence and artifacts
-.omo/evidence/
+# OpenCode workspace metadata
+.omo/
 
 # Node.js
 node_modules/
