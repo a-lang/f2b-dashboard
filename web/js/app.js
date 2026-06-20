@@ -118,9 +118,6 @@
       if (currentData.trends && currentData.trends.length) {
         renderTrendChart('chart-trend', currentData.trends, currentTimeRange);
       }
-      if (currentData.heatmap) {
-        renderHeatmap('chart-heatmap', currentData);
-      }
     }
   }
 

@@ -55,6 +55,9 @@
     "loading": "Loading...",
     "noData": "No data available"
   },
+  "common": {
+    "timeFiltered": "⏱ Time Range Filtered"
+  },
   "time": {
     "lastUpdated": "Last updated",
     "dataGenerated": "Data",
@@ -91,8 +94,9 @@
     "maxRetry": "Max Retry"
   },
   "footer": {
-    "dataSource": "Data Source",
-    "poweredBy": "Powered by"
+    "github": "GitHub",
+    "license": "MIT License",
+    "copyright": "© 2026 alang"
   },
   "buttons": {
     "toggleTheme": "Toggle Theme",
@@ -143,6 +147,13 @@
     "status": "Status",
     "banned": "Banned",
     "active": "Active",
+    "activeHint": "Detected in logs, currently not banned",
+    "activeScenarios": {
+      "notReachedThreshold": "Attack count has not reached the ban threshold",
+      "previouslyBanned": "Was previously banned but has been unbanned",
+      "normalAttempt": "Normal login attempt, recorded but not banned"
+    },
+    "bannedHint": "Currently blocked by fail2ban",
     "noData": "No attack data available"
   },
   "charts": {

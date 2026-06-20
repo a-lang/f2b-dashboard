@@ -9,16 +9,16 @@
     "trends": "每日趨勢",
     "worldMap": "全球攻擊地圖",
     "topIPs": "攻擊排行 IP",
-    "jailStats": "監獄分類統計",
+    "jailStats": "Jail 分類統計",
     "heatmap": "攻擊熱力圖",
     "logList": "最近日誌記錄",
-    "perJailReport": "各監獄報告"
+    "perJailReport": "各 Jail 報告"
   },
   "stats": {
     "totalAttacks": "總攻擊次數",
     "activeBans": "目前封鎖中",
     "uniqueIPs": "攻擊來源 IP 數",
-    "activeJails": "監獄數量"
+    "activeJails": "Jail 數量"
   },
   "timeRange": {
     "24h": "最近 24 小時",
@@ -55,6 +55,9 @@
     "loading": "載入中...",
     "noData": "暫無資料"
   },
+  "common": {
+    "timeFiltered": "⏱ 依時間範圍篩選"
+  },
   "time": {
     "lastUpdated": "最後更新",
     "dataGenerated": "資料",
@@ -78,7 +81,7 @@
     "country": "國家",
     "city": "城市",
     "attackCount": "攻擊次數",
-    "jail": "監獄",
+    "jail": "Jail",
     "lastSeen": "最後出現",
     "status": "狀態",
     "banned": "已封鎖",
@@ -91,8 +94,9 @@
     "maxRetry": "最大重試"
   },
   "footer": {
-    "dataSource": "資料來源",
-    "poweredBy": "技術支援"
+    "github": "GitHub",
+    "license": "MIT License",
+    "copyright": "© 2026 alang"
   },
   "buttons": {
     "toggleTheme": "切換主題",
@@ -125,7 +129,7 @@
     "entries": "筆記錄"
   },
   "perJail": {
-    "selectJail": "選擇監獄",
+    "selectJail": "選擇 Jail",
     "configCard": "設定值",
     "topIPs": "熱門 IP",
     "timeline": "時間線",
@@ -138,11 +142,18 @@
     "ip": "IP",
     "country": "國家",
     "attacks": "攻擊次數",
-    "jail": "監獄",
+    "jail": "Jail",
     "lastSeen": "最後出現",
     "status": "狀態",
     "banned": "已封鎖",
     "active": "啟用中",
+    "activeHint": "出現在日誌中，目前未被封鎖",
+    "activeScenarios": {
+      "notReachedThreshold": "攻擊次數尚未達到封鎖門檻",
+      "previouslyBanned": "曾被封鎖但已解封",
+      "normalAttempt": "正常登入嘗試，僅記錄未封鎖"
+    },
+    "bannedHint": "目前被 fail2ban 封鎖中",
     "noData": "暫無攻擊資料"
   },
   "charts": {

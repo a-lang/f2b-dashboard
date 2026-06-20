@@ -14,8 +14,10 @@
     <!-- ===== Header ===== -->
     <header class="dashboard-header">
       <h1 class="dashboard-header__title">
-        <span class="dashboard-header__title-icon" aria-hidden="true">&#x1F6E1;</span>
-        <span data-i18n="header.title">Fail2Ban Dashboard</span>
+        <a href="#" class="dashboard-header__title-link">
+          <span class="dashboard-header__title-icon" aria-hidden="true">&#x1F6E1;</span>
+          <span data-i18n="header.title">Fail2Ban Dashboard</span>
+        </a>
       </h1>
       <div class="dashboard-header__controls">
         <span id="last-update-time" class="last-update-time">Data: -- · Fetched: --</span>
@@ -99,6 +101,7 @@
           <div class="card__header">
             <span class="card__icon" aria-hidden="true">&#x1F4C8;</span>
             <h2 class="card__title" data-i18n="timeline.title">Attack Timeline</h2>
+            <span class="time-filter-badge" data-i18n="common.timeFiltered">⏱ Time Range Filtered</span>
           </div>
           <div class="card__body">
             <div id="chart-timeline" class="chart-container"></div>
@@ -110,6 +113,7 @@
           <div class="card__header">
             <span class="card__icon" aria-hidden="true">&#x1F4CA;</span>
             <h2 class="card__title" data-i18n="trend.title">Attack Trends</h2>
+            <span class="time-filter-badge" data-i18n="common.timeFiltered">⏱ Time Range Filtered</span>
           </div>
           <div class="card__body">
             <div id="chart-trend" class="chart-container"></div>
@@ -155,6 +159,20 @@
                   </tr>
                 </tbody>
               </table>
+            </div>
+            <div class="ip-status-legend">
+              <span class="ip-status-legend__item">
+                <span class="ip-status-badge ip-status-badge--active" data-i18n="topIPs.active">Active</span>
+                <span class="ip-status-legend__scenarios">
+                  <span data-i18n="topIPs.activeScenarios.notReachedThreshold">Attack count has not reached the ban threshold</span>
+                  <span data-i18n="topIPs.activeScenarios.previouslyBanned">Was previously banned but has been unbanned</span>
+                  <span data-i18n="topIPs.activeScenarios.normalAttempt">Normal login attempt, recorded but not banned</span>
+                </span>
+              </span>
+              <span class="ip-status-legend__item">
+                <span class="ip-status-badge ip-status-badge--banned" data-i18n="topIPs.banned">Banned</span>
+                <span data-i18n="topIPs.bannedHint">Currently blocked by fail2ban</span>
+              </span>
             </div>
           </div>
         </section>
@@ -215,7 +233,15 @@
     </main>
 
     <footer class="dashboard-footer">
-      <span data-i18n="footer.dataSource">Data source: fail2ban.log</span>
+      <span>
+        <a href="https://github.com/a-lang/f2b-dashboard" target="_blank" rel="noopener noreferrer"
+           class="footer-link" data-i18n="footer.github">GitHub</a>
+        <span class="footer-sep">&middot;</span>
+        <a href="https://opensource.org/licenses/MIT" target="_blank" rel="noopener noreferrer"
+           class="footer-link" data-i18n="footer.license">MIT License</a>
+        <span class="footer-sep">&middot;</span>
+        <span data-i18n="footer.copyright">&copy; 2026 alang</span>
+      </span>
     </footer>
 
   </div>
