@@ -466,7 +466,7 @@ body {
 /* --- Jail Stats Chart Height --- */
 .section-jail-stats .chart-container {
   min-height: 280px;
-  height: 320px;
+  flex: 1;
 }
 
 /* --- Log List --- */
@@ -732,43 +732,6 @@ body {
   color: var(--text-secondary);
 }
 
-/* --- Jail Stats Cards --- */
-.jail-stats-cards {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: var(--space-md);
-  margin-top: var(--space-lg);
-}
-
-.jail-stats-card {
-  background-color: var(--bg-secondary);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  padding: var(--space-md);
-  border-left: 3px solid var(--chart-sshd);
-}
-
-.jail-stats-card__title {
-  font-size: var(--text-base);
-  font-weight: 600;
-  margin-bottom: var(--space-sm);
-}
-
-.jail-stats-card__stats {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: var(--space-sm);
-}
-
-.jail-stats-card__config {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: var(--space-sm);
-  margin-top: var(--space-sm);
-  padding-top: var(--space-sm);
-  border-top: 1px solid var(--border);
-}
-
 .chart-container--mini {
   min-height: 180px;
   height: 200px;
@@ -785,8 +748,11 @@ body {
   gap: var(--space-xs);
 }
 
-.dashboard-footer__update-time {
-  color: var(--text-muted);
+.last-update-time {
+  font-size: var(--text-xs);
+  color: var(--text-secondary);
+  white-space: nowrap;
+  margin-left: var(--space-sm);
 }
 
 /* --- Loading & Error States --- */
@@ -860,9 +826,6 @@ body {
     grid-template-columns: repeat(3, 1fr);
   }
 
-  .jail-stats-cards {
-    grid-template-columns: repeat(2, 1fr);
-  }
 }
 
 /* --- Desktop (1024px+) --- */
@@ -949,6 +912,13 @@ body {
     justify-content: space-between;
     flex-wrap: wrap;
     gap: var(--space-xs);
+  }
+
+  .last-update-time {
+    width: 100%;
+    text-align: center;
+    margin-left: 0;
+    margin-top: var(--space-xs);
   }
 
   .card__header {

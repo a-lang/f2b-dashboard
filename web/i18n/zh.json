@@ -57,6 +57,8 @@
   },
   "time": {
     "lastUpdated": "最後更新",
+    "dataGenerated": "資料",
+    "lastFetched": "擷取",
     "minutesAgo": "分鐘前",
     "hoursAgo": "小時前",
     "daysAgo": "天前",
@@ -154,11 +156,7 @@
     "movingAverage": "7日平均"
   },
   "jailStats": {
-    "totalAttacks": "總攻擊次數",
-    "attacks": "攻擊次數",
-    "bans": "封鎖次數",
-    "unbans": "解除封鎖",
-    "activeBans": "目前封鎖中"
+    "totalAttacks": "總攻擊次數"
   },
   "timeUnits": {
     "minute": "分鐘",

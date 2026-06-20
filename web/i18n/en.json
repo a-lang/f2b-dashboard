@@ -57,6 +57,8 @@
   },
   "time": {
     "lastUpdated": "Last updated",
+    "dataGenerated": "Data",
+    "lastFetched": "Fetched",
     "minutesAgo": "minutes ago",
     "hoursAgo": "hours ago",
     "daysAgo": "days ago",
@@ -154,11 +156,7 @@
     "movingAverage": "7-day Average"
   },
   "jailStats": {
-    "totalAttacks": "Total Attacks",
-    "attacks": "Attacks",
-    "bans": "Bans",
-    "unbans": "Unbans",
-    "activeBans": "Active Bans"
+    "totalAttacks": "Total Attacks"
   },
   "timeUnits": {
     "minute": "minute",

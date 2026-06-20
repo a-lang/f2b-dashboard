@@ -252,6 +252,22 @@ jq --slurpfile cache "$GEO_CACHE_JSON" '
         else
             $entry
         end
+    ) |
+    .perJail |= with_entries(
+        .value.topIPs |= map(
+            . as $entry |
+            ($cache[0][$entry.ip] // null) as $geo |
+            if $geo then
+                $entry + {
+                    country: $geo.country,
+                    city: $geo.city,
+                    lat: $geo.lat,
+                    lon: $geo.lon
+                }
+            else
+                $entry
+            end
+        )
     )
 ' "$DASHBOARD_JSON" > "$dashboard_tmp" && mv "$dashboard_tmp" "$DASHBOARD_JSON"
 

@@ -636,9 +636,9 @@ END {
         printf "      \"totalUnbans\": %d,\n", unbans
         printf "      \"currentBanned\": %d,\n", currentBanned
 
-        # attackTrend - last 7 days
+        # attackTrend
         printf "      \"attackTrend\": ["
-        start = (n_dates > 7 ? n_dates - 6 : 1)
+        start = 1
         first = 1
         for (di = start; di <= n_dates; di++) {
             d = dates[di]

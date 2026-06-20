@@ -18,6 +18,7 @@
         <span data-i18n="header.title">Fail2Ban Dashboard</span>
       </h1>
       <div class="dashboard-header__controls">
+        <span id="last-update-time" class="last-update-time">Data: -- · Fetched: --</span>
         <button
           type="button"
           class="btn btn--icon"
@@ -53,6 +54,7 @@
             <option value="all" selected data-i18n="timeRange.all">All time</option>
           </select>
         </div>
+        
       </div>
     </header>
 
@@ -212,9 +214,7 @@
       </div>
     </main>
 
-    <!-- ===== Footer ===== -->
     <footer class="dashboard-footer">
-      <span class="dashboard-footer__update-time" id="last-update-time" data-i18n="footer.lastUpdate">Last updated: --</span>
       <span data-i18n="footer.dataSource">Data source: fail2ban.log</span>
     </footer>
 

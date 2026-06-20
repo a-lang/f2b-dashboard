@@ -1272,7 +1272,7 @@
     var dates = [];
     var values = [];
 
-    var startIdx = Math.max(0, attackTrend.length - 7);
+    var startIdx = 0;
     for (var i = startIdx; i < attackTrend.length; i++) {
       if (i < trends.length) {
         dates.push(trends[i].date);
@@ -1552,99 +1552,6 @@
     };
 
     chart.setOption(option, true);
-
-    // Render per-jail detail cards
-    renderJailCards(data);
-  }
-
-  /**
-   * Render per-jail detail cards below the donut chart.
-   * @param {object} data - Dashboard data with jails and perJail objects
-   */
-  function renderJailCards(data) {
-    var chartEl = document.getElementById('chart-jail-stats');
-    if (!chartEl) return;
-
-    var parent = chartEl.parentElement;
-    if (!parent) return;
-
-    // Find or create cards container
-    var cardsContainer = parent.querySelector('.jail-stats-cards');
-    if (!cardsContainer) {
-      cardsContainer = document.createElement('div');
-      cardsContainer.className = 'jail-stats-cards';
-      parent.appendChild(cardsContainer);
-    }
-
-    var colors = getChartColors();
-    var jailColorMap = {
-      sshd: colors.sshd,
-      asterisk: colors.asterisk
-    };
-
-    var jailLabelMap = {
-      sshd: t('charts.sshd'),
-      asterisk: t('charts.asterisk')
-    };
-
-    var html = '';
-    var jailNames = Object.keys(data.jails);
-
-    for (var i = 0; i < jailNames.length; i++) {
-      var name = jailNames[i];
-      var jail = data.jails[name];
-      var perJail = data.perJail ? data.perJail[name] : null;
-      var color = jailColorMap[name] || colors.total;
-      var label = jailLabelMap[name] || name;
-
-      html += '<div class="jail-stats-card" style="border-left-color:' + color + '">';
-      html += '<div class="jail-stats-card__title" style="color:' + color + '">' + escapeHtml(label) + '</div>';
-      html += '<div class="jail-stats-card__stats">';
-
-      html += '<div class="jail-stat">' +
-        '<span class="jail-stat__value">' + Number(jail.attacks || 0).toLocaleString() + '</span>' +
-        '<span class="jail-stat__label">' + t('jailStats.attacks') + '</span>' +
-        '</div>';
-
-      html += '<div class="jail-stat">' +
-        '<span class="jail-stat__value">' + Number(jail.bans || 0).toLocaleString() + '</span>' +
-        '<span class="jail-stat__label">' + t('jailStats.bans') + '</span>' +
-        '</div>';
-
-      html += '<div class="jail-stat">' +
-        '<span class="jail-stat__value">' + Number(jail.unbans || 0).toLocaleString() + '</span>' +
-        '<span class="jail-stat__label">' + t('jailStats.unbans') + '</span>' +
-        '</div>';
-
-      var activeBans = perJail ? (perJail.currentBanned || 0) : 0;
-      html += '<div class="jail-stat">' +
-        '<span class="jail-stat__value">' + Number(activeBans).toLocaleString() + '</span>' +
-        '<span class="jail-stat__label">' + t('jailStats.activeBans') + '</span>' +
-        '</div>';
-
-      html += '</div>'; // close jail-stats-card__stats
-
-      if (perJail) {
-        html += '<div class="jail-stats-card__config">';
-        html += '<div class="jail-stat">' +
-          '<span class="jail-stat__value">' + formatDuration(perJail.banTime) + '</span>' +
-          '<span class="jail-stat__label">' + t('jailConfig.banTime') + '</span>' +
-          '</div>';
-        html += '<div class="jail-stat">' +
-          '<span class="jail-stat__value">' + formatDuration(perJail.findtime) + '</span>' +
-          '<span class="jail-stat__label">' + t('jailConfig.findTime') + '</span>' +
-          '</div>';
-        html += '<div class="jail-stat">' +
-          '<span class="jail-stat__value">' + perJail.maxRetry + '</span>' +
-          '<span class="jail-stat__label">' + t('jailConfig.maxRetry') + '</span>' +
-          '</div>';
-        html += '</div>'; // close jail-stats-card__config
-      }
-
-      html += '</div>'; // close jail-stats-card
-    }
-
-    cardsContainer.innerHTML = html;
   }
 
   // ============================================================

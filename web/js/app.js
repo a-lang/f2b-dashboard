@@ -96,9 +96,12 @@
 
   // --- State ---
   let refreshTimer = null;
+  let lastUpdateTimer = null;
   let currentData = null;
   var _selectedJail = null;
   var currentTimeRange = localStorage.getItem(LS_TIME_RANGE) || 'all';
+  var lastFetchedAt = null;
+  var lastDataTimestamp = null;
 
   // --- Time Range Change Handler ---
 
@@ -540,9 +543,11 @@
 
       currentData = data;
       window.hideErrorBanner();
+      lastFetchedAt = new Date();
+      lastDataTimestamp = data.meta && (data.meta.lastUpdated || data.meta.generatedAt);
 
       renderStatsCards(data);
-      updateLastUpdated(data.meta && (data.meta.lastUpdated || data.meta.generatedAt));
+      updateLastUpdated(lastDataTimestamp);
 
       if (data.timeline && data.timeline.length) {
         // Auto-switch to 'all' if current time range filters out everything
@@ -596,34 +601,33 @@
   }
 
   /**
-   * Update the "last updated" timestamp in the footer.
-   * @param {string} isoTimestamp
+   * Update the header timestamp display with data generated and fetched times.
+   * @param {string} isoTimestamp - ISO timestamp from data.meta.generatedAt
    */
   function updateLastUpdated(isoTimestamp) {
     const el = document.getElementById('last-update-time');
     if (!el) return;
 
     if (!isoTimestamp) {
-      el.textContent = t('footer.lastUpdate') + ': --';
+      el.textContent = t('time.dataGenerated') + ': --';
       return;
     }
 
-    const date = new Date(isoTimestamp);
-    const now = new Date();
-    const diffMs = now - date;
-    const diffMin = Math.floor(diffMs / 60000);
-
-    let timeStr;
-    if (diffMin < 1) {
-      timeStr = t('time.justNow');
-    } else if (diffMin < 60) {
-      timeStr = diffMin + ' ' + t('time.minutesAgo');
-    } else {
+    function relativeTime(date) {
+      const diffMs = Date.now() - date.getTime();
+      const diffMin = Math.floor(diffMs / 60000);
+      if (diffMin < 1) return t('time.justNow');
+      if (diffMin < 60) return diffMin + ' ' + t('time.minutesAgo');
       const diffHr = Math.floor(diffMin / 60);
-      timeStr = diffHr + ' ' + t('time.hoursAgo');
+      return diffHr + ' ' + t('time.hoursAgo');
     }
 
-    el.textContent = t('footer.lastUpdate') + ': ' + timeStr;
+    var parts = [];
+    parts.push(t('time.dataGenerated') + ': ' + relativeTime(new Date(isoTimestamp)));
+    if (lastFetchedAt) {
+      parts.push(t('time.lastFetched') + ': ' + relativeTime(lastFetchedAt));
+    }
+    el.textContent = parts.join(' · ');
   }
 
   // ============================================================
@@ -638,6 +642,10 @@
       clearInterval(refreshTimer);
       refreshTimer = null;
     }
+    if (lastUpdateTimer) {
+      clearInterval(lastUpdateTimer);
+      lastUpdateTimer = null;
+    }
 
     const select = document.getElementById('refresh-interval');
     if (!select) return;
@@ -646,6 +654,9 @@
 
     if (interval > 0) {
       refreshTimer = setInterval(fetchAndRender, interval);
+      lastUpdateTimer = setInterval(function () {
+        if (lastDataTimestamp) updateLastUpdated(lastDataTimestamp);
+      }, 60000);
     }
   }
 
