@@ -1,0 +1,247 @@
+{
+  "schema_version": 2,
+  "active_work_id": "f2b-dashboard-8e76243e",
+  "works": {
+    "f2b-dashboard-8e76243e": {
+      "work_id": "f2b-dashboard-8e76243e",
+      "active_plan": "/home/alang/AI_Workshop/oh-my-openagent/f2b-dashboard/.omo/plans/f2b-dashboard.md",
+      "plan_name": "f2b-dashboard",
+      "status": "completed",
+      "started_at": "2026-06-19T09:40:09.103Z",
+      "updated_at": "2026-06-20T02:47:41.746Z",
+      "session_ids": [
+        "opencode:ses_120e8e368ffezkx2C4T21FKorR"
+      ],
+      "session_origins": {
+        "opencode:ses_120e8e368ffezkx2C4T21FKorR": "direct"
+      },
+      "agent": "atlas",
+      "task_sessions": {
+        "todo:1": {
+          "task_key": "todo:1",
+          "task_label": "1",
+          "task_title": "JSON Data Schema Definition",
+          "session_id": "opencode:ses_120bcd291fferT5u2PK1KG680N",
+          "agent": "Sisyphus-Junior",
+          "started_at": "2026-06-19T09:46:45.216Z",
+          "status": "completed",
+          "updated_at": "2026-06-19T10:00:14.688Z",
+          "ended_at": "2026-06-19T10:00:14.688Z",
+          "elapsed_ms": 809472
+        },
+        "todo:5": {
+          "task_key": "todo:5",
+          "task_label": "5",
+          "task_title": "Bash Parser — Event Parsing + Aggregation Engine",
+          "session_id": "opencode:ses_120ab12dcffe3FaLCVXGVQ0vQl",
+          "agent": "Sisyphus-Junior",
+          "category": "deep",
+          "updated_at": "2026-06-19T10:37:26.689Z",
+          "started_at": "2026-06-19T10:34:46.432Z",
+          "status": "completed",
+          "ended_at": "2026-06-19T10:37:26.689Z",
+          "elapsed_ms": 160257
+        },
+        "todo:10": {
+          "task_key": "todo:10",
+          "task_label": "10",
+          "task_title": "World Map Visualization",
+          "session_id": "opencode:ses_11eaea3e4ffem02qRc6KKVRv3o",
+          "agent": "Sisyphus-Junior",
+          "category": "visual-engineering",
+          "started_at": "2026-06-19T10:42:03.597Z",
+          "status": "completed",
+          "updated_at": "2026-06-19T19:27:01.224Z",
+          "ended_at": "2026-06-19T19:27:01.224Z",
+          "elapsed_ms": 31497627
+        },
+        "todo:16": {
+          "task_key": "todo:16",
+          "task_label": "16",
+          "task_title": "Auto-Refresh System + Time Range Selector",
+          "session_id": "opencode:ses_11ea44a39ffeESBfFGHv2qBWN2",
+          "agent": "Sisyphus-Junior",
+          "category": "visual-engineering",
+          "updated_at": "2026-06-19T19:44:09.408Z",
+          "started_at": "2026-06-19T19:32:43.847Z",
+          "status": "completed",
+          "ended_at": "2026-06-19T19:44:09.408Z",
+          "elapsed_ms": 685561
+        },
+        "final-wave:f1": {
+          "task_key": "final-wave:f1",
+          "task_label": "F1",
+          "task_title": "**Plan Compliance Audit** — `oracle`",
+          "session_id": "opencode:ses_11e715078ffet3WjYd4DYmVlZn",
+          "agent": "Sisyphus-Junior",
+          "category": "quick",
+          "started_at": "2026-06-19T19:45:56.136Z",
+          "status": "completed",
+          "updated_at": "2026-06-20T02:47:10.896Z",
+          "ended_at": "2026-06-20T02:47:10.896Z",
+          "elapsed_ms": 25274760
+        },
+        "final-wave:f2": {
+          "task_key": "final-wave:f2",
+          "task_label": "F2",
+          "task_title": "Code Quality Review — Run `shellcheck` on all Bash scripts. Review all JS files for: `console.log` in production, unused variables, missing error handling, hardcoded values that should be in config. Check HTML for accessibility basics. Verify CSS theme variables are complete.",
+          "session_id": "opencode:ses_11e956e56ffecJefjMPiWGtq8j",
+          "agent": "Sisyphus-Junior",
+          "category": "unspecified-high",
+          "updated_at": "2026-06-20T02:47:12.191Z",
+          "started_at": "2026-06-19T19:48:58.599Z",
+          "status": "completed",
+          "ended_at": "2026-06-20T02:47:12.191Z",
+          "elapsed_ms": 25093592
+        },
+        "final-wave:f4": {
+          "task_key": "final-wave:f4",
+          "task_label": "F4",
+          "task_title": "Scope Fidelity Check — For each task: read \"What to do\", read actual diff. Verify 1:1 — everything in spec was built (no missing), nothing beyond spec was built (no creep). Check \"Must NOT do\" compliance. Detect cross-task contamination. Flag unaccounted changes.",
+          "session_id": "opencode:ses_11e94d539ffeT6i1odUxQjHzrR",
+          "agent": "Sisyphus-Junior",
+          "category": "deep",
+          "updated_at": "2026-06-20T02:47:15.341Z",
+          "started_at": "2026-06-19T19:49:56.016Z",
+          "status": "completed",
+          "ended_at": "2026-06-20T02:47:15.341Z",
+          "elapsed_ms": 25039325
+        },
+        "final-wave:f3": {
+          "task_key": "final-wave:f3",
+          "task_label": "F3",
+          "task_title": "Real Manual QA — Start from clean state. Run `install.sh`. Execute `f2b-parse.sh` with sample logs. Open dashboard in browser. Verify ALL 9 sections render with data. Toggle dark/light theme. Switch Chinese/English. Test auto-refresh by modifying JSON. Test error state by removing JSON. Check mobile responsive layout. Save evidence to `.omo/evidence/final-qa/`.",
+          "session_id": "opencode:ses_11e951e09ffeYfumWEQbonpN0x",
+          "agent": "Sisyphus-Junior",
+          "category": "unspecified-high",
+          "updated_at": "2026-06-20T02:47:13.855Z",
+          "started_at": "2026-06-19T20:06:45.699Z",
+          "status": "completed",
+          "ended_at": "2026-06-20T02:47:13.855Z",
+          "elapsed_ms": 24028156
+        }
+      },
+      "ended_at": "2026-06-20T02:47:41.746Z",
+      "elapsed_ms": 61652643
+    }
+  },
+  "active_plan": "/home/alang/AI_Workshop/oh-my-openagent/f2b-dashboard/.omo/plans/f2b-dashboard.md",
+  "started_at": "2026-06-19T09:40:09.103Z",
+  "status": "completed",
+  "updated_at": "2026-06-20T02:47:41.746Z",
+  "session_ids": [
+    "opencode:ses_120e8e368ffezkx2C4T21FKorR"
+  ],
+  "session_origins": {
+    "opencode:ses_120e8e368ffezkx2C4T21FKorR": "direct"
+  },
+  "plan_name": "f2b-dashboard",
+  "task_sessions": {
+    "todo:1": {
+      "task_key": "todo:1",
+      "task_label": "1",
+      "task_title": "JSON Data Schema Definition",
+      "session_id": "opencode:ses_120bcd291fferT5u2PK1KG680N",
+      "agent": "Sisyphus-Junior",
+      "started_at": "2026-06-19T09:46:45.216Z",
+      "status": "completed",
+      "updated_at": "2026-06-19T10:00:14.688Z",
+      "ended_at": "2026-06-19T10:00:14.688Z",
+      "elapsed_ms": 809472
+    },
+    "todo:5": {
+      "task_key": "todo:5",
+      "task_label": "5",
+      "task_title": "Bash Parser — Event Parsing + Aggregation Engine",
+      "session_id": "opencode:ses_120ab12dcffe3FaLCVXGVQ0vQl",
+      "agent": "Sisyphus-Junior",
+      "category": "deep",
+      "updated_at": "2026-06-19T10:37:26.689Z",
+      "started_at": "2026-06-19T10:34:46.432Z",
+      "status": "completed",
+      "ended_at": "2026-06-19T10:37:26.689Z",
+      "elapsed_ms": 160257
+    },
+    "todo:10": {
+      "task_key": "todo:10",
+      "task_label": "10",
+      "task_title": "World Map Visualization",
+      "session_id": "opencode:ses_11eaea3e4ffem02qRc6KKVRv3o",
+      "agent": "Sisyphus-Junior",
+      "category": "visual-engineering",
+      "started_at": "2026-06-19T10:42:03.597Z",
+      "status": "completed",
+      "updated_at": "2026-06-19T19:27:01.224Z",
+      "ended_at": "2026-06-19T19:27:01.224Z",
+      "elapsed_ms": 31497627
+    },
+    "todo:16": {
+      "task_key": "todo:16",
+      "task_label": "16",
+      "task_title": "Auto-Refresh System + Time Range Selector",
+      "session_id": "opencode:ses_11ea44a39ffeESBfFGHv2qBWN2",
+      "agent": "Sisyphus-Junior",
+      "category": "visual-engineering",
+      "updated_at": "2026-06-19T19:44:09.408Z",
+      "started_at": "2026-06-19T19:32:43.847Z",
+      "status": "completed",
+      "ended_at": "2026-06-19T19:44:09.408Z",
+      "elapsed_ms": 685561
+    },
+    "final-wave:f1": {
+      "task_key": "final-wave:f1",
+      "task_label": "F1",
+      "task_title": "**Plan Compliance Audit** — `oracle`",
+      "session_id": "opencode:ses_11e715078ffet3WjYd4DYmVlZn",
+      "agent": "Sisyphus-Junior",
+      "category": "quick",
+      "started_at": "2026-06-19T19:45:56.136Z",
+      "status": "completed",
+      "updated_at": "2026-06-20T02:47:10.896Z",
+      "ended_at": "2026-06-20T02:47:10.896Z",
+      "elapsed_ms": 25274760
+    },
+    "final-wave:f2": {
+      "task_key": "final-wave:f2",
+      "task_label": "F2",
+      "task_title": "Code Quality Review — Run `shellcheck` on all Bash scripts. Review all JS files for: `console.log` in production, unused variables, missing error handling, hardcoded values that should be in config. Check HTML for accessibility basics. Verify CSS theme variables are complete.",
+      "session_id": "opencode:ses_11e956e56ffecJefjMPiWGtq8j",
+      "agent": "Sisyphus-Junior",
+      "category": "unspecified-high",
+      "updated_at": "2026-06-20T02:47:12.191Z",
+      "started_at": "2026-06-19T19:48:58.599Z",
+      "status": "completed",
+      "ended_at": "2026-06-20T02:47:12.191Z",
+      "elapsed_ms": 25093592
+    },
+    "final-wave:f4": {
+      "task_key": "final-wave:f4",
+      "task_label": "F4",
+      "task_title": "Scope Fidelity Check — For each task: read \"What to do\", read actual diff. Verify 1:1 — everything in spec was built (no missing), nothing beyond spec was built (no creep). Check \"Must NOT do\" compliance. Detect cross-task contamination. Flag unaccounted changes.",
+      "session_id": "opencode:ses_11e94d539ffeT6i1odUxQjHzrR",
+      "agent": "Sisyphus-Junior",
+      "category": "deep",
+      "updated_at": "2026-06-20T02:47:15.341Z",
+      "started_at": "2026-06-19T19:49:56.016Z",
+      "status": "completed",
+      "ended_at": "2026-06-20T02:47:15.341Z",
+      "elapsed_ms": 25039325
+    },
+    "final-wave:f3": {
+      "task_key": "final-wave:f3",
+      "task_label": "F3",
+      "task_title": "Real Manual QA — Start from clean state. Run `install.sh`. Execute `f2b-parse.sh` with sample logs. Open dashboard in browser. Verify ALL 9 sections render with data. Toggle dark/light theme. Switch Chinese/English. Test auto-refresh by modifying JSON. Test error state by removing JSON. Check mobile responsive layout. Save evidence to `.omo/evidence/final-qa/`.",
+      "session_id": "opencode:ses_11e951e09ffeYfumWEQbonpN0x",
+      "agent": "Sisyphus-Junior",
+      "category": "unspecified-high",
+      "updated_at": "2026-06-20T02:47:13.855Z",
+      "started_at": "2026-06-19T20:06:45.699Z",
+      "status": "completed",
+      "ended_at": "2026-06-20T02:47:13.855Z",
+      "elapsed_ms": 24028156
+    }
+  },
+  "agent": "atlas",
+  "ended_at": "2026-06-20T02:47:41.746Z",
+  "elapsed_ms": 61652643
+}

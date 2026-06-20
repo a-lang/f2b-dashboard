@@ -1,0 +1,171 @@
+{
+  "dashboard": {
+    "title": "Fail2Ban Attack Dashboard",
+    "subtitle": "Real-time attack intelligence"
+  },
+  "sections": {
+    "stats": "Statistics Overview",
+    "timeline": "Attack Timeline",
+    "trends": "Daily Trends",
+    "worldMap": "Attack World Map",
+    "topIPs": "Top Attacking IPs",
+    "jailStats": "Jail Classification",
+    "heatmap": "Attack Heatmap",
+    "logList": "Recent Log Entries",
+    "perJailReport": "Per-Jail Report"
+  },
+  "stats": {
+    "totalAttacks": "Total Attacks",
+    "activeBans": "Active Bans",
+    "uniqueIPs": "Unique IPs",
+    "activeJails": "Active Jails"
+  },
+  "timeRange": {
+    "24h": "Last 24h",
+    "7d": "Last 7 days",
+    "all": "All time",
+    "label": "Time Range",
+    "switchToAll": "(Switch to 'All time' to see data)"
+  },
+  "eventTypes": {
+    "found": "Found",
+    "ban": "Ban",
+    "unban": "Unban",
+    "restoreBan": "Restore Ban",
+    "ignore": "Ignore",
+    "alreadyBanned": "Already Banned",
+    "flushTicket": "Flush Ticket"
+  },
+  "theme": {
+    "dark": "Dark",
+    "light": "Light"
+  },
+  "language": {
+    "english": "English",
+    "chinese": "繁體中文"
+  },
+  "refresh": {
+    "refreshInterval": "Refresh Interval",
+    "manual": "Manual",
+    "seconds": "seconds",
+    "minutes": "minutes"
+  },
+  "errors": {
+    "dataUnavailable": "Data unavailable",
+    "loading": "Loading...",
+    "noData": "No data available"
+  },
+  "time": {
+    "lastUpdated": "Last updated",
+    "minutesAgo": "minutes ago",
+    "hoursAgo": "hours ago",
+    "daysAgo": "days ago",
+    "justNow": "just now",
+    "second": "second",
+    "seconds": "seconds",
+    "minute": "minute",
+    "minutes": "minutes",
+    "hour": "hour",
+    "hours": "hours",
+    "day": "day",
+    "days": "days"
+  },
+  "table": {
+    "rank": "Rank",
+    "ip": "IP Address",
+    "country": "Country",
+    "city": "City",
+    "attackCount": "Attack Count",
+    "jail": "Jail",
+    "lastSeen": "Last Seen",
+    "status": "Status",
+    "banned": "Banned",
+    "active": "Active",
+    "total": "Total"
+  },
+  "jailConfig": {
+    "banTime": "Ban Time",
+    "findTime": "Find Time",
+    "maxRetry": "Max Retry"
+  },
+  "footer": {
+    "dataSource": "Data Source",
+    "poweredBy": "Powered by"
+  },
+  "buttons": {
+    "toggleTheme": "Toggle Theme",
+    "toggleLanguage": "Toggle Language"
+  },
+  "map": {
+    "internalPrivate": "Internal/Private",
+    "ipv6Unavailable": "IPv6 - Geo unavailable",
+    "unknown": "Unknown",
+    "attacksFrom": "attacks from"
+  },
+  "heatmap": {
+    "hour": "Hour",
+    "day": "Day",
+    "monday": "Mon",
+    "tuesday": "Tue",
+    "wednesday": "Wed",
+    "thursday": "Thu",
+    "friday": "Fri",
+    "saturday": "Sat",
+    "sunday": "Sun"
+  },
+  "logList": {
+    "timestamp": "Timestamp",
+    "eventType": "Event Type",
+    "details": "Details",
+    "filter": "Filter logs...",
+    "showing": "Showing",
+    "of": "of",
+    "entries": "entries"
+  },
+  "perJail": {
+    "selectJail": "Select Jail",
+    "configCard": "Configuration",
+    "topIPs": "Top IPs",
+    "timeline": "Timeline",
+    "banRatio": "Ban/Unban Ratio",
+    "uniqueAttackers": "Unique Attackers"
+  },
+  "topIPs": {
+    "title": "Top Attacking IPs",
+    "rank": "#",
+    "ip": "IP",
+    "country": "Country",
+    "attacks": "Attacks",
+    "jail": "Jail",
+    "lastSeen": "Last Seen",
+    "status": "Status",
+    "banned": "Banned",
+    "active": "Active",
+    "noData": "No attack data available"
+  },
+  "charts": {
+    "attacks": "Attacks",
+    "timeline": "Timeline",
+    "date": "Date",
+    "count": "Count",
+    "sshd": "SSH",
+    "asterisk": "Asterisk",
+    "total": "Total",
+    "movingAverage": "7-day Average"
+  },
+  "jailStats": {
+    "totalAttacks": "Total Attacks",
+    "attacks": "Attacks",
+    "bans": "Bans",
+    "unbans": "Unbans",
+    "activeBans": "Active Bans"
+  },
+  "timeUnits": {
+    "minute": "minute",
+    "minutes": "minutes",
+    "hour": "hour",
+    "hours": "hours",
+    "day": "day",
+    "days": "days"
+  }
+}

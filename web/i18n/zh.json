@@ -1,0 +1,171 @@
+{
+  "dashboard": {
+    "title": "Fail2Ban 攻擊儀表板",
+    "subtitle": "即時攻擊情報"
+  },
+  "sections": {
+    "stats": "統計概覽",
+    "timeline": "攻擊時間線",
+    "trends": "每日趨勢",
+    "worldMap": "全球攻擊地圖",
+    "topIPs": "攻擊排行 IP",
+    "jailStats": "監獄分類統計",
+    "heatmap": "攻擊熱力圖",
+    "logList": "最近日誌記錄",
+    "perJailReport": "各監獄報告"
+  },
+  "stats": {
+    "totalAttacks": "總攻擊次數",
+    "activeBans": "目前封鎖中",
+    "uniqueIPs": "攻擊來源 IP 數",
+    "activeJails": "監獄數量"
+  },
+  "timeRange": {
+    "24h": "最近 24 小時",
+    "7d": "最近 7 天",
+    "all": "全部時間",
+    "label": "時間範圍",
+    "switchToAll": "（切換至「全部時間」以查看資料）"
+  },
+  "eventTypes": {
+    "found": "發現",
+    "ban": "封鎖",
+    "unban": "解除封鎖",
+    "restoreBan": "恢復封鎖",
+    "ignore": "忽略",
+    "alreadyBanned": "已封鎖",
+    "flushTicket": "清除票券"
+  },
+  "theme": {
+    "dark": "深色",
+    "light": "淺色"
+  },
+  "language": {
+    "english": "English",
+    "chinese": "繁體中文"
+  },
+  "refresh": {
+    "refreshInterval": "刷新間隔",
+    "manual": "手動",
+    "seconds": "秒",
+    "minutes": "分鐘"
+  },
+  "errors": {
+    "dataUnavailable": "無法取得資料",
+    "loading": "載入中...",
+    "noData": "暫無資料"
+  },
+  "time": {
+    "lastUpdated": "最後更新",
+    "minutesAgo": "分鐘前",
+    "hoursAgo": "小時前",
+    "daysAgo": "天前",
+    "justNow": "剛剛",
+    "second": "秒",
+    "seconds": "秒",
+    "minute": "分鐘",
+    "minutes": "分鐘",
+    "hour": "小時",
+    "hours": "小時",
+    "day": "天",
+    "days": "天"
+  },
+  "table": {
+    "rank": "排名",
+    "ip": "IP 位址",
+    "country": "國家",
+    "city": "城市",
+    "attackCount": "攻擊次數",
+    "jail": "監獄",
+    "lastSeen": "最後出現",
+    "status": "狀態",
+    "banned": "已封鎖",
+    "active": "啟用中",
+    "total": "總計"
+  },
+  "jailConfig": {
+    "banTime": "封鎖時間",
+    "findTime": "偵測時間",
+    "maxRetry": "最大重試"
+  },
+  "footer": {
+    "dataSource": "資料來源",
+    "poweredBy": "技術支援"
+  },
+  "buttons": {
+    "toggleTheme": "切換主題",
+    "toggleLanguage": "切換語言"
+  },
+  "map": {
+    "internalPrivate": "內部/私人網路",
+    "ipv6Unavailable": "IPv6 - 地理位置不可用",
+    "unknown": "未知",
+    "attacksFrom": "次攻擊來自"
+  },
+  "heatmap": {
+    "hour": "小時",
+    "day": "星期",
+    "monday": "週一",
+    "tuesday": "週二",
+    "wednesday": "週三",
+    "thursday": "週四",
+    "friday": "週五",
+    "saturday": "週六",
+    "sunday": "週日"
+  },
+  "logList": {
+    "timestamp": "時間戳",
+    "eventType": "事件類型",
+    "details": "詳細資訊",
+    "filter": "篩選日誌...",
+    "showing": "顯示",
+    "of": "共",
+    "entries": "筆記錄"
+  },
+  "perJail": {
+    "selectJail": "選擇監獄",
+    "configCard": "設定值",
+    "topIPs": "熱門 IP",
+    "timeline": "時間線",
+    "banRatio": "封鎖/解除比率",
+    "uniqueAttackers": "獨立攻擊者"
+  },
+  "topIPs": {
+    "title": "攻擊排行 IP",
+    "rank": "#",
+    "ip": "IP",
+    "country": "國家",
+    "attacks": "攻擊次數",
+    "jail": "監獄",
+    "lastSeen": "最後出現",
+    "status": "狀態",
+    "banned": "已封鎖",
+    "active": "啟用中",
+    "noData": "暫無攻擊資料"
+  },
+  "charts": {
+    "attacks": "攻擊",
+    "timeline": "時間線",
+    "date": "日期",
+    "count": "次數",
+    "sshd": "SSH",
+    "asterisk": "Asterisk",
+    "total": "總計",
+    "movingAverage": "7日平均"
+  },
+  "jailStats": {
+    "totalAttacks": "總攻擊次數",
+    "attacks": "攻擊次數",
+    "bans": "封鎖次數",
+    "unbans": "解除封鎖",
+    "activeBans": "目前封鎖中"
+  },
+  "timeUnits": {
+    "minute": "分鐘",
+    "minutes": "分鐘",
+    "hour": "小時",
+    "hours": "小時",
+    "day": "天",
+    "days": "天"
+  }
+}

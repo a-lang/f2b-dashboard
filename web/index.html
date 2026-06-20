@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Fail2Ban Live Dashboard — Real-time attack intelligence">
+  <title>Fail2Ban Dashboard</title>
+  <link rel="stylesheet" href="css/theme.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="dashboard-container">
+
+    <!-- ===== Header ===== -->
+    <header class="dashboard-header">
+      <h1 class="dashboard-header__title">
+        <span class="dashboard-header__title-icon" aria-hidden="true">&#x1F6E1;</span>
+        <span data-i18n="header.title">Fail2Ban Dashboard</span>
+      </h1>
+      <div class="dashboard-header__controls">
+        <button
+          type="button"
+          class="btn btn--icon"
+          id="theme-toggle"
+          aria-label="Toggle theme"
+          title="Toggle theme"
+        >
+          <span id="theme-icon">&#9789;</span>
+        </button>
+        <button
+          type="button"
+          class="btn btn--icon"
+          id="lang-toggle"
+          aria-label="Switch language"
+          title="Switch language"
+        >
+          &#127760;
+        </button>
+        <div class="refresh-selector">
+          <label class="refresh-selector__label" for="refresh-interval" data-i18n="header.refreshInterval">Refresh</label>
+          <select id="refresh-interval" class="refresh-selector__select">
+            <option value="60000" data-i18n="header.refresh.1m">1 min</option>
+            <option value="300000" selected data-i18n="header.refresh.5m">5 min</option>
+            <option value="600000" data-i18n="header.refresh.10m">10 min</option>
+            <option value="0" data-i18n="header.refresh.off">Off</option>
+          </select>
+        </div>
+        <div class="time-range-selector">
+          <label class="time-range-selector__label" for="time-range" data-i18n="timeRange.label">Time Range</label>
+          <select id="time-range" class="time-range-selector__select">
+            <option value="24h" data-i18n="timeRange.24h">Last 24h</option>
+            <option value="7d" data-i18n="timeRange.7d">Last 7 days</option>
+            <option value="all" selected data-i18n="timeRange.all">All time</option>
+          </select>
+        </div>
+      </div>
+    </header>
+
+    <div id="error-banner" class="error-banner hidden" data-i18n="errors.dataUnavailable">Data unavailable</div>
+
+    <!-- ===== Main Content ===== -->
+    <main class="dashboard-main">
+      <div class="dashboard-grid">
+
+        <!-- 1. Stats Cards -->
+        <section class="section-stats-cards" aria-label="Statistics overview">
+          <div class="stats-grid">
+            <div class="stat-card">
+              <span class="stat-card__icon" aria-hidden="true">&#x1F4CA;</span>
+              <span class="stat-card__value" id="stat-total-attacks">--</span>
+              <span class="stat-card__label" data-i18n="stats.totalAttacks">Total Attacks</span>
+              <span class="stat-card__trend" id="stat-total-attacks-trend"></span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-card__icon" aria-hidden="true">&#x1F512;</span>
+              <span class="stat-card__value" id="stat-active-bans">--</span>
+              <span class="stat-card__label" data-i18n="stats.activeBans">Active Bans</span>
+              <span class="stat-card__trend" id="stat-active-bans-trend"></span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-card__icon" aria-hidden="true">&#x1F310;</span>
+              <span class="stat-card__value" id="stat-unique-ips">--</span>
+              <span class="stat-card__label" data-i18n="stats.uniqueIPs">Unique IPs</span>
+              <span class="stat-card__trend" id="stat-unique-ips-trend"></span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-card__icon" aria-hidden="true">&#x1F6E1;</span>
+              <span class="stat-card__value" id="stat-active-jails">--</span>
+              <span class="stat-card__label" data-i18n="stats.activeJails">Active Jails</span>
+              <span class="stat-card__trend" id="stat-active-jails-trend"></span>
+            </div>
+          </div>
+        </section>
+
+        <!-- 2. Attack Timeline -->
+        <section class="section-timeline-chart card" aria-label="Attack timeline">
+          <div class="card__header">
+            <span class="card__icon" aria-hidden="true">&#x1F4C8;</span>
+            <h2 class="card__title" data-i18n="timeline.title">Attack Timeline</h2>
+          </div>
+          <div class="card__body">
+            <div id="chart-timeline" class="chart-container"></div>
+          </div>
+        </section>
+
+        <!-- 3. Attack Trend -->
+        <section class="section-trend-chart card" aria-label="Attack trends">
+          <div class="card__header">
+            <span class="card__icon" aria-hidden="true">&#x1F4CA;</span>
+            <h2 class="card__title" data-i18n="trend.title">Attack Trends</h2>
+          </div>
+          <div class="card__body">
+            <div id="chart-trend" class="chart-container"></div>
+          </div>
+        </section>
+
+        <!-- 4. World Map -->
+        <section class="section-world-map card" aria-label="Attack source map">
+          <div class="card__header">
+            <span class="card__icon" aria-hidden="true">&#x1F5FA;</span>
+            <h2 class="card__title" data-i18n="map.title">Attack Sources</h2>
+          </div>
+          <div class="card__body">
+            <div id="chart-world-map" class="chart-container chart-container--map"></div>
+          </div>
+        </section>
+
+        <!-- 5. Top IPs -->
+        <section class="section-top-ips card" aria-label="Top attacking IPs">
+          <div class="card__header">
+            <span class="card__icon" aria-hidden="true">&#x1F3AF;</span>
+            <h2 class="card__title" data-i18n="topIPs.title">Top Attacking IPs</h2>
+          </div>
+          <div class="card__body card__body--flush">
+            <div class="ip-table-wrapper">
+              <table class="ip-table" id="top-ips-table">
+                <thead>
+                  <tr>
+                    <th data-i18n="topIPs.rank">#</th>
+                    <th data-i18n="topIPs.ip">IP</th>
+                    <th data-i18n="topIPs.country">Country</th>
+                    <th data-i18n="topIPs.attacks">Attacks</th>
+                    <th data-i18n="topIPs.jail">Jail</th>
+                    <th data-i18n="topIPs.lastSeen">Last Seen</th>
+                    <th data-i18n="topIPs.status">Status</th>
+                  </tr>
+                </thead>
+                <tbody id="top-ips-body">
+                  <tr>
+                    <td colspan="7">
+                      <div class="loading-placeholder" data-i18n="common.loading">Loading data...</div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- 6. Jail Statistics -->
+        <section class="section-jail-stats card" aria-label="Jail statistics">
+          <div class="card__header">
+            <span class="card__icon" aria-hidden="true">&#x1F6E1;</span>
+            <h2 class="card__title" data-i18n="jailStats.title">Jail Statistics</h2>
+          </div>
+          <div class="card__body">
+            <div id="chart-jail-stats" class="chart-container"></div>
+          </div>
+        </section>
+
+        <!-- 7. Attack Heatmap -->
+        <section class="section-heatmap card" aria-label="Attack heatmap">
+          <div class="card__header">
+            <span class="card__icon" aria-hidden="true">&#x1F525;</span>
+            <h2 class="card__title" data-i18n="heatmap.title">Attack Heatmap</h2>
+          </div>
+          <div class="card__body">
+            <div id="chart-heatmap" class="heatmap-container"></div>
+          </div>
+        </section>
+
+        <!-- 8. Log List -->
+        <section class="section-log-list card" aria-label="Recent logs">
+          <div class="card__header">
+            <span class="card__icon" aria-hidden="true">&#x1F4CB;</span>
+            <h2 class="card__title" data-i18n="logList.title">Recent Logs</h2>
+          </div>
+          <div class="card__body card__body--flush">
+            <div class="log-list" id="log-list">
+              <div class="loading-placeholder" data-i18n="common.loading">Loading data...</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 9. Per-Jail Report -->
+        <section class="section-per-jail-report card" aria-label="Per-jail report">
+          <div class="card__header">
+            <span class="card__icon" aria-hidden="true">&#x1F4DD;</span>
+            <h2 class="card__title" data-i18n="perJail.title">Per-Jail Report</h2>
+          </div>
+          <div class="card__body">
+            <div class="jail-report-grid" id="jail-report-grid">
+              <div class="loading-placeholder" data-i18n="common.loading">Loading data...</div>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </main>
+
+    <!-- ===== Footer ===== -->
+    <footer class="dashboard-footer">
+      <span class="dashboard-footer__update-time" id="last-update-time" data-i18n="footer.lastUpdate">Last updated: --</span>
+      <span data-i18n="footer.dataSource">Data source: fail2ban.log</span>
+    </footer>
+
+  </div>
+
+  <!-- ECharts CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+  <!-- App scripts (order matters) -->
+  <script src="js/config.js"></script>
+  <script src="js/i18n.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/charts.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
