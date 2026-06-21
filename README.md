@@ -2,11 +2,11 @@
 
 # Fail2Ban 即時儀表板
 
-輕量級、零後端的 Fail2Ban 攻擊情報儀表板。以 Bash 腳本、Cron 排程及靜態 HTML/JavaScript 前端建構。將本機 `fail2ban.log` 日誌解析為聚合 JSON 資料，並以互動式圖表即時視覺化呈現。
+輕量級、零後端的 [Fail2Ban](https://github.com/fail2ban/fail2ban) 攻擊情報儀表板。以 Bash 腳本、Cron 排程及靜態 HTML/JavaScript 前端建構。將本機 `fail2ban.log` 日誌解析為聚合 JSON 資料，並以互動式圖表即時視覺化呈現。
 
 ## 概覽
 
-Fail2Ban 即時儀表板將原始 Fail2Ban 日誌轉化為可操作的洞察資訊，無需後端伺服器、Node.js 執行環境或資料庫。架構設計刻意保持簡單：
+[Fail2Ban](https://github.com/fail2ban/fail2ban) 即時儀表板將原始 Fail2Ban 日誌轉化為可操作的洞察資訊，無需後端伺服器、Node.js 執行環境或資料庫。架構設計刻意保持簡單：
 
 - **Bash 腳本**負責解析與聚合日誌資料
 - **Cron**排程定期更新資料集
@@ -142,17 +142,108 @@ bin/f2b-geoip.sh /path/to/dashboard.json   # 自訂路徑
 
 ### 檢視儀表板
 
-提供`/opt/f2b-dashboard/web/`目錄的靜態檔案服務並在瀏覽器中開啟：
+提供`/opt/f2b-dashboard/web/`目錄的靜態檔案服務並在瀏覽器中開啟。
+
+#### Python（快速測試用，僅限本機或內部網路）
 
 ```bash
-# 使用 Python 快速測試
 python3 -m http.server 8080 --directory /opt/f2b-dashboard/web
-
-# 然後開啟
 # http://localhost:8080
 ```
 
-正式環境建議使用 nginx、apache2、Caddy 或其他靜態檔案伺服器。
+> 注意：Python 內建伺服器不適合正式環境、不支援安全標頭，且無 TLS。
+
+#### Nginx
+
+`/etc/nginx/sites-available/f2b-dashboard`：
+
+```nginx
+server {
+    listen 80;
+    server_name dashboard.example.com;
+    root /opt/f2b-dashboard/web;
+    index index.html;
+
+    server_tokens off;
+
+    location / {
+        try_files $uri $uri/ =404;
+    }
+
+    # 禁止直接讀取原始資料（避免暴露內部 IP）
+    location /data/ {
+        deny all;
+    }
+
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header X-Frame-Options "DENY" always;
+    add_header Referrer-Policy "no-referrer" always;
+}
+```
+
+#### Apache
+
+`/etc/apache2/sites-available/f2b-dashboard.conf`：
+
+```apache
+<VirtualHost *:80>
+    ServerName dashboard.example.com
+    DocumentRoot /opt/f2b-dashboard/web
+
+    ServerSignature Off
+    ServerTokens Prod
+
+    <Directory /opt/f2b-dashboard/web>
+        Options -Indexes
+        AllowOverride None
+        Require all granted
+    </Directory>
+
+    # 禁止直接讀取原始資料（避免暴露內部 IP）
+    <Directory /opt/f2b-dashboard/web/data>
+        Require all denied
+    </Directory>
+
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set X-Frame-Options "DENY"
+    Header always set Referrer-Policy "no-referrer"
+</VirtualHost>
+```
+
+#### Lighttpd
+
+`/etc/lighttpd/conf-available/10-f2b-dashboard.conf`：
+
+```lighttpd
+$HTTP["host"] == "dashboard.example.com" {
+    server.document-root = "/opt/f2b-dashboard/web"
+    server.tag = ""
+
+    dir-listing.activate = "disable"
+
+    # 禁止直接讀取原始資料（避免暴露內部 IP）
+    $HTTP["url"] =~ "^/data/" {
+        url.access-deny = ("")
+    }
+
+    setenv.add-response-header = (
+        "X-Content-Type-Options" => "nosniff",
+        "X-Frame-Options" => "DENY",
+        "Referrer-Policy" => "no-referrer"
+    )
+}
+```
+
+#### 安全性說明
+
+上述設定涵蓋以下安全措施：
+
+- **目錄列表關閉**（`-Indexes` / `dir-listing.activate = "disable"`）— 防止暴露檔案結構
+- **隱藏伺服器版本**（`server_tokens off` / `ServerTokens Prod` / `server.tag = ""`）— 減少 fingerprinting
+- **`X-Content-Type-Options: nosniff`** — 防止 MIME 類型嗅探攻擊
+- **`X-Frame-Options: DENY`** — 防止點擊劫持
+- **`Referrer-Policy: no-referrer`** — 不洩漏來源頁面路徑
+- **`data/` 目錄拒絕對外存取** — 保護 `dashboard.json` 中的原始 IP 資料
 
 ## 設定
 

@@ -2,11 +2,11 @@
 
 # Fail2Ban Live Dashboard
 
-Lightweight, zero-backend Fail2Ban attack intelligence dashboard. Built with Bash scripts, Cron scheduling, and a static HTML/JavaScript frontend. Parses local `fail2ban.log` into aggregated JSON data and visualizes it with interactive charts.
+Lightweight, zero-backend [Fail2Ban](https://github.com/fail2ban/fail2ban) attack intelligence dashboard. Built with Bash scripts, Cron scheduling, and a static HTML/JavaScript frontend. Parses local `fail2ban.log` into aggregated JSON data and visualizes it with interactive charts.
 
 ## Overview
 
-Fail2Ban Live Dashboard turns raw Fail2Ban logs into actionable insights — no backend server, Node.js runtime, or database required. The architecture is intentionally simple:
+[Fail2Ban](https://github.com/fail2ban/fail2ban) Live Dashboard turns raw Fail2Ban logs into actionable insights — no backend server, Node.js runtime, or database required. The architecture is intentionally simple:
 
 - **Bash scripts** parse and aggregate log data
 - **Cron** schedules periodic data updates
@@ -140,17 +140,108 @@ To change the interval, edit `*/5` in the crontab entry.
 
 ### Viewing the Dashboard
 
-Serve the `/opt/f2b-dashboard/web/` directory and open in a browser:
+Serve the `/opt/f2b-dashboard/web/` directory and open in a browser.
+
+#### Python (quick test only, for local/internal network use)
 
 ```bash
-# Quick test with Python
 python3 -m http.server 8080 --directory /opt/f2b-dashboard/web
-
-# Then open
 # http://localhost:8080
 ```
 
-For production, use nginx, apache2, Caddy, or another static file server.
+> Note: Python's built-in server is not suitable for production — no security headers, no TLS.
+
+#### Nginx
+
+`/etc/nginx/sites-available/f2b-dashboard`：
+
+```nginx
+server {
+    listen 80;
+    server_name dashboard.example.com;
+    root /opt/f2b-dashboard/web;
+    index index.html;
+
+    server_tokens off;
+
+    location / {
+        try_files $uri $uri/ =404;
+    }
+
+    # Block direct access to raw data (protect internal IPs)
+    location /data/ {
+        deny all;
+    }
+
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header X-Frame-Options "DENY" always;
+    add_header Referrer-Policy "no-referrer" always;
+}
+```
+
+#### Apache
+
+`/etc/apache2/sites-available/f2b-dashboard.conf`：
+
+```apache
+<VirtualHost *:80>
+    ServerName dashboard.example.com
+    DocumentRoot /opt/f2b-dashboard/web
+
+    ServerSignature Off
+    ServerTokens Prod
+
+    <Directory /opt/f2b-dashboard/web>
+        Options -Indexes
+        AllowOverride None
+        Require all granted
+    </Directory>
+
+    # Block direct access to raw data (protect internal IPs)
+    <Directory /opt/f2b-dashboard/web/data>
+        Require all denied
+    </Directory>
+
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set X-Frame-Options "DENY"
+    Header always set Referrer-Policy "no-referrer"
+</VirtualHost>
+```
+
+#### Lighttpd
+
+`/etc/lighttpd/conf-available/10-f2b-dashboard.conf`：
+
+```lighttpd
+$HTTP["host"] == "dashboard.example.com" {
+    server.document-root = "/opt/f2b-dashboard/web"
+    server.tag = ""
+
+    dir-listing.activate = "disable"
+
+    # Block direct access to raw data (protect internal IPs)
+    $HTTP["url"] =~ "^/data/" {
+        url.access-deny = ("")
+    }
+
+    setenv.add-response-header = (
+        "X-Content-Type-Options" => "nosniff",
+        "X-Frame-Options" => "DENY",
+        "Referrer-Policy" => "no-referrer"
+    )
+}
+```
+
+#### Security Notes
+
+The configurations above apply these security measures:
+
+- **Disable directory listing** (`-Indexes` / `dir-listing.activate = "disable"`) — prevents file structure exposure
+- **Hide server version** (`server_tokens off` / `ServerTokens Prod` / `server.tag = ""`) — reduces fingerprinting
+- **`X-Content-Type-Options: nosniff`** — prevents MIME type sniffing
+- **`X-Frame-Options: DENY`** — prevents clickjacking
+- **`Referrer-Policy: no-referrer`** — prevents referrer leakage
+- **`data/` directory denied from external access** — protects `dashboard.json` raw IP data
 
 ## Configuration
 
