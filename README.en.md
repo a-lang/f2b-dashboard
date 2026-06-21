@@ -38,6 +38,18 @@ This makes deployment trivial on any Linux distribution with minimal dependencie
 - **Mobile Responsive** — Single-column on phones, multi-column grid on tablets and desktops
 - **Graceful Error Handling** — Fallback states for missing, corrupt, or loading data
 
+### Screenshot
+
+![screenshot-1](assets/screenshot-1.png)
+
+![screenshot-1](assets/screenshot-2.png)
+
+![screenshot-1](assets/screenshot-3.png)
+
+![screenshot-1](assets/screenshot-4.png)
+
+![screenshot-1](assets/screenshot-5.png)
+
 ## Requirements
 
 - Bash 4+
@@ -186,9 +198,9 @@ Edit `web/js/config.js` in the project root to customize settings:
 ```
 fail2ban.log ──┐
 fail2ban.log.1─┼──► f2b-parse.sh ──► dashboard.json ──┐
-fail2ban.log.2─┘                                       ├──► Browser
-                                                        │
-                     f2b-geoip.sh ◄── IP-API (HTTP) ────┘
+fail2ban.log.2─┘                                      ├──► Browser
+                                                      │
+                     f2b-geoip.sh ◄── IP-API (HTTP) ──┘
                             │
                             ▼
                       geo-cache.json
