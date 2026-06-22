@@ -99,6 +99,22 @@ done
 
 GENERATED_AT=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 
+# Check fail2ban service status
+F2B_STATUS="unknown"
+if command -v systemctl >/dev/null 2>&1; then
+    if systemctl is-active --quiet fail2ban 2>/dev/null; then
+        F2B_STATUS="running"
+    else
+        F2B_STATUS="stopped"
+    fi
+elif command -v service >/dev/null 2>&1; then
+    if service fail2ban status >/dev/null 2>&1; then
+        F2B_STATUS="running"
+    else
+        F2B_STATUS="stopped"
+    fi
+fi
+
 # Sort log files by suffix number descending (oldest first)
 if [[ ${#LOG_FILES[@]} -gt 1 ]]; then
     mapfile -t sorted < <(printf '%s\n' "${LOG_FILES[@]}" | sort -t. -k2 -n -r)
@@ -110,6 +126,7 @@ if [[ ${#LOG_FILES[@]} -eq 0 ]]; then
     jq -n \
       --arg generated_at "$GENERATED_AT" \
       --arg parser_version "$PARSER_VERSION" \
+      --arg f2b_status "$F2B_STATUS" \
       '{
         meta: {
           generatedAt: $generated_at,
@@ -133,6 +150,7 @@ if [[ ${#LOG_FILES[@]} -eq 0 ]]; then
           ignored: 0,
           uniqueIPs: 0,
           activeJails: 0,
+          f2bStatus: $f2b_status,
           topAttacker: { ip: null, count: 0, jail: null }
         },
         timeline: [],
@@ -172,6 +190,7 @@ awk \
     -v generated_at="$GENERATED_AT" \
     -v log_files_processed="$LOG_FILES_PROCESSED" \
     -v date_dow_file="$DATE_DOW_FILE" \
+    -v f2b_status="$F2B_STATUS" \
 '
 BEGIN {
     totalAttacks = 0
@@ -426,6 +445,7 @@ END {
     print "    \"ignored\": " ignored ","
     print "    \"uniqueIPs\": " uniqueIPs ","
     print "    \"activeJails\": " activeJails ","
+    print "    \"f2bStatus\": " json_str(f2b_status) ","
     print "    \"topAttacker\": {"
     print "      \"ip\": " json_str(topIP) ","
     print "      \"count\": " topCount ","

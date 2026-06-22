@@ -350,6 +350,14 @@ body {
   color: var(--success);
 }
 
+.stat-card--running .stat-card__value {
+  color: var(--success);
+}
+
+.stat-card--stopped .stat-card__value {
+  color: var(--danger);
+}
+
 /* --- Chart Containers --- */
 .chart-container {
   width: 100%;
@@ -892,7 +900,7 @@ body {
 /* --- Desktop (1024px+) --- */
 @media (min-width: 1024px) {
   .stats-grid {
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(5, 1fr);
   }
 
   .dashboard-grid {

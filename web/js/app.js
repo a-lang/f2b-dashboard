@@ -180,6 +180,36 @@
     localStorage.setItem(LS_STATS_PREV, JSON.stringify(snapshot));
   }
 
+  /**
+   * Render the Fail2Ban service status card.
+   * @param {object} data - Full dashboard JSON object
+   */
+  function renderF2BStatusCard(data) {
+    var el = document.getElementById('stat-f2b-status');
+    if (!el) return;
+
+    var card = document.getElementById('stat-f2b-status-card');
+    var status = data && data.summary && data.summary.f2bStatus;
+    if (!status) {
+      el.textContent = '--';
+      if (card) card.classList.remove('stat-card--running', 'stat-card--stopped');
+      return;
+    }
+
+    var key = 'stats.f2bStatus.' + status;
+    var translated = t(key);
+    el.textContent = translated !== key ? translated : status;
+
+    if (card) {
+      card.classList.remove('stat-card--running', 'stat-card--stopped');
+      if (status === 'running') {
+        card.classList.add('stat-card--running');
+      } else if (status === 'stopped') {
+        card.classList.add('stat-card--stopped');
+      }
+    }
+  }
+
   // ============================================================
   // Duration Formatting
   // ============================================================
@@ -544,6 +574,7 @@
       lastDataTimestamp = data.meta && (data.meta.lastUpdated || data.meta.generatedAt);
 
       renderStatsCards(data);
+      renderF2BStatusCard(data);
       updateLastUpdated(lastDataTimestamp);
 
       if (data.timeline && data.timeline.length) {
@@ -704,6 +735,7 @@
   function onLanguageChanged() {
     if (currentData) {
       renderStatsCards(currentData);
+      renderF2BStatusCard(currentData);
       updateLastUpdated(currentData.meta && currentData.meta.generatedAt);
       if (currentData.timeline && currentData.timeline.length) {
         renderTimelineChart('chart-timeline', currentData.timeline, currentTimeRange);

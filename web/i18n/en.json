@@ -18,7 +18,11 @@
     "totalAttacks": "Total Attacks",
     "activeBans": "Active Bans",
     "uniqueIPs": "Unique IPs",
-    "activeJails": "Active Jails"
+    "activeJails": "Active Jails",
+    "f2bStatus": "Fail2Ban Status",
+    "f2bStatus.running": "Running",
+    "f2bStatus.stopped": "Stopped",
+    "f2bStatus.unknown": "Unknown"
   },
   "timeRange": {
     "24h": "Last 24h",

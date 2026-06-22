@@ -18,7 +18,11 @@
     "totalAttacks": "總攻擊次數",
     "activeBans": "目前封鎖中",
     "uniqueIPs": "攻擊來源 IP 數",
-    "activeJails": "Jail 數量"
+    "activeJails": "Jail 數量",
+    "f2bStatus": "Fail2Ban 狀態",
+    "f2bStatus.running": "運行中",
+    "f2bStatus.stopped": "已停止",
+    "f2bStatus.unknown": "未知"
   },
   "timeRange": {
     "24h": "最近 24 小時",
