@@ -1,10 +1,13 @@
-> English | [繁體中文](README.md)
+🌐 English | [繁體中文](README.md)
 
 # Fail2Ban Live Dashboard
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![GitHub stars](https://img.shields.io/github/stars/a-lang/f2b-dashboard.svg)](https://github.com/a-lang/f2b-dashboard)
+
 Lightweight, zero-backend [Fail2Ban](https://github.com/fail2ban/fail2ban) attack intelligence dashboard. Built with Bash scripts, Cron scheduling, and a static HTML/JavaScript frontend. Parses local `fail2ban.log` into aggregated JSON data and visualizes it with interactive charts.
 
-## Overview
+## 🏗️ Overview
 
 [Fail2Ban](https://github.com/fail2ban/fail2ban) Live Dashboard turns raw Fail2Ban logs into actionable insights — no backend server, Node.js runtime, or database required. The architecture is intentionally simple:
 
@@ -15,7 +18,7 @@ Lightweight, zero-backend [Fail2Ban](https://github.com/fail2ban/fail2ban) attac
 
 This makes deployment trivial on any Linux distribution with minimal dependencies.
 
-## Features
+## ✨ Features
 
 ### Dashboard Panels
 
@@ -38,19 +41,19 @@ This makes deployment trivial on any Linux distribution with minimal dependencie
 - **Mobile Responsive** — Single-column on phones, multi-column grid on tablets and desktops
 - **Graceful Error Handling** — Fallback states for missing, corrupt, or loading data
 
-### Screenshot
+### Screenshots
 
-![screenshot-1](assets/screenshot-1.png)
+![Stat Cards](assets/screenshot-1.png)
 
-![screenshot-1](assets/screenshot-2.png)
+![Attack Timeline & Trends](assets/screenshot-2.png)
 
-![screenshot-1](assets/screenshot-3.png)
+![World Map](assets/screenshot-3.png)
 
-![screenshot-1](assets/screenshot-4.png)
+![Attack Heatmap](assets/screenshot-4.png)
 
-![screenshot-1](assets/screenshot-5.png)
+![Per-Jail Report](assets/screenshot-5.png)
 
-## Requirements
+## 📋 Requirements
 
 - Bash 4+
 - `curl`
@@ -60,7 +63,7 @@ This makes deployment trivial on any Linux distribution with minimal dependencie
 
 Supported distributions: Debian/Ubuntu, CentOS/RHEL, Alpine, Arch.
 
-## Installation
+## 🚀 Installation
 
 ```bash
 sudo git clone https://github.com/a-lang/f2b-dashboard.git /opt/f2b-dashboard
@@ -79,7 +82,7 @@ chmod +x bin/f2b-parse.sh bin/f2b-geoip.sh
 
 After installation, serve the `/opt/f2b-dashboard/web/` directory with any web server and open the dashboard in a browser.
 
-## Usage
+## 📖 Usage
 
 ### Parsing Logs
 
@@ -151,7 +154,8 @@ python3 -m http.server 8080 --directory /opt/f2b-dashboard/web
 
 > Note: Python's built-in server is not suitable for production — no security headers, no TLS.
 
-#### Nginx
+<details>
+<summary>Nginx</summary>
 
 `/etc/nginx/sites-available/f2b-dashboard`：
 
@@ -179,7 +183,10 @@ server {
 }
 ```
 
-#### Apache
+</details>
+
+<details>
+<summary>Apache</summary>
 
 `/etc/apache2/sites-available/f2b-dashboard.conf`：
 
@@ -208,7 +215,10 @@ server {
 </VirtualHost>
 ```
 
-#### Lighttpd
+</details>
+
+<details>
+<summary>Lighttpd</summary>
 
 `/etc/lighttpd/conf-available/10-f2b-dashboard.conf`：
 
@@ -232,6 +242,8 @@ $HTTP["host"] == "dashboard.example.com" {
 }
 ```
 
+</details>
+
 #### Security Notes
 
 The configurations above apply these security measures:
@@ -243,7 +255,7 @@ The configurations above apply these security measures:
 - **`Referrer-Policy: no-referrer`** — prevents referrer leakage
 - **`data/` directory denied from external access** — protects `dashboard.json` raw IP data
 
-## Configuration
+## ⚙️ Configuration
 
 Edit `web/js/config.js` in the project root to customize settings:
 
@@ -256,7 +268,7 @@ Edit `web/js/config.js` in the project root to customize settings:
 | `geoApiUrl` | `http://ip-api.com/json/` | GeoIP API base URL |
 | `geoApiDelay` | `1.4` | Seconds between API requests (free tier: 45/min) |
 
-## File Structure
+## 📁 File Structure
 
 ```
 .
@@ -284,17 +296,17 @@ Edit `web/js/config.js` in the project root to customize settings:
 └── README.en.md        # This file (English)
 ```
 
-## Architecture
+## 🔗 Architecture
 
 ```
 fail2ban.log ──┐
 fail2ban.log.1─┼──► f2b-parse.sh ──► dashboard.json ──┐
 fail2ban.log.2─┘                                      ├──► Browser
                                                       │
-                     f2b-geoip.sh ◄── IP-API (HTTP) ──┘
-                            │
-                            ▼
-                      geo-cache.json
+                    f2b-geoip.sh ◄── IP-API (HTTP) ──┘
+                           │
+                           ▼
+                     geo-cache.json
 ```
 
 1. **f2b-parse.sh** reads `fail2ban.log` and rotated files, aggregates events, and writes `dashboard.json` atomically (write to temp file, then rename).
@@ -303,7 +315,7 @@ fail2ban.log.2─┘                                      ├──► Browser
 4. **Browser** polls `dashboard.json` at the interval set in `web/js/config.js`.
 5. **ECharts** renders all charts directly from the JSON data with no additional transformation.
 
-## Troubleshooting
+## 🔧 Troubleshooting
 
 ### Missing jq, curl, or awk
 
@@ -339,7 +351,7 @@ If the dashboard loads but shows "--" or "Loading data...", check:
   bin/f2b-geoip.sh web/data/dashboard.json web/data/geo-cache.json
   ```
 
-## Uninstall
+## 🗑️ Uninstall
 
 ```bash
 # Remove cron job
@@ -353,6 +365,22 @@ rm -f /opt/f2b-dashboard/web/data/dashboard.json
 rm -f /opt/f2b-dashboard/web/data/geo-cache.json
 ```
 
-## License
+## ⚖️ License
 
 MIT
+
+## 🤝 Contributing
+
+Contributions from the community are welcome! For suggestions or issues, please visit [GitHub Issues](https://github.com/a-lang/f2b-dashboard/issues).
+
+## 🙏 Acknowledgments
+
+This project is built upon the excellent work of:
+
+- [Fail2Ban](https://github.com/fail2ban/fail2ban) — Log parsing and banning engine
+- [ECharts](https://echarts.apache.org/) — Interactive chart visualization
+- [IP-API](http://ip-api.com) — GeoIP geolocation service
+
+---
+
+**⭐ Find this project helpful? Give it a star to show your support!**

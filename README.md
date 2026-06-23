@@ -1,10 +1,13 @@
-> [English](README.en.md) | 繁體中文
+🌐 [English](README.en.md) | 繁體中文
 
 # Fail2Ban 即時儀表板
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![GitHub stars](https://img.shields.io/github/stars/a-lang/f2b-dashboard.svg)](https://github.com/a-lang/f2b-dashboard)
+
 輕量級、零後端的 [Fail2Ban](https://github.com/fail2ban/fail2ban) 攻擊情報儀表板。以 Bash 腳本、Cron 排程及靜態 HTML/JavaScript 前端建構。將本機 `fail2ban.log` 日誌解析為聚合 JSON 資料，並以互動式圖表即時視覺化呈現。
 
-## 概覽
+## 🏗️ 概覽
 
 [Fail2Ban](https://github.com/fail2ban/fail2ban) 即時儀表板將原始 Fail2Ban 日誌轉化為可操作的洞察資訊，無需後端伺服器、Node.js 執行環境或資料庫。架構設計刻意保持簡單：
 
@@ -15,7 +18,7 @@
 
 這使得儀表板可在任何 Linux 發行版上輕鬆部署，且依賴極少。
 
-## 功能特色
+## ✨ 功能特色
 
 ### 儀表板區塊
 
@@ -40,19 +43,17 @@
 
 ### 畫面截圖
 
-![screenshot-1](assets/screenshot-1.png)
+![統計卡片](assets/screenshot-1.png)
 
-![screenshot-1](assets/screenshot-2.png)
+![攻擊時間軸與趨勢](assets/screenshot-2.png)
 
-![screenshot-1](assets/screenshot-3.png)
+![世界地圖](assets/screenshot-3.png)
 
-![screenshot-1](assets/screenshot-4.png)
+![攻擊熱力圖](assets/screenshot-4.png)
 
-![screenshot-1](assets/screenshot-5.png)
+![各 Jail 報告](assets/screenshot-5.png)
 
-
-
-## 系統需求
+## 📋 系統需求
 
 - Bash 4+
 - `curl`
@@ -62,7 +63,7 @@
 
 支援的發行版：Debian/Ubuntu、CentOS/RHEL、Alpine、Arch。
 
-## 安裝
+## 🚀 安裝
 
 ```bash
 sudo git clone https://github.com/a-lang/f2b-dashboard.git /opt/f2b-dashboard
@@ -81,7 +82,7 @@ chmod +x bin/f2b-parse.sh bin/f2b-geoip.sh
 
 安裝完成後，以任意網頁伺服器提供`/opt/f2b-dashboard/web/`目錄，並在瀏覽器中開啟儀表板。
 
-## 使用方式
+## 📖 使用方式
 
 ### 解析日誌
 
@@ -153,7 +154,8 @@ python3 -m http.server 8080 --directory /opt/f2b-dashboard/web
 
 > 注意：Python 內建伺服器不適合正式環境、不支援安全標頭，且無 TLS。
 
-#### Nginx
+<details>
+<summary>Nginx</summary>
 
 `/etc/nginx/sites-available/f2b-dashboard`：
 
@@ -181,7 +183,10 @@ server {
 }
 ```
 
-#### Apache
+</details>
+
+<details>
+<summary>Apache</summary>
 
 `/etc/apache2/sites-available/f2b-dashboard.conf`：
 
@@ -210,7 +215,10 @@ server {
 </VirtualHost>
 ```
 
-#### Lighttpd
+</details>
+
+<details>
+<summary>Lighttpd</summary>
 
 `/etc/lighttpd/conf-available/10-f2b-dashboard.conf`：
 
@@ -234,6 +242,8 @@ $HTTP["host"] == "dashboard.example.com" {
 }
 ```
 
+</details>
+
 #### 安全性說明
 
 上述設定涵蓋以下安全措施：
@@ -245,7 +255,7 @@ $HTTP["host"] == "dashboard.example.com" {
 - **`Referrer-Policy: no-referrer`** — 不洩漏來源頁面路徑
 - **`data/` 目錄拒絕對外存取** — 保護 `dashboard.json` 中的原始 IP 資料
 
-## 設定
+## ⚙️ 設定
 
 編輯專案根目錄的`web/js/config.js`以自訂設定：
 
@@ -258,7 +268,7 @@ $HTTP["host"] == "dashboard.example.com" {
 | `geoApiUrl` | `http://ip-api.com/json/` | GeoIP API 基礎 URL |
 | `geoApiDelay` | `1.4` | API 請求間隔秒數（免費方案每分鐘 45 次） |
 
-## 檔案結構
+## 📁 檔案結構
 
 ```
 .
@@ -286,7 +296,7 @@ $HTTP["host"] == "dashboard.example.com" {
 └── README.en.md        # 說明文件（英文）
 ```
 
-## 架構
+## 🔗 架構
 
 ```
 fail2ban.log ──┐
@@ -305,7 +315,7 @@ fail2ban.log.2─┘                                      ├──► 瀏覽器
 4. **瀏覽器** 依`web/js/config.js`設定的間隔輪詢`dashboard.json`。
 5. **ECharts** 直接從 JSON 資料渲染所有圖表，無需額外轉換。
 
-## 疑難排解
+## 🔧 疑難排解
 
 ### 缺少 jq、curl 或 awk
 
@@ -341,7 +351,7 @@ Cron 排程以安裝使用者的身份執行。請確認該使用者對`/var/log
   bin/f2b-geoip.sh web/data/dashboard.json web/data/geo-cache.json
   ```
 
-## 解除安裝
+## 🗑️ 解除安裝
 
 ```bash
 # 移除 cron 排程
@@ -355,6 +365,22 @@ rm -f /opt/f2b-dashboard/web/data/dashboard.json
 rm -f /opt/f2b-dashboard/web/data/geo-cache.json
 ```
 
-## 授權條款
+## ⚖️ 授權條款
 
 MIT
+
+## 🤝 Contributing
+
+歡迎社群貢獻！如有建議或問題，請至 [GitHub Issues](https://github.com/a-lang/f2b-dashboard/issues) 提出。
+
+## 🙏 Acknowledgments
+
+本專案感謝以下開源專案：
+
+- [Fail2Ban](https://github.com/fail2ban/fail2ban) — 日誌解析與封禁引擎
+- [ECharts](https://echarts.apache.org/) — 互動式圖表視覺化
+- [IP-API](http://ip-api.com) — GeoIP 地理定位服務
+
+---
+
+**⭐ 覺得這個專案有幫助嗎？請給個 Star 支持一下！**
