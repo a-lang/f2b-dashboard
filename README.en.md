@@ -317,7 +317,8 @@ fail2ban.log.2─┘                                      ├──► Browser
 
 ## 🔧 Troubleshooting
 
-### Missing jq, curl, or awk
+<details>
+<summary>Missing jq, curl, or awk</summary>
 
 Make sure `curl`, `awk`, and `jq` are installed. Distribution-specific install commands:
 
@@ -326,19 +327,31 @@ Make sure `curl`, `awk`, and `jq` are installed. Distribution-specific install c
 - Alpine: `sudo apk add curl gawk jq`
 - Arch: `sudo pacman -S curl gawk jq`
 
-### Log File Permission Denied
+</details>
+
+<details>
+<summary>Log File Permission Denied</summary>
 
 The cron job runs as the installing user. Ensure that user has read access to `/var/log/fail2ban.log` and its rotated files. You may need to add the user to the `adm` or `log` group.
 
-### CORS Issues When Serving the Dashboard
+</details>
+
+<details>
+<summary>CORS Issues When Serving the Dashboard</summary>
 
 If you see CORS errors in the browser console, make sure your web server allows same-origin `GET` requests. Most static file servers handle this by default. Opening `index.html` via the `file://` protocol may cause modern browsers to block `fetch` requests — always serve the `web/` directory over HTTP.
 
-### IP-API Rate Limiting
+</details>
+
+<details>
+<summary>IP-API Rate Limiting</summary>
 
 The free tier allows 45 requests per minute. The script enforces a 1.4-second delay between requests. If you see "Unknown" geolocations, wait a few minutes for the cron schedule to catch up. Cached IPs are not re-queried.
 
-### Dashboard Blank (No Log Data)
+</details>
+
+<details>
+<summary>Dashboard Blank (No Log Data)</summary>
 
 If the dashboard loads but shows "--" or "Loading data...", check:
 
@@ -350,6 +363,8 @@ If the dashboard loads but shows "--" or "Loading data...", check:
   bin/f2b-parse.sh /var/log/fail2ban.log web/data
   bin/f2b-geoip.sh web/data/dashboard.json web/data/geo-cache.json
   ```
+
+</details>
 
 ## 🗑️ Uninstall
 
