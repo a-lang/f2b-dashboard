@@ -319,6 +319,7 @@ fail2ban.log.2─┘                                      ├──► Browser
 
 <details>
 <summary>Missing jq, curl, or awk</summary>
+<br>
 
 Make sure `curl`, `awk`, and `jq` are installed. Distribution-specific install commands:
 
@@ -331,6 +332,7 @@ Make sure `curl`, `awk`, and `jq` are installed. Distribution-specific install c
 
 <details>
 <summary>Log File Permission Denied</summary>
+<br>
 
 The cron job runs as the installing user. Ensure that user has read access to `/var/log/fail2ban.log` and its rotated files. You may need to add the user to the `adm` or `log` group.
 
@@ -338,6 +340,7 @@ The cron job runs as the installing user. Ensure that user has read access to `/
 
 <details>
 <summary>CORS Issues When Serving the Dashboard</summary>
+<br>
 
 If you see CORS errors in the browser console, make sure your web server allows same-origin `GET` requests. Most static file servers handle this by default. Opening `index.html` via the `file://` protocol may cause modern browsers to block `fetch` requests — always serve the `web/` directory over HTTP.
 
@@ -345,6 +348,7 @@ If you see CORS errors in the browser console, make sure your web server allows 
 
 <details>
 <summary>IP-API Rate Limiting</summary>
+<br>
 
 The free tier allows 45 requests per minute. The script enforces a 1.4-second delay between requests. If you see "Unknown" geolocations, wait a few minutes for the cron schedule to catch up. Cached IPs are not re-queried.
 
@@ -352,6 +356,7 @@ The free tier allows 45 requests per minute. The script enforces a 1.4-second de
 
 <details>
 <summary>Dashboard Blank (No Log Data)</summary>
+<br>
 
 If the dashboard loads but shows "--" or "Loading data...", check:
 

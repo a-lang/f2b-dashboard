@@ -319,6 +319,7 @@ fail2ban.log.2─┘                                      ├──► 瀏覽器
 
 <details>
 <summary>缺少 jq、curl 或 awk</summary>
+<br>
 
 請確認已安裝`curl`、`awk`及`jq`。各發行版安裝指令：
 
@@ -331,6 +332,7 @@ fail2ban.log.2─┘                                      ├──► 瀏覽器
 
 <details>
 <summary>日誌檔權限不足</summary>
+<br>
 
 Cron 排程以安裝使用者的身份執行。請確認該使用者對`/var/log/fail2ban.log`及輪替檔案有讀取權限。你可能需要將使用者加入`adm`或`log`群組。
 
@@ -338,6 +340,7 @@ Cron 排程以安裝使用者的身份執行。請確認該使用者對`/var/log
 
 <details>
 <summary>提供儀表板時的 CORS 問題</summary>
+<br>
 
 若瀏覽器主控台出現 CORS 錯誤，請確認網頁伺服器已設定允許同源的`GET`請求。多數靜態檔案伺服器預設即處理此問題。若直接以`file://`協定開啟`index.html`，現代瀏覽器可能阻擋`fetch`請求。請始終透過 HTTP 提供`web/`目錄。
 
@@ -345,6 +348,7 @@ Cron 排程以安裝使用者的身份執行。請確認該使用者對`/var/log
 
 <details>
 <summary>IP-API 速率限制</summary>
+<br>
 
 免費方案每分鐘允許 45 次請求。腳本在每次請求間強制等待 1.4 秒。若看到「未知」地理位置，請稍候數分鐘讓 cron 排程追上進度。已快取的 IP 不會重複查詢。
 
@@ -352,6 +356,7 @@ Cron 排程以安裝使用者的身份執行。請確認該使用者對`/var/log
 
 <details>
 <summary>儀表板空白（無日誌資料）</summary>
+<br>
 
 若儀表板載入但顯示「--」或「載入資料中...」，請檢查：
 
