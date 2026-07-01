@@ -38,6 +38,21 @@
   }
 
   /**
+   * Build a tooltip style object from chart colors, theme-aware.
+   * @param {object} colors - Color map from getChartColors()
+   * @param {boolean} dark - Whether dark theme is active
+   * @returns {{backgroundColor: string, borderColor: string, textStyle: {color: string, fontSize: number}}}
+   */
+  function getTooltipStyle(colors, dark) {
+    return {
+      backgroundColor: dark ? 'rgba(15,17,23,0.92)' : 'rgba(255,255,255,0.96)',
+      borderColor: dark ? colors.grid : '#d4d7e0',
+      borderWidth: 1,
+      textStyle: { color: dark ? '#e8eaf0' : '#1a1c2b', fontSize: 13 }
+    };
+  }
+
+  /**
    * Create a vertical linear gradient for ECharts area fill.
    * @param {string} hexColor - Hex color for the gradient
    * @returns {object} ECharts LinearGradient object
@@ -87,43 +102,13 @@
   // ============================================================
 
   /**
-   * Filter trends data by time range.
-   * @param {Array} trends - Full trends array
+   * Filter data by time range, using the specified date field.
+   * @param {Array} data - Data array
    * @param {string} timeRange - '24h', '7d', or 'all'
-   * @returns {Array} Filtered trends array
+   * @param {string} dateField - Property name holding the date string ('date' or 'timestamp')
+   * @returns {Array} Filtered data array
    */
-  function filterTrendsByTimeRange(trends, timeRange) {
-    if (!trends || !trends.length) return [];
-
-    if (timeRange === 'all') return trends;
-
-    var now = new Date();
-    var cutoff;
-
-    if (timeRange === '24h') {
-      cutoff = new Date(now.getTime() - 24 * 60 * 60 * 1000);
-    } else if (timeRange === '7d') {
-      cutoff = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-    } else {
-      return trends;
-    }
-
-    return trends.filter(function (item) {
-      return new Date(item.date) >= cutoff;
-    });
-  }
-
-  // ============================================================
-  // Time Range Filtering — Timeline
-  // ============================================================
-
-  /**
-   * Filter timeline data by time range.
-   * @param {Array} data - Timeline data [{timestamp, sshd, asterisk, total}, ...]
-   * @param {string} timeRange - '24h', '7d', or 'all'
-   * @returns {Array} Filtered data
-   */
-  function filterTimelineByTimeRange(data, timeRange) {
+  function filterByTimeRange(data, timeRange, dateField) {
     if (!data || !data.length) return [];
 
     if (timeRange === 'all') return data;
@@ -140,7 +125,7 @@
     }
 
     return data.filter(function (item) {
-      return new Date(item.timestamp) >= cutoff;
+      return new Date(item[dateField]) >= cutoff;
     });
   }
 
@@ -189,7 +174,7 @@
     var chart = getChartInstance(containerId);
     if (!chart) return;
 
-    var filtered = filterTrendsByTimeRange(data, timeRange);
+    var filtered = filterByTimeRange(data, timeRange, 'date');
     if (!filtered.length) {
       chart.clear();
       chart.setOption({
@@ -394,7 +379,7 @@
     var chart = getChartInstance(containerId);
     if (!chart) return;
 
-    var filtered = filterTimelineByTimeRange(data, timeRange);
+    var filtered = filterByTimeRange(data, timeRange, 'timestamp');
     if (!filtered.length) {
       chart.clear();
       var emptyMsg = timeRange !== 'all' 
@@ -419,9 +404,7 @@
     var asteriskData = filtered.map(function (d) { return [d.timestamp, d.asterisk]; });
     var totalData = filtered.map(function (d) { return [d.timestamp, d.total]; });
 
-    var tooltipBg = dark ? 'rgba(15,17,23,0.92)' : 'rgba(255,255,255,0.96)';
-    var tooltipText = dark ? '#e8eaf0' : '#1a1c2b';
-    var tooltipBorder = dark ? colors.grid : '#d4d7e0';
+    var tooltipStyle = getTooltipStyle(colors, dark);
 
     function fmtDate(val) {
       var d = new Date(val);
@@ -440,13 +423,9 @@
       backgroundColor: 'transparent',
       animation: false,
 
-      tooltip: {
+      tooltip: Object.assign({
         trigger: 'axis',
-        backgroundColor: tooltipBg,
-        borderColor: tooltipBorder,
-        borderWidth: 1,
         padding: [10, 14],
-        textStyle: { color: tooltipText, fontSize: 13 },
         formatter: function (params) {
           if (!params || !params.length) return '';
           var dateStr = fmtDateTime(params[0].value[0]);
@@ -460,7 +439,7 @@
           }
           return html;
         }
-      },
+      }, tooltipStyle),
 
       legend: {
         data: [t('charts.sshd'), t('charts.asterisk'), t('charts.total')],
@@ -809,12 +788,8 @@
       backgroundColor: 'transparent',
       animation: false,
 
-      tooltip: {
-        backgroundColor: dark ? 'rgba(15,17,23,0.92)' : 'rgba(255,255,255,0.96)',
-        borderColor: dark ? colors.grid : '#d4d7e0',
-        borderWidth: 1,
+      tooltip: Object.assign({
         padding: [8, 12],
-        textStyle: { color: dark ? '#e8eaf0' : '#1a1c2b', fontSize: 13 },
         formatter: function (params) {
           if (!params || params.value == null) return '';
           var dayIdx = params.value[1];
@@ -823,7 +798,7 @@
           return '<b>' + dayNames[dayIdx] + '</b> ' + hours[hourIdx] +
             '<br/>' + t('charts.attacks') + ': <b>' + count.toLocaleString() + '</b>';
         }
-      },
+      }, getTooltipStyle(colors, dark)),
 
       grid: {
         top: 10,
@@ -1088,21 +1063,13 @@
     var lowColor = dark ? hexToRgba(accentColor, 0.15) : hexToRgba(accentColor, 0.1);
     var highColor = accentColor;
 
-    var tooltipBg = dark ? 'rgba(15,17,23,0.92)' : 'rgba(255,255,255,0.96)';
-    var tooltipText = dark ? '#e8eaf0' : '#1a1c2b';
-    var tooltipBorder = dark ? colors.grid : '#d4d7e0';
-
     var option = {
       backgroundColor: 'transparent',
       animation: false,
 
-      tooltip: {
+      tooltip: Object.assign({
         trigger: 'item',
-        backgroundColor: tooltipBg,
-        borderColor: tooltipBorder,
-        borderWidth: 1,
         padding: [10, 14],
-        textStyle: { color: tooltipText, fontSize: 13 },
         formatter: function (params) {
           if (!params.data || params.data.value == null) {
             return params.name;
@@ -1115,7 +1082,7 @@
             'IPs: ' + d.ipCount + '</div>';
           return html;
         }
-      },
+      }, getTooltipStyle(colors, dark)),
 
       visualMap: {
         min: 0,
@@ -1275,19 +1242,18 @@
       backgroundColor: 'transparent',
       animation: false,
 
-      tooltip: {
+      tooltip: Object.assign({
         trigger: 'axis',
-        backgroundColor: dark ? 'rgba(15,17,23,0.92)' : 'rgba(255,255,255,0.96)',
-        borderColor: dark ? colors.grid : '#d4d7e0',
-        borderWidth: 1,
-        textStyle: { color: dark ? '#e8eaf0' : '#1a1c2b', fontSize: 12 },
+        textStyle: { fontSize: 12 },
         formatter: function (params) {
           if (!params || !params.length) return '';
           var dateStr = dates[params[0].dataIndex] || params[0].axisValue;
           return '<b>' + dateStr + '</b><br/>' +
             params[0].seriesName + ': <b>' + Number(params[0].value).toLocaleString() + '</b>';
         }
-      },
+      }, getTooltipStyle(colors, dark), {
+        textStyle: { color: dark ? '#e8eaf0' : '#1a1c2b', fontSize: 12 }
+      }),
 
       grid: {
         left: 50,
@@ -1408,31 +1374,25 @@
       return;
     }
 
-    var tooltipBg = dark ? 'rgba(15,17,23,0.92)' : 'rgba(255,255,255,0.96)';
-    var tooltipText = dark ? '#e8eaf0' : '#1a1c2b';
-    var tooltipBorder = dark ? colors.grid : '#d4d7e0';
+    var tooltipTextColor = dark ? '#e8eaf0' : '#1a1c2b';
 
     var option = {
       backgroundColor: 'transparent',
       animation: false,
 
-      tooltip: {
+      tooltip: Object.assign({
         trigger: 'item',
-        backgroundColor: tooltipBg,
-        borderColor: tooltipBorder,
-        borderWidth: 1,
         padding: [10, 14],
-        textStyle: { color: tooltipText, fontSize: 13 },
         formatter: function (params) {
           return '<div style="display:flex;align-items:center;gap:6px;margin:2px 0">' +
             '<span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:' + params.color + '"></span>' +
             '<span>' + params.name + '</span>' +
             '<span style="margin-left:auto;font-weight:600">' + params.value.toLocaleString() + '</span>' +
             '</div>' +
-            '<div style="font-size:12px;color:' + tooltipText + ';opacity:0.7;margin-top:2px">' +
+            '<div style="font-size:12px;color:' + tooltipTextColor + ';opacity:0.7;margin-top:2px">' +
             params.percent + '%</div>';
         }
-      },
+      }, getTooltipStyle(colors, dark)),
 
       legend: {
         orient: 'horizontal',
