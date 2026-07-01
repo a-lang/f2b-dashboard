@@ -38,6 +38,21 @@
   }
 
   /**
+   * Build a tooltip style object from chart colors, theme-aware.
+   * @param {object} colors - Color map from getChartColors()
+   * @param {boolean} dark - Whether dark theme is active
+   * @returns {{backgroundColor: string, borderColor: string, borderWidth: number, textStyle: {color: string, fontSize: number}}}
+   */
+  function getTooltipStyle(colors, dark) {
+    return {
+      backgroundColor: dark ? 'rgba(15,17,23,0.92)' : 'rgba(255,255,255,0.96)',
+      borderColor: dark ? colors.grid : '#d4d7e0',
+      borderWidth: 1,
+      textStyle: { color: dark ? '#e8eaf0' : '#1a1c2b', fontSize: 13 }
+    };
+  }
+
+  /**
    * Get the CSS color for a jail by its position in the jail list.
    * Uses --chart-jail-N palette (1-8), cycling if more than 8 jails.
    * @param {number} index - Zero-based jail index

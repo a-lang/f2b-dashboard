@@ -3,6 +3,16 @@
     "title": "Fail2Ban Attack Dashboard",
     "subtitle": "Real-time attack intelligence"
   },
+  "header": {
+    "title": "Fail2Ban Dashboard",
+    "refreshInterval": "Refresh",
+    "refresh": {
+      "1m": "1 min",
+      "5m": "5 min",
+      "10m": "10 min",
+      "off": "Off"
+    }
+  },
   "sections": {
     "stats": "Statistics Overview",
     "timeline": "Attack Timeline",
@@ -19,10 +29,12 @@
     "activeBans": "Active Bans",
     "uniqueIPs": "Unique IPs",
     "activeJails": "Active Jails",
-    "f2bStatus": "Fail2Ban Status",
-    "f2bStatus.running": "Running",
-    "f2bStatus.stopped": "Stopped",
-    "f2bStatus.unknown": "Unknown"
+    "f2bStatusLabel": "Fail2Ban Status",
+    "f2bStatus": {
+      "running": "Running",
+      "stopped": "Stopped",
+      "unknown": "Unknown"
+    }
   },
   "timeRange": {
     "24h": "Last 24h",
@@ -60,7 +72,8 @@
     "noData": "No data available"
   },
   "common": {
-    "timeFiltered": "⏱ Time Range Filtered"
+    "timeFiltered": "⏱ Time Range Filtered",
+    "loading": "Loading data..."
   },
   "time": {
     "lastUpdated": "Last updated",
@@ -107,12 +120,14 @@
     "toggleLanguage": "Toggle Language"
   },
   "map": {
+    "title": "Attack Sources",
     "internalPrivate": "Internal/Private",
     "ipv6Unavailable": "IPv6 - Geo unavailable",
     "unknown": "Unknown",
     "attacksFrom": "attacks from"
   },
   "heatmap": {
+    "title": "Attack Heatmap",
     "hour": "Hour",
     "day": "Day",
     "monday": "Mon",
@@ -124,6 +139,7 @@
     "sunday": "Sun"
   },
   "logList": {
+    "title": "Recent Logs",
     "timestamp": "Timestamp",
     "eventType": "Event Type",
     "details": "Details",
@@ -133,6 +149,7 @@
     "entries": "entries"
   },
   "perJail": {
+    "title": "Per-Jail Report",
     "selectJail": "Select Jail",
     "configCard": "Configuration",
     "topIPs": "Top IPs",
@@ -160,6 +177,12 @@
     "bannedHint": "Currently blocked by fail2ban",
     "noData": "No attack data available"
   },
+  "timeline": {
+    "title": "Attack Timeline"
+  },
+  "trend": {
+    "title": "Attack Trends"
+  },
   "charts": {
     "attacks": "Attacks",
     "timeline": "Timeline",
@@ -171,6 +194,7 @@
     "movingAverage": "7-day Average"
   },
   "jailStats": {
+    "title": "Jail Statistics",
     "totalAttacks": "Total Attacks"
   },
   "timeUnits": {
