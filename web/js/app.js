@@ -278,20 +278,26 @@
 
     var jails = Object.keys(data.perJail);
     var jailData = data.perJail[jail];
-    var jailLabel = jail === 'sshd' ? t('charts.sshd') : (jail === 'asterisk' ? t('charts.asterisk') : jail);
-    var jailColorClass = 'jail-report-card__title--' + jail;
+    var jailLabel = getJailLabel(jail);
+
+    // Find jail index for color
+    var jailNames = (data.meta && data.meta.jailNames) ? data.meta.jailNames : jails;
+    var jailIdx = jailNames.indexOf(jail);
+    if (jailIdx < 0) jailIdx = 0;
+    var jailColor = getJailColor(jailIdx);
 
     var toggleHTML = '<div class="jail-toggle" id="jail-toggle">';
     for (var i = 0; i < jails.length; i++) {
       var j = jails[i];
-      var label = j === 'sshd' ? t('charts.sshd') : (j === 'asterisk' ? t('charts.asterisk') : j);
+      var label = getJailLabel(j);
       var activeClass = j === jail ? ' jail-toggle__btn--active' : '';
       toggleHTML += '<button type="button" class="jail-toggle__btn' + activeClass + '" data-jail="' + escapeHtml(j) + '">' + escapeHtml(label) + '</button>';
     }
     toggleHTML += '</div>';
 
+    var titleStyle = ' style="color:' + jailColor + '"';
     var configHTML = '<div class="jail-report-card">' +
-      '<div class="jail-report-card__title ' + jailColorClass + '">' + escapeHtml(jailLabel) + ' ' + t('perJail.configCard') + '</div>' +
+      '<div class="jail-report-card__title"' + titleStyle + '>' + escapeHtml(jailLabel) + ' ' + t('perJail.configCard') + '</div>' +
       '<div class="jail-report-card__stats">' +
         '<div class="jail-stat">' +
           '<span class="jail-stat__value">' + formatDuration(jailData.banTime) + '</span>' +
@@ -327,7 +333,7 @@
 
     var topIPs = jailData.topIPs || [];
     var ipsHTML = '<div class="jail-report-card">' +
-      '<div class="jail-report-card__title ' + jailColorClass + '">' + t('perJail.topIPs') + '</div>';
+      '<div class="jail-report-card__title"' + titleStyle + '>' + t('perJail.topIPs') + '</div>';
 
     if (topIPs.length) {
       ipsHTML += '<div class="ip-table-wrapper"><table class="ip-table">' +
@@ -358,7 +364,7 @@
     ipsHTML += '</div>';
 
     var chartHTML = '<div class="jail-report-card">' +
-      '<div class="jail-report-card__title ' + jailColorClass + '">' + t('perJail.timeline') + '</div>' +
+      '<div class="jail-report-card__title"' + titleStyle + '>' + t('perJail.timeline') + '</div>' +
       '<div id="jail-attack-trend-chart" class="chart-container chart-container--mini"></div>' +
     '</div>';
 
@@ -422,6 +428,13 @@
     if (!logs.length) {
       container.innerHTML = '<div class="empty-state">' + t('errors.noData') + '</div>';
       return;
+    }
+
+    // Build jail→index map for dynamic color
+    var jailNames = (data && data.meta && data.meta.jailNames) ? data.meta.jailNames : [];
+    var jailIndexMap = {};
+    for (var ji = 0; ji < jailNames.length; ji++) {
+      jailIndexMap[jailNames[ji]] = ji;
     }
 
     var currentFilter = container.dataset.filter || '';
@@ -499,7 +512,11 @@
         actionEl.appendChild(badgeEl);
 
         var jailEl = document.createElement('span');
-        jailEl.className = 'log-entry__jail log-entry__jail--' + (entry.jail || 'sshd');
+        jailEl.className = 'log-entry__jail';
+        var jIdx = jailIndexMap[entry.jail];
+        if (jIdx !== undefined) {
+          jailEl.style.color = getJailColor(jIdx);
+        }
         jailEl.textContent = entry.jail || '--';
 
         var ipEl = document.createElement('span');
@@ -569,6 +586,7 @@
       }
 
       currentData = data;
+      window._dashboardData = data;
       window.hideErrorBanner();
       lastFetchedAt = new Date();
       lastDataTimestamp = data.meta && (data.meta.lastUpdated || data.meta.generatedAt);
