@@ -41,7 +41,7 @@
    * Build a tooltip style object from chart colors, theme-aware.
    * @param {object} colors - Color map from getChartColors()
    * @param {boolean} dark - Whether dark theme is active
-   * @returns {{backgroundColor: string, borderColor: string, textStyle: {color: string, fontSize: number}}}
+   * @returns {{backgroundColor: string, borderColor: string, borderWidth: number, textStyle: {color: string, fontSize: number}}}
    */
   function getTooltipStyle(colors, dark) {
     return {
@@ -50,6 +50,31 @@
       borderWidth: 1,
       textStyle: { color: dark ? '#e8eaf0' : '#1a1c2b', fontSize: 13 }
     };
+  }
+
+  /**
+   * Get the CSS color for a jail by its position in the jail list.
+   * Uses --chart-jail-N palette (1-8), cycling if more than 8 jails.
+   * @param {number} index - Zero-based jail index
+   * @returns {string} CSS color value
+   */
+  function getJailColor(index) {
+    var n = ((index % 8) + 8) % 8 + 1;  // 1-based, 1-8 cycling
+    return getCSSVar('--chart-jail-' + n);
+  }
+
+  /**
+   * Get a display label for a jail name.
+   * Checks i18n for a known jail key (charts.sshd, charts.asterisk),
+   * falls back to the raw jail name.
+   * @param {string} jail - Jail name (e.g. 'sshd', 'asterisk', 'recidive')
+   * @returns {string} Display label
+   */
+  function getJailLabel(jail) {
+    if (!jail) return '--';
+    var key = 'charts.' + jail;
+    var label = t(key);
+    return label !== key ? label : jail;
   }
 
   /**
@@ -190,11 +215,68 @@
 
     var colors = getChartColors();
 
+    // Dynamically detect jail names from the data (meta.jailNames or object keys)
+    var jailNames = (window._dashboardData && window._dashboardData.meta && window._dashboardData.meta.jailNames)
+      ? window._dashboardData.meta.jailNames
+      : [];
+    if (!jailNames.length && filtered.length) {
+      var sample = filtered[0];
+      for (var k in sample) {
+        if (k !== 'date' && k !== 'total' && k !== 'bans' && k !== 'unbans' && sample.hasOwnProperty(k)) {
+          jailNames.push(k);
+        }
+      }
+    }
+
     var dates = filtered.map(function (d) { return d.date; });
-    var sshdData = filtered.map(function (d) { return d.sshd; });
-    var asteriskData = filtered.map(function (d) { return d.asterisk; });
     var totalData = filtered.map(function (d) { return d.total; });
     var maData = movingAverage(totalData, 7);
+
+    // Build per-jail label/color maps for tooltip
+    var jailLabels = [];
+    var jailColors = [];
+    for (var ji = 0; ji < jailNames.length; ji++) {
+      jailLabels.push(getJailLabel(jailNames[ji]));
+      jailColors.push(getJailColor(ji));
+    }
+
+    // Build series: one stacked bar per jail + moving average line
+    var trendSeries = [];
+    var legendData = [];
+    for (var si = 0; si < jailNames.length; si++) {
+      var jn = jailNames[si];
+      var jLabel = jailLabels[si];
+      var jColor = jailColors[si];
+      legendData.push(jLabel);
+      trendSeries.push({
+        name: jLabel,
+        type: 'bar',
+        stack: 'attacks',
+        data: filtered.map(function (d) { return d[jn] || 0; }),
+        itemStyle: {
+          color: jColor,
+          borderRadius: si === jailNames.length - 1 ? [2, 2, 0, 0] : [0, 0, 0, 0]
+        },
+        barMaxWidth: 28,
+        emphasis: {
+          itemStyle: { opacity: 0.85 }
+        }
+      });
+    }
+    legendData.push(t('charts.movingAverage'));
+    trendSeries.push({
+      name: t('charts.movingAverage'),
+      type: 'line',
+      data: maData,
+      smooth: 0.3,
+      symbol: 'none',
+      lineStyle: {
+        color: colors.total,
+        width: 2,
+        type: 'solid'
+      },
+      z: 10
+    });
 
     var option = {
       backgroundColor: colors.bg,
@@ -214,33 +296,31 @@
           var dateStr = params[0].axisValue;
           var html = '<div style="font-weight:600;margin-bottom:4px">' + dateStr + '</div>';
 
-          var sshdVal = 0;
-          var asteriskVal = 0;
+          var jailVals = {};
           var maVal = null;
+          var grandTotal = 0;
 
           for (var i = 0; i < params.length; i++) {
             var p = params[i];
-            if (p.seriesName === t('charts.sshd')) {
-              sshdVal = p.value;
-            } else if (p.seriesName === t('charts.asterisk')) {
-              asteriskVal = p.value;
-            } else if (p.seriesName === t('charts.movingAverage')) {
+            if (p.seriesName === t('charts.movingAverage')) {
               maVal = p.value;
+            } else {
+              jailVals[p.seriesName] = p.value;
+              grandTotal += p.value;
             }
           }
 
-          html += '<div style="display:flex;align-items:center;gap:6px;margin:2px 0">'
-            + '<span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:'
-            + colors.sshd + '"></span>'
-            + t('charts.sshd') + ': <b>' + sshdVal.toLocaleString() + '</b></div>';
-
-          html += '<div style="display:flex;align-items:center;gap:6px;margin:2px 0">'
-            + '<span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:'
-            + colors.asterisk + '"></span>'
-            + t('charts.asterisk') + ': <b>' + asteriskVal.toLocaleString() + '</b></div>';
+          for (var ji = 0; ji < jailNames.length; ji++) {
+            var jLabel = jailLabels[ji];
+            var val = jailVals[jLabel] || 0;
+            html += '<div style="display:flex;align-items:center;gap:6px;margin:2px 0">'
+              + '<span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:'
+              + jailColors[ji] + '"></span>'
+              + jLabel + ': <b>' + val.toLocaleString() + '</b></div>';
+          }
 
           html += '<div style="display:flex;align-items:center;gap:6px;margin:2px 0;font-weight:600">'
-            + t('table.total') + ': <b>' + (sshdVal + asteriskVal).toLocaleString() + '</b></div>';
+            + t('table.total') + ': <b>' + grandTotal.toLocaleString() + '</b></div>';
 
           if (maVal !== null && maVal !== undefined) {
             html += '<div style="display:flex;align-items:center;gap:6px;margin:2px 0;border-top:1px solid '
@@ -255,7 +335,7 @@
       },
 
       legend: {
-        data: [t('charts.sshd'), t('charts.asterisk'), t('charts.movingAverage')],
+        data: legendData,
         top: 0,
         left: 'center',
         textStyle: { color: colors.text, fontSize: 12 },
@@ -312,49 +392,7 @@
 
       animation: false,
 
-      series: [
-        {
-          name: t('charts.sshd'),
-          type: 'bar',
-          stack: 'attacks',
-          data: sshdData,
-          itemStyle: {
-            color: colors.sshd,
-            borderRadius: [0, 0, 0, 0]
-          },
-          barMaxWidth: 28,
-          emphasis: {
-            itemStyle: { opacity: 0.85 }
-          }
-        },
-        {
-          name: t('charts.asterisk'),
-          type: 'bar',
-          stack: 'attacks',
-          data: asteriskData,
-          itemStyle: {
-            color: colors.asterisk,
-            borderRadius: [2, 2, 0, 0]
-          },
-          barMaxWidth: 28,
-          emphasis: {
-            itemStyle: { opacity: 0.85 }
-          }
-        },
-        {
-          name: t('charts.movingAverage'),
-          type: 'line',
-          data: maData,
-          smooth: 0.3,
-          symbol: 'none',
-          lineStyle: {
-            color: colors.total,
-            width: 2,
-            type: 'solid'
-          },
-          z: 10
-        }
-      ]
+      series: trendSeries
     };
 
     chart.setOption(option, true);
@@ -400,9 +438,56 @@
     var dark = isDarkTheme();
     var lang = getCurrentLang();
 
-    var sshdData = filtered.map(function (d) { return [d.timestamp, d.sshd]; });
-    var asteriskData = filtered.map(function (d) { return [d.timestamp, d.asterisk]; });
+    // Dynamically detect jail names from the data (meta.jailNames or object keys)
+    var jailNames = (window._dashboardData && window._dashboardData.meta && window._dashboardData.meta.jailNames)
+      ? window._dashboardData.meta.jailNames
+      : [];
+    if (!jailNames.length && filtered.length) {
+      // Fallback: extract from data object keys
+      var sample = filtered[0];
+      for (var k in sample) {
+        if (k !== 'timestamp' && k !== 'total' && sample.hasOwnProperty(k)) {
+          jailNames.push(k);
+        }
+      }
+    }
+
+    // Build series data per jail + total
+    var seriesData = [];
+    var legendData = [];
+    for (var ji = 0; ji < jailNames.length; ji++) {
+      var jn = jailNames[ji];
+      var jColor = getJailColor(ji);
+      var jLabel = getJailLabel(jn);
+      legendData.push(jLabel);
+      seriesData.push({
+        name: jLabel,
+        type: 'line',
+        smooth: true,
+        symbol: 'none',
+        connectNulls: false,
+        lineStyle: { width: 1.5, color: jColor },
+        itemStyle: { color: jColor },
+        areaStyle: { color: areaGradient(jColor) },
+        emphasis: { focus: 'series' },
+        data: filtered.map(function (d) { return [d.timestamp, d[jn] || 0]; })
+      });
+    }
+    // Total series
     var totalData = filtered.map(function (d) { return [d.timestamp, d.total]; });
+    legendData.push(t('charts.total'));
+    seriesData.push({
+      name: t('charts.total'),
+      type: 'line',
+      smooth: true,
+      symbol: 'none',
+      connectNulls: false,
+      lineStyle: { width: 1.5, color: colors.total },
+      itemStyle: { color: colors.total },
+      areaStyle: { color: areaGradient(colors.total) },
+      emphasis: { focus: 'series' },
+      data: totalData
+    });
 
     var tooltipStyle = getTooltipStyle(colors, dark);
 
@@ -442,7 +527,7 @@
       }, tooltipStyle),
 
       legend: {
-        data: [t('charts.sshd'), t('charts.asterisk'), t('charts.total')],
+        data: legendData,
         top: 4,
         right: 16,
         textStyle: { color: colors.text, fontSize: 12 },
@@ -515,44 +600,7 @@
         }
       ],
 
-      series: [
-        {
-          name: t('charts.sshd'),
-          type: 'line',
-          smooth: true,
-          symbol: 'none',
-          connectNulls: false,
-          lineStyle: { width: 1.5, color: colors.sshd },
-          itemStyle: { color: colors.sshd },
-          areaStyle: { color: areaGradient(colors.sshd) },
-          emphasis: { focus: 'series' },
-          data: sshdData
-        },
-        {
-          name: t('charts.asterisk'),
-          type: 'line',
-          smooth: true,
-          symbol: 'none',
-          connectNulls: false,
-          lineStyle: { width: 1.5, color: colors.asterisk },
-          itemStyle: { color: colors.asterisk },
-          areaStyle: { color: areaGradient(colors.asterisk) },
-          emphasis: { focus: 'series' },
-          data: asteriskData
-        },
-        {
-          name: t('charts.total'),
-          type: 'line',
-          smooth: true,
-          symbol: 'none',
-          connectNulls: false,
-          lineStyle: { width: 1.5, color: colors.total },
-          itemStyle: { color: colors.total },
-          areaStyle: { color: areaGradient(colors.total) },
-          emphasis: { focus: 'series' },
-          data: totalData
-        }
-      ]
+      series: seriesData
     };
 
     chart.setOption(option, true);
@@ -1212,8 +1260,15 @@
 
     var colors = getChartColors();
     var dark = isDarkTheme();
-    var jailColor = jail === 'sshd' ? colors.sshd : colors.asterisk;
-    var jailLabel = jail === 'sshd' ? t('charts.sshd') : t('charts.asterisk');
+
+    // Find jail index for color palette
+    var jailNames = (window._dashboardData && window._dashboardData.meta && window._dashboardData.meta.jailNames)
+      ? window._dashboardData.meta.jailNames
+      : [];
+    var jailIdx = jailNames.indexOf(jail);
+    if (jailIdx < 0) jailIdx = 0;
+    var jailColor = getJailColor(jailIdx);
+    var jailLabel = getJailLabel(jail);
 
     var trends = data.trends || [];
     var attackTrend = jailData.attackTrend;
@@ -1332,18 +1387,7 @@
     var colors = getChartColors();
     var dark = isDarkTheme();
 
-    // Map jail names to colors and i18n labels
-    var jailColorMap = {
-      sshd: colors.sshd,
-      asterisk: colors.asterisk
-    };
-
-    var jailLabelMap = {
-      sshd: t('charts.sshd'),
-      asterisk: t('charts.asterisk')
-    };
-
-    // Build pie data from jails
+    // Build pie data from jails — dynamic color/label via palette
     var pieData = [];
     var totalAttacks = 0;
     var jailNames = Object.keys(data.jails);
@@ -1354,9 +1398,9 @@
       var attacks = jailData.attacks || 0;
       totalAttacks += attacks;
       pieData.push({
-        name: jailLabelMap[name] || name,
+        name: getJailLabel(name),
         value: attacks,
-        itemStyle: { color: jailColorMap[name] || colors.total }
+        itemStyle: { color: getJailColor(i) }
       });
     }
 
@@ -1481,6 +1525,8 @@
   window.getChartColors = getChartColors;
   window.renderPerJailMiniChart = renderPerJailMiniChart;
   window.renderWorldMapFallback = renderWorldMapFallback;
+  window.getJailColor = getJailColor;
+  window.getJailLabel = getJailLabel;
   window.disposeChartInstance = function (id) {
     if (chartInstances[id]) {
       chartInstances[id].dispose();

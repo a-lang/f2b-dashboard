@@ -38,9 +38,18 @@
   --shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.5), 0 2px 4px rgba(0, 0, 0, 0.4);
   --shadow-card: 0 1px 4px rgba(0, 0, 0, 0.3);
 
-  /* Chart colors */
-  --chart-sshd: #f87171;
-  --chart-asterisk: #fbbf24;
+  /* Chart colors — jail palette (supports up to 8 jails) */
+  --chart-jail-1: #f87171;   /* red — sshd (default) */
+  --chart-jail-2: #fbbf24;   /* amber — asterisk (default) */
+  --chart-jail-3: #a78bfa;   /* violet */
+  --chart-jail-4: #34d399;   /* emerald */
+  --chart-jail-5: #60a5fa;   /* blue */
+  --chart-jail-6: #f472b6;   /* pink */
+  --chart-jail-7: #5eead4;   /* teal */
+  --chart-jail-8: #fb923c;   /* orange */
+  /* Legacy aliases (kept for backward compat) */
+  --chart-sshd: var(--chart-jail-1);
+  --chart-asterisk: var(--chart-jail-2);
   --chart-total: #38bdf8;
   --chart-grid: #2a2d3e;
   --chart-text: #8b8fa3;
@@ -110,8 +119,17 @@
   --shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06);
   --shadow-card: 0 1px 4px rgba(0, 0, 0, 0.06);
 
-  --chart-sshd: #dc2626;
-  --chart-asterisk: #d97706;
+  /* Chart colors — jail palette (light theme) */
+  --chart-jail-1: #dc2626;   /* red — sshd */
+  --chart-jail-2: #d97706;   /* amber — asterisk */
+  --chart-jail-3: #7c3aed;   /* violet */
+  --chart-jail-4: #059669;   /* emerald */
+  --chart-jail-5: #2563eb;   /* blue */
+  --chart-jail-6: #db2777;   /* pink */
+  --chart-jail-7: #0d9488;   /* teal */
+  --chart-jail-8: #ea580c;   /* orange */
+  --chart-sshd: var(--chart-jail-1);
+  --chart-asterisk: var(--chart-jail-2);
   --chart-total: #0284c7;
   --chart-grid: #d4d7e0;
   --chart-text: #5c6078;

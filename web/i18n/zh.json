@@ -3,6 +3,16 @@
     "title": "Fail2Ban 攻擊儀表板",
     "subtitle": "即時攻擊情報"
   },
+  "header": {
+    "title": "Fail2Ban 儀表板",
+    "refreshInterval": "刷新",
+    "refresh": {
+      "1m": "1 分鐘",
+      "5m": "5 分鐘",
+      "10m": "10 分鐘",
+      "off": "關閉"
+    }
+  },
   "sections": {
     "stats": "統計概覽",
     "timeline": "攻擊時間線",
@@ -19,10 +29,12 @@
     "activeBans": "目前封鎖中",
     "uniqueIPs": "攻擊來源 IP 數",
     "activeJails": "Jail 數量",
-    "f2bStatus": "Fail2Ban 狀態",
-    "f2bStatus.running": "運行中",
-    "f2bStatus.stopped": "已停止",
-    "f2bStatus.unknown": "未知"
+    "f2bStatusLabel": "Fail2Ban 狀態",
+    "f2bStatus": {
+      "running": "運行中",
+      "stopped": "已停止",
+      "unknown": "未知"
+    }
   },
   "timeRange": {
     "24h": "最近 24 小時",
@@ -60,7 +72,8 @@
     "noData": "暫無資料"
   },
   "common": {
-    "timeFiltered": "⏱ 依時間範圍篩選"
+    "timeFiltered": "⏱ 依時間範圍篩選",
+    "loading": "載入資料中..."
   },
   "time": {
     "lastUpdated": "最後更新",
@@ -107,12 +120,14 @@
     "toggleLanguage": "切換語言"
   },
   "map": {
+    "title": "攻擊來源",
     "internalPrivate": "內部/私人網路",
     "ipv6Unavailable": "IPv6 - 地理位置不可用",
     "unknown": "未知",
     "attacksFrom": "次攻擊來自"
   },
   "heatmap": {
+    "title": "攻擊熱力圖",
     "hour": "小時",
     "day": "星期",
     "monday": "週一",
@@ -124,6 +139,7 @@
     "sunday": "週日"
   },
   "logList": {
+    "title": "最近日誌",
     "timestamp": "時間戳",
     "eventType": "事件類型",
     "details": "詳細資訊",
@@ -133,10 +149,11 @@
     "entries": "筆記錄"
   },
   "perJail": {
+    "title": "各 Jail 報告",
     "selectJail": "選擇 Jail",
     "configCard": "設定值",
     "topIPs": "熱門 IP",
-    "timeline": "時間線",
+    "timeline": "時間軸",
     "banRatio": "封鎖/解除比率",
     "uniqueAttackers": "獨立攻擊者"
   },
@@ -160,6 +177,12 @@
     "bannedHint": "目前被 fail2ban 封鎖中",
     "noData": "暫無攻擊資料"
   },
+  "timeline": {
+    "title": "攻擊時間線"
+  },
+  "trend": {
+    "title": "攻擊趨勢"
+  },
   "charts": {
     "attacks": "攻擊",
     "timeline": "時間線",
@@ -171,6 +194,7 @@
     "movingAverage": "7日平均"
   },
   "jailStats": {
+    "title": "Jail 統計",
     "totalAttacks": "總攻擊次數"
   },
   "timeUnits": {

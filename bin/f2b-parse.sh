@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # f2b-parse.sh - Fail2ban log parser that outputs aggregated dashboard.json
-# Version: 1.0.0
+# Version: 1.1.0
 
 set -euo pipefail
 
@@ -59,7 +59,7 @@ OUTPUT_DIR="${2:-web/data}"
 OUTPUT_DIR="${OUTPUT_DIR%/}"
 OUTPUT_FILE="$OUTPUT_DIR/dashboard.json"
 LOCK_FILE="/tmp/f2b-parse.lock"
-PARSER_VERSION="1.0.0"
+PARSER_VERSION="1.1.0"
 
 # Create output directory if needed
 mkdir -p "$OUTPUT_DIR"
@@ -138,7 +138,8 @@ if [[ ${#LOG_FILES[@]} -eq 0 ]]; then
           parserVersion: $parser_version,
           totalLines: 0,
           skippedLines: 0,
-          parseErrors: 0
+          parseErrors: 0,
+          jailNames: []
         },
         summary: {
           totalAttacks: 0,
@@ -184,6 +185,28 @@ for f in "${LOG_FILES[@]}"; do
 done
 LOG_FILES_PROCESSED="[${LOG_FILES_PROCESSED#, }]"
 
+# Pre-scan log files for jail names (dynamic detection)
+# Extract jail names from [jail_name] patterns in the log
+JAIL_NAMES_LIST=$(grep -hoE '\[[a-zA-Z0-9_ -]+\] ' "${LOG_FILES[@]}" 2>/dev/null \
+    | sed 's/^\[//; s/\] $//' | sort -u | tr '\n' ' ')
+JAIL_NAMES_LIST=${JAIL_NAMES_LIST% }
+
+# Query jail configs from fail2ban-client (with sensible defaults fallback)
+# Format: "jail:banTime:findTime:maxRetry jail:..."
+JAIL_CONFIGS_STR=""
+if [[ -n "$JAIL_NAMES_LIST" ]]; then
+    for jail in $JAIL_NAMES_LIST; do
+        bt=3600; ft=600; mr=5  # defaults
+        if command -v fail2ban-client >/dev/null 2>&1 && fail2ban-client ping &>/dev/null; then
+            bt=$(fail2ban-client get "$jail" bantime 2>/dev/null || echo 3600)
+            ft=$(fail2ban-client get "$jail" findtime 2>/dev/null || echo 600)
+            mr=$(fail2ban-client get "$jail" maxretry 2>/dev/null || echo 5)
+        fi
+        JAIL_CONFIGS_STR="$JAIL_CONFIGS_STR$jail:$bt:$ft:$mr "
+    done
+    JAIL_CONFIGS_STR=${JAIL_CONFIGS_STR% }
+fi
+
 # Run the awk parser
 awk \
     -v parser_version="$PARSER_VERSION" \
@@ -191,6 +214,7 @@ awk \
     -v log_files_processed="$LOG_FILES_PROCESSED" \
     -v date_dow_file="$DATE_DOW_FILE" \
     -v f2b_status="$F2B_STATUS" \
+    -v jail_configs="$JAIL_CONFIGS_STR" \
 '
 BEGIN {
     totalAttacks = 0
@@ -202,13 +226,20 @@ BEGIN {
     skippedLines = 0
     parseErrors = 0
 
-    # Jail configurations
-    jail_banTime["sshd"] = 7200
-    jail_findtime["sshd"] = 900
-    jail_maxRetry["sshd"] = 4
-    jail_banTime["asterisk"] = 259200
-    jail_findtime["asterisk"] = 600
-    jail_maxRetry["asterisk"] = 4
+    # Load jail configs passed from bash
+    # Format: "jail:banTime:findTime:maxRetry jail:..."
+    n_jail_configs = 0
+    if (jail_configs != "") {
+        n_entries = split(jail_configs, config_entries, " ")
+        for (ci = 1; ci <= n_entries; ci++) {
+            n_parts = split(config_entries[ci], cp, ":")
+            jn = cp[1]
+            jail_banTime[jn] = cp[2] + 0
+            jail_findtime[jn] = cp[3] + 0
+            jail_maxRetry[jn] = cp[4] + 0
+            n_jail_configs++
+        }
+    }
 
     # Load date->dow mapping
     while ((getline line < date_dow_file) > 0) {
@@ -247,6 +278,9 @@ function iso_timestamp(ts) {
 function json_str(s) {
     gsub(/\\/, "\\\\", s)
     gsub(/"/, "\\\"", s)
+    gsub(/\n/, "\\n", s)
+    gsub(/\r/, "\\r", s)
+    gsub(/\t/, "\\t", s)
     return "\"" s "\""
 }
 
@@ -276,11 +310,21 @@ function add_recent_log(ts, type, ip, jail, msg) {
     if (timeRangeStart == "" || ts_raw < timeRangeStart) timeRangeStart = ts_raw
     if (timeRangeEnd == "" || ts_raw > timeRangeEnd) timeRangeEnd = ts_raw
 
+    # Dynamic jail detection: extract jail name from [jail_name] pattern
+    # Note: fail2ban logs contain "fail2ban.filter         [PID]: INFO    [jail] Event"
+    # We must match the [jail] bracket, not the [PID] bracket.
+    # Strategy: remove the PID bracket (fail2ban.module  [PID]: LEVEL  ) first,
+    # then match the remaining [jail_name] bracket.
     jail = ""
-    if (match(line, /\[sshd\]/)) {
-        jail = "sshd"
-    } else if (match(line, /\[asterisk\]/)) {
-        jail = "asterisk"
+    work = line
+    sub(/fail2ban\.[a-z]+ +\[[0-9]+\]: [A-Z]+ +/, "", work)
+    if (match(work, /\[[a-zA-Z0-9_-]+\]/)) {
+        # Extract jail name between brackets (without [ and ])
+        jail = substr(work, RSTART + 1, RLENGTH - 2)
+        # Position after the bracket match for event extraction
+        rest = substr(work, RSTART + RLENGTH)
+        # Skip leading space or colon-space
+        sub(/^[: ]+/, "", rest)
     }
 
     if (jail == "" && match(line, /Determined IP using DNS Lookup/)) {
@@ -294,8 +338,8 @@ function add_recent_log(ts, type, ip, jail, msg) {
         next
     }
 
-    jail_end = index(line, "[" jail "]")
-    rest = substr(line, jail_end + length(jail) + 3)
+    # Track this jail as seen
+    jail_seen[jail] = 1
 
     ip = ""
     event_type = ""
@@ -331,6 +375,13 @@ function add_recent_log(ts, type, ip, jail, msg) {
     if (event_type == "") {
         skippedLines++
         next
+    }
+
+    # Apply default config if not already set from fail2ban-client
+    if (!(jail in jail_banTime)) {
+        jail_banTime[jail] = 3600
+        jail_findtime[jail] = 600
+        jail_maxRetry[jail] = 5
     }
 
     if (event_type == "Found") {
@@ -393,9 +444,23 @@ function add_recent_log(ts, type, ip, jail, msg) {
 }
 
 END {
-    activeJails = 0
-    if (("sshd" in jail_attacks) || ("sshd" in jail_bans)) activeJails++
-    if (("asterisk" in jail_attacks) || ("asterisk" in jail_bans)) activeJails++
+    # Build sorted jail_names array from jail_seen
+    n_jail_names = 0
+    for (jn in jail_seen) {
+        jail_names[++n_jail_names] = jn
+    }
+    # Insertion sort for consistent output
+    for (i = 2; i <= n_jail_names; i++) {
+        tmp = jail_names[i]
+        j = i - 1
+        while (j >= 1 && jail_names[j] > tmp) {
+            jail_names[j+1] = jail_names[j]
+            j--
+        }
+        jail_names[j+1] = tmp
+    }
+
+    activeJails = n_jail_names
 
     uniqueIPs = 0
     for (ip in ip_count) uniqueIPs++
@@ -431,7 +496,14 @@ END {
     print "    \"parserVersion\": " json_str(parser_version) ","
     print "    \"totalLines\": " totalLines ","
     print "    \"skippedLines\": " skippedLines ","
-    print "    \"parseErrors\": " parseErrors
+    print "    \"parseErrors\": " parseErrors ","
+    # jailNames array for frontend dynamic rendering
+    printf "    \"jailNames\": ["
+    for (ji = 1; ji <= n_jail_names; ji++) {
+        printf "%s", json_str(jail_names[ji])
+        if (ji < n_jail_names) printf ", "
+    }
+    printf "]\n"
     print "  },"
 
     # summary
@@ -476,10 +548,15 @@ END {
     print "  \"timeline\": ["
     for (i = 1; i <= n_hours; i++) {
         h = hours[i]
-        sshd_c = timeline["sshd", h] + 0
-        ast_c = timeline["asterisk", h] + 0
-        printf "    { \"timestamp\": %s, \"sshd\": %d, \"asterisk\": %d, \"total\": %d }",
-            json_str(h), sshd_c, ast_c, sshd_c + ast_c
+        total = 0
+        printf "    { \"timestamp\": %s", json_str(h)
+        for (ji = 1; ji <= n_jail_names; ji++) {
+            jn = jail_names[ji]
+            c = timeline[jn, h] + 0
+            printf ", %s: %d", json_str(jn), c
+            total += c
+        }
+        printf ", \"total\": %d }", total
         if (i < n_hours) printf ","
         printf "\n"
     }
@@ -522,11 +599,9 @@ END {
     }
     print "  ],"
 
-    # jails
+    # jails (dynamic)
     print "  \"jails\": {"
-    jail_names[1] = "sshd"
-    jail_names[2] = "asterisk"
-    for (ji = 1; ji <= 2; ji++) {
+    for (ji = 1; ji <= n_jail_names; ji++) {
         jn = jail_names[ji]
         attacks = jail_attacks[jn] + 0
         bans = jail_bans[jn] + 0
@@ -552,7 +627,7 @@ END {
 
         printf "    %s: { \"attacks\": %d, \"bans\": %d, \"unbans\": %d, \"restoredBans\": %d, \"ignored\": %d, \"uniqueIPs\": %d, \"topIP\": %s, \"topIPCount\": %d }",
             json_str(jn), attacks, bans, unbans, restored, ign, uips, json_str(tIP), tCount
-        if (ji < 2) printf ","
+        if (ji < n_jail_names) printf ","
         printf "\n"
     }
     print "  },"
@@ -591,7 +666,7 @@ END {
     print "    ]"
     print "  },"
 
-    # trends
+    # trends (dynamic jails)
     n_dates = 0
     for (key in trends) {
         split(key, parts, SUBSEP)
@@ -614,12 +689,17 @@ END {
     print "  \"trends\": ["
     for (i = 1; i <= n_dates; i++) {
         d = dates[i]
-        sshd_c = trends["sshd", d] + 0
-        ast_c = trends["asterisk", d] + 0
+        total = 0
+        printf "    { \"date\": %s", json_str(d)
+        for (ji = 1; ji <= n_jail_names; ji++) {
+            jn = jail_names[ji]
+            c = trends[jn, d] + 0
+            printf ", %s: %d", json_str(jn), c
+            total += c
+        }
         bans_c = trends_bans[d] + 0
         unbans_c = trends_unbans[d] + 0
-        printf "    { \"date\": %s, \"sshd\": %d, \"asterisk\": %d, \"total\": %d, \"bans\": %d, \"unbans\": %d }",
-            json_str(d), sshd_c, ast_c, sshd_c + ast_c, bans_c, unbans_c
+        printf ", \"total\": %d, \"bans\": %d, \"unbans\": %d }", total, bans_c, unbans_c
         if (i < n_dates) printf ","
         printf "\n"
     }
@@ -637,9 +717,9 @@ END {
     }
     print "  ],"
 
-    # perJail
+    # perJail (dynamic)
     print "  \"perJail\": {"
-    for (ji = 1; ji <= 2; ji++) {
+    for (ji = 1; ji <= n_jail_names; ji++) {
         jn = jail_names[ji]
         attacks = jail_attacks[jn] + 0
         bans = jail_bans[jn] + 0
@@ -658,9 +738,8 @@ END {
 
         # attackTrend
         printf "      \"attackTrend\": ["
-        start = 1
         first = 1
-        for (di = start; di <= n_dates; di++) {
+        for (di = 1; di <= n_dates; di++) {
             d = dates[di]
             c = trends[jn, d] + 0
             if (!first) printf ", "
@@ -717,7 +796,7 @@ END {
         printf "]\n"
 
         printf "    }"
-        if (ji < 2) printf ","
+        if (ji < n_jail_names) printf ","
         printf "\n"
     }
     print "  }"
