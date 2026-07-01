@@ -735,25 +735,6 @@
     }
   }
 
-  // Re-render on i18n language change
-  document.addEventListener('i18n:languageChanged', function () {
-    refreshChartsOnThemeChange(window._dashboardData || null);
-  });
-
-  // Re-render on theme change via MutationObserver on data-theme attribute
-  var _themeObserver = new MutationObserver(function (mutations) {
-    for (var i = 0; i < mutations.length; i++) {
-      if (mutations[i].attributeName === 'data-theme') {
-        refreshChartsOnThemeChange(window._dashboardData || null);
-        return;
-      }
-    }
-  });
-  _themeObserver.observe(document.documentElement, {
-    attributes: true,
-    attributeFilter: ['data-theme']
-  });
-
   // ============================================================
   // Attack Heatmap (Hour × Day)
   // ============================================================
@@ -1359,36 +1340,6 @@
     };
 
     chart.setOption(option, true);
-  }
-
-  // ============================================================
-  // Duration Formatting
-  // ============================================================
-
-  /**
-   * Format seconds into a human-readable duration string.
-   * @param {number} seconds - Duration in seconds (e.g. 7200, 259200)
-   * @returns {string} Formatted duration (e.g. "2 hours", "3 days")
-   */
-  function formatDuration(seconds) {
-    if (!seconds || seconds <= 0) return '--';
-
-    var days = Math.floor(seconds / 86400);
-    var hours = Math.floor(seconds / 3600);
-    var minutes = Math.floor(seconds / 60);
-
-    if (days >= 1) {
-      var remainHours = Math.floor((seconds % 86400) / 3600);
-      if (remainHours > 0) {
-        return days + ' ' + (days === 1 ? t('timeUnits.day') : t('timeUnits.days')) +
-          ' ' + remainHours + ' ' + (remainHours === 1 ? t('timeUnits.hour') : t('timeUnits.hours'));
-      }
-      return days + ' ' + (days === 1 ? t('timeUnits.day') : t('timeUnits.days'));
-    }
-    if (hours >= 1) {
-      return hours + ' ' + (hours === 1 ? t('timeUnits.hour') : t('timeUnits.hours'));
-    }
-    return minutes + ' ' + (minutes === 1 ? t('timeUnits.minute') : t('timeUnits.minutes'));
   }
 
   // ============================================================

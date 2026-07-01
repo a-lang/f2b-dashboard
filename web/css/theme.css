@@ -134,7 +134,7 @@ html *::after {
 }
 
 /* Exclude ECharts containers from theme transition (they handle their own) */
-.echarts-container,
-.echarts-container * {
+.chart-container,
+.chart-container * {
   transition: none !important;
 }

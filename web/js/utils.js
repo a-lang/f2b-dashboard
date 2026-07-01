@@ -203,6 +203,39 @@
   }
 
   // ============================================================
+  // Duration Formatting
+  // ============================================================
+
+  /**
+   * Format seconds into a human-readable duration string (i18n-aware).
+   * @param {number} seconds - Duration in seconds (e.g. 7200, 259200)
+   * @returns {string} Formatted duration (e.g. "2 hours", "3 days 4 hours")
+   */
+  function formatDuration(seconds) {
+    if (seconds == null || isNaN(seconds) || seconds <= 0) return '--';
+
+    var days = Math.floor(seconds / 86400);
+    var hours = Math.floor(seconds / 3600);
+    var minutes = Math.floor(seconds / 60);
+
+    if (days >= 1) {
+      var remainHours = Math.floor((seconds % 86400) / 3600);
+      if (remainHours > 0) {
+        return days + ' ' + (days === 1 ? t('time.day') : t('time.days')) +
+          ' ' + remainHours + ' ' + (remainHours === 1 ? t('time.hour') : t('time.hours'));
+      }
+      return days + ' ' + (days === 1 ? t('time.day') : t('time.days'));
+    }
+    if (hours >= 1) {
+      return hours + ' ' + (hours === 1 ? t('time.hour') : t('time.hours'));
+    }
+    if (minutes >= 1) {
+      return minutes + ' ' + (minutes === 1 ? t('time.minute') : t('time.minutes'));
+    }
+    return seconds + ' ' + (seconds === 1 ? t('time.second') : t('time.seconds'));
+  }
+
+  // ============================================================
   // Dashboard Data Validation
   // ============================================================
 
@@ -225,6 +258,7 @@
   window.escapeHtml = escapeHtml;
   window.getCountryFlag = getCountryFlag;
   window.formatNumber = formatNumber;
+  window.formatDuration = formatDuration;
   window.debounce = debounce;
   window.isDarkTheme = isDarkTheme;
   window.hexToRgba = hexToRgba;

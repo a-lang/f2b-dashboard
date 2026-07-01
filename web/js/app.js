@@ -211,33 +211,6 @@
   }
 
   // ============================================================
-  // Duration Formatting
-  // ============================================================
-
-  /**
-   * Format seconds into a human-readable duration string.
-   * @param {number} seconds - Duration in seconds
-   * @returns {string} e.g. "2 hours", "3 days"
-   */
-  function formatDuration(seconds) {
-    if (seconds == null || isNaN(seconds)) return '--';
-
-    if (seconds >= 86400) {
-      var days = Math.round(seconds / 86400);
-      return days + ' ' + (days === 1 ? t('time.day') : t('time.days'));
-    }
-    if (seconds >= 3600) {
-      var hours = Math.round(seconds / 3600);
-      return hours + ' ' + (hours === 1 ? t('time.hour') : t('time.hours'));
-    }
-    if (seconds >= 60) {
-      var minutes = Math.round(seconds / 60);
-      return minutes + ' ' + (minutes === 1 ? t('time.minute') : t('time.minutes'));
-    }
-    return seconds + ' ' + (seconds === 1 ? t('time.second') : t('time.seconds'));
-  }
-
-  // ============================================================
   // Per-Jail Report
   // ============================================================
 
