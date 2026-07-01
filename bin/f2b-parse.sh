@@ -311,13 +311,13 @@ function add_recent_log(ts, type, ip, jail, msg) {
     if (timeRangeEnd == "" || ts_raw > timeRangeEnd) timeRangeEnd = ts_raw
 
     # Dynamic jail detection: extract jail name from [jail_name] pattern
-    # Note: fail2ban logs contain "fail2ban.filter[PID]: [jail] Event"
+    # Note: fail2ban logs contain "fail2ban.filter         [PID]: INFO    [jail] Event"
     # We must match the [jail] bracket, not the [PID] bracket.
-    # Strategy: remove the PID bracket (filter[123] / actions[123]) first,
+    # Strategy: remove the PID bracket (fail2ban.module  [PID]: LEVEL  ) first,
     # then match the remaining [jail_name] bracket.
     jail = ""
     work = line
-    sub(/fail2ban\.(filter|actions|jail)\[[0-9]+\]: /, "", work)
+    sub(/fail2ban\.[a-z]+ +\[[0-9]+\]: [A-Z]+ +/, "", work)
     if (match(work, /\[[a-zA-Z0-9_-]+\]/)) {
         # Extract jail name between brackets (without [ and ])
         jail = substr(work, RSTART + 1, RLENGTH - 2)
