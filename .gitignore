@@ -11,6 +11,8 @@ logs/
 
 # OpenCode workspace metadata
 .omo/
+.opencode/
+.agents/
 
 # Node.js
 node_modules/
