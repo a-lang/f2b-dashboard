@@ -77,7 +77,7 @@ mkdir -p web/data
 chmod +x bin/f2b-parse.sh bin/f2b-geoip.sh
 
 # Install cron job (every 5 minutes)
-(crontab -l 2>/dev/null; echo "*/5 * * * * flock -n /tmp/f2b-parse.lock /opt/f2b-dashboard/bin/f2b-parse.sh /var/log/fail2ban.log /opt/f2b-dashboard/web/data && /opt/f2b-dashboard/bin/f2b-geoip.sh /opt/f2b-dashboard/web/data/dashboard.json /opt/f2b-dashboard/web/data/geo-cache.json") | crontab -
+(crontab -l 2>/dev/null; echo "*/5 * * * * /opt/f2b-dashboard/bin/f2b-parse.sh /var/log/fail2ban.log /opt/f2b-dashboard/web/data && /opt/f2b-dashboard/bin/f2b-geoip.sh /opt/f2b-dashboard/web/data/dashboard.json /opt/f2b-dashboard/web/data/geo-cache.json") | crontab -
 ```
 
 After installation, serve the `/opt/f2b-dashboard/web/` directory with any web server and open the dashboard in a browser.
@@ -136,7 +136,7 @@ Queries [IP-API](http://ip-api.com) for geolocation data on unique public IPs. M
 By default, the cron job runs every 5 minutes:
 
 ```
-*/5 * * * * flock -n /tmp/f2b-parse.lock /opt/f2b-dashboard/bin/f2b-parse.sh /var/log/fail2ban.log /opt/f2b-dashboard/web/data && /opt/f2b-dashboard/bin/f2b-geoip.sh /opt/f2b-dashboard/web/data/dashboard.json /opt/f2b-dashboard/web/data/geo-cache.json
+*/5 * * * * /opt/f2b-dashboard/bin/f2b-parse.sh /var/log/fail2ban.log /opt/f2b-dashboard/web/data && /opt/f2b-dashboard/bin/f2b-geoip.sh /opt/f2b-dashboard/web/data/dashboard.json /opt/f2b-dashboard/web/data/geo-cache.json
 ```
 
 To change the interval, edit `*/5` in the crontab entry.

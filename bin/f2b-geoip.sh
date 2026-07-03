@@ -90,6 +90,7 @@ fi
 # Temp files
 cache_tmp=$(mktemp)
 dashboard_tmp=$(mktemp)
+chmod 644 "$cache_tmp" "$dashboard_tmp"
 
 cleanup() {
     rm -f "${cache_tmp:-}" "${cache_tmp:-}."* "${dashboard_tmp:-}" "${api_tmp:-}"

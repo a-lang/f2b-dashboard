@@ -6,7 +6,7 @@ Pure static dashboard — zero backend, zero npm, zero build step. Edit files an
 ## Architecture
 - `bin/f2b-parse.sh` reads `fail2ban.log` (inc. rotated `.1`, `.2`, ...), outputs `web/data/dashboard.json`
 - `bin/f2b-geoip.sh` enriches `dashboard.json` with GeoIP via IP-API (cached in `geo-cache.json`, 45 req/min limit)
-- Cron runs both sequentially with `flock -n /tmp/f2b-parse.lock` to prevent overlap
+- Script self-locks via `flock`; cron runs both with `&&` to prevent overlap
 - Browser polls `dashboard.json` at `CONFIG.refreshInterval` (default 5 min)
 - Deployed by `git clone` to `/opt/f2b-dashboard`
 

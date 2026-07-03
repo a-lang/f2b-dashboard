@@ -77,7 +77,7 @@ mkdir -p web/data
 chmod +x bin/f2b-parse.sh bin/f2b-geoip.sh
 
 # 安裝 cron 排程（每 5 分鐘）
-(crontab -l 2>/dev/null; echo "*/5 * * * * flock -n /tmp/f2b-parse.lock /opt/f2b-dashboard/bin/f2b-parse.sh /var/log/fail2ban.log /opt/f2b-dashboard/web/data && /opt/f2b-dashboard/bin/f2b-geoip.sh /opt/f2b-dashboard/web/data/dashboard.json /opt/f2b-dashboard/web/data/geo-cache.json") | crontab -
+(crontab -l 2>/dev/null; echo "*/5 * * * * /opt/f2b-dashboard/bin/f2b-parse.sh /var/log/fail2ban.log /opt/f2b-dashboard/web/data && /opt/f2b-dashboard/bin/f2b-geoip.sh /opt/f2b-dashboard/web/data/dashboard.json /opt/f2b-dashboard/web/data/geo-cache.json") | crontab -
 ```
 
 安裝完成後，以任意網頁伺服器提供`/opt/f2b-dashboard/web/`目錄，並在瀏覽器中開啟儀表板。
@@ -136,7 +136,7 @@ bin/f2b-geoip.sh /path/to/dashboard.json   # 自訂路徑
 預設情況下，cron 排程每 5 分鐘執行一次：
 
 ```
-*/5 * * * * flock -n /tmp/f2b-parse.lock /opt/f2b-dashboard/bin/f2b-parse.sh /var/log/fail2ban.log /opt/f2b-dashboard/web/data && /opt/f2b-dashboard/bin/f2b-geoip.sh /opt/f2b-dashboard/web/data/dashboard.json /opt/f2b-dashboard/web/data/geo-cache.json
+*/5 * * * * /opt/f2b-dashboard/bin/f2b-parse.sh /var/log/fail2ban.log /opt/f2b-dashboard/web/data && /opt/f2b-dashboard/bin/f2b-geoip.sh /opt/f2b-dashboard/web/data/dashboard.json /opt/f2b-dashboard/web/data/geo-cache.json
 ```
 
 若要調整間隔，手動修改 crontab 中的 `*/5` 部分即可。
