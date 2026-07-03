@@ -494,14 +494,16 @@
     function fmtDate(val) {
       var d = new Date(val);
       var locale = lang === 'zh' ? 'zh-TW' : 'en-US';
-      return d.toLocaleDateString(locale, { month: 'short', day: 'numeric' });
+      var tz = window.SERVER_TIMEZONE || 'UTC';
+      return d.toLocaleDateString(locale, { month: 'short', day: 'numeric', timeZone: tz });
     }
 
     function fmtDateTime(val) {
       var d = new Date(val);
       var locale = lang === 'zh' ? 'zh-TW' : 'en-US';
-      return d.toLocaleDateString(locale, { year: 'numeric', month: 'short', day: 'numeric' }) +
-        ' ' + d.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' });
+      var tz = window.SERVER_TIMEZONE || 'UTC';
+      return d.toLocaleDateString(locale, { year: 'numeric', month: 'short', day: 'numeric', timeZone: tz }) +
+        ' ' + d.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit', timeZone: tz });
     }
 
     var option = {
@@ -641,10 +643,12 @@
     } else if (diffDay < 30) {
       return diffDay + ' ' + t('time.daysAgo', { count: diffDay });
     } else {
+      var tz = window.SERVER_TIMEZONE || 'UTC';
       return date.toLocaleDateString(locale, {
         year: 'numeric',
         month: 'short',
-        day: 'numeric'
+        day: 'numeric',
+        timeZone: tz
       });
     }
   }

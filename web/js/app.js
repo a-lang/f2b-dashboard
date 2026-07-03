@@ -309,13 +309,20 @@
   };
 
   function formatLogTimestamp(isoStr) {
+    if (!isoStr) return '--';
+    var tz = window.SERVER_TIMEZONE || 'UTC';
     var d = new Date(isoStr);
-    var month = String(d.getMonth() + 1).padStart(2, '0');
-    var day = String(d.getDate()).padStart(2, '0');
-    var hours = String(d.getHours()).padStart(2, '0');
-    var mins = String(d.getMinutes()).padStart(2, '0');
-    var secs = String(d.getSeconds()).padStart(2, '0');
-    return month + '-' + day + ' ' + hours + ':' + mins + ':' + secs;
+    var parts = new Intl.DateTimeFormat('en-US', {
+      timeZone: tz,
+      month: '2-digit', day: '2-digit',
+      hour: '2-digit', minute: '2-digit', second: '2-digit',
+      hour12: false
+    }).formatToParts(d);
+    var get = function (type) {
+      for (var i = 0; i < parts.length; i++) if (parts[i].type === type) return parts[i].value;
+      return '00';
+    };
+    return get('month') + '-' + get('day') + ' ' + get('hour') + ':' + get('minute') + ':' + get('second');
   }
 
   function renderLogList(data) {
@@ -488,6 +495,7 @@
       window.hideErrorBanner();
       lastFetchedAt = new Date();
       lastDataTimestamp = data.meta && (data.meta.lastUpdated || data.meta.generatedAt);
+      window.SERVER_TIMEZONE = data.meta && (data.meta.timezone || 'UTC');
 
       renderStatsCards(data);
       renderF2BStatusCard(data);

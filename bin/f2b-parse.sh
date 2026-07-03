@@ -61,6 +61,20 @@ OUTPUT_FILE="$OUTPUT_DIR/dashboard.json"
 LOCK_FILE="/tmp/f2b-parse.lock"
 PARSER_VERSION="1.1.0"
 
+# Detect server timezone (IANA name + offset)
+if [ -f /etc/timezone ]; then
+    SERVER_TZ_NAME=$(cat /etc/timezone)
+elif command -v timedatectl >/dev/null 2>&1; then
+    SERVER_TZ_NAME=$(timedatectl show --property=Timezone --value 2>/dev/null || echo "UTC")
+elif [ -L /etc/localtime ]; then
+    SERVER_TZ_NAME=$(readlink /etc/localtime | sed 's|^.*/zoneinfo/||')
+else
+    SERVER_TZ_NAME="UTC"
+fi
+SERVER_TZ_OFFSET=$(date +%:z)
+: "${SERVER_TZ_NAME:=UTC}"
+: "${SERVER_TZ_OFFSET:=+00:00}"
+
 # Create output directory if needed
 mkdir -p "$OUTPUT_DIR"
 
@@ -97,7 +111,7 @@ for f in "$LOG_DIR/${LOG_BASE}".[0-9]*; do
     LOG_FILES+=("$f")
 done
 
-GENERATED_AT=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+GENERATED_AT=$(date +"%Y-%m-%dT%H:%M:%S")${SERVER_TZ_OFFSET}
 
 # Check fail2ban service status
 F2B_STATUS="unknown"
@@ -127,6 +141,8 @@ if [[ ${#LOG_FILES[@]} -eq 0 ]]; then
       --arg generated_at "$GENERATED_AT" \
       --arg parser_version "$PARSER_VERSION" \
       --arg f2b_status "$F2B_STATUS" \
+      --arg server_tz_name "$SERVER_TZ_NAME" \
+      --arg server_tz_offset "$SERVER_TZ_OFFSET" \
       '{
         meta: {
           generatedAt: $generated_at,
@@ -139,6 +155,8 @@ if [[ ${#LOG_FILES[@]} -eq 0 ]]; then
           totalLines: 0,
           skippedLines: 0,
           parseErrors: 0,
+          timezone: $server_tz_name,
+          timezoneOffset: $server_tz_offset,
           jailNames: []
         },
         summary: {
@@ -215,6 +233,8 @@ awk \
     -v date_dow_file="$DATE_DOW_FILE" \
     -v f2b_status="$F2B_STATUS" \
     -v jail_configs="$JAIL_CONFIGS_STR" \
+    -v server_tz_name="$SERVER_TZ_NAME" \
+    -v server_tz_offset="$SERVER_TZ_OFFSET" \
 '
 BEGIN {
     totalAttacks = 0
@@ -272,7 +292,7 @@ function is_ipv6(ip) {
 
 function iso_timestamp(ts) {
     gsub(/ /, "T", ts)
-    return ts "Z"
+    return ts server_tz_offset
 }
 
 function json_str(s) {
@@ -394,7 +414,7 @@ function add_recent_log(ts, type, ip, jail, msg) {
 
         jail_ip_count[jail, ip]++
 
-        hour_key = substr(ts_raw, 1, 10) "T" substr(ts_raw, 12, 2) ":00:00Z"
+        hour_key = substr(ts_raw, 1, 10) "T" substr(ts_raw, 12, 2) ":00:00" server_tz_offset
         timeline[jail, hour_key]++
 
         trends[jail, date_str]++
@@ -497,6 +517,8 @@ END {
     print "    \"totalLines\": " totalLines ","
     print "    \"skippedLines\": " skippedLines ","
     print "    \"parseErrors\": " parseErrors ","
+    print "    \"timezone\": " json_str(server_tz_name) ","
+    print "    \"timezoneOffset\": " json_str(server_tz_offset) ","
     # jailNames array for frontend dynamic rendering
     printf "    \"jailNames\": ["
     for (ji = 1; ji <= n_jail_names; ji++) {
