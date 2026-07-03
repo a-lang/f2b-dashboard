@@ -172,11 +172,6 @@ server {
         try_files $uri $uri/ =404;
     }
 
-    # 禁止直接讀取原始資料（避免暴露內部 IP）
-    location /data/ {
-        deny all;
-    }
-
     add_header X-Content-Type-Options "nosniff" always;
     add_header X-Frame-Options "DENY" always;
     add_header Referrer-Policy "no-referrer" always;
@@ -193,10 +188,11 @@ server {
 ```apache
 <VirtualHost *:80>
     ServerName dashboard.example.com
-    DocumentRoot /opt/f2b-dashboard/web
 
     ServerSignature Off
     ServerTokens Prod
+
+    Alias /f2b-dashboard/ "/opt/f2b-dashboard/web/"
 
     <Directory /opt/f2b-dashboard/web>
         Options -Indexes
@@ -204,16 +200,13 @@ server {
         Require all granted
     </Directory>
 
-    # 禁止直接讀取原始資料（避免暴露內部 IP）
-    <Directory /opt/f2b-dashboard/web/data>
-        Require all denied
-    </Directory>
-
     Header always set X-Content-Type-Options "nosniff"
     Header always set X-Frame-Options "DENY"
     Header always set Referrer-Policy "no-referrer"
 </VirtualHost>
 ```
+
+> 若要啟用 HTTPS，將 `*:80` 改為 `*:443`，並加入 `SSLEngine on` 與憑證相關指令。
 
 </details>
 
@@ -228,11 +221,6 @@ $HTTP["host"] == "dashboard.example.com" {
     server.tag = ""
 
     dir-listing.activate = "disable"
-
-    # 禁止直接讀取原始資料（避免暴露內部 IP）
-    $HTTP["url"] =~ "^/data/" {
-        url.access-deny = ("")
-    }
 
     setenv.add-response-header = (
         "X-Content-Type-Options" => "nosniff",
@@ -253,7 +241,6 @@ $HTTP["host"] == "dashboard.example.com" {
 - **`X-Content-Type-Options: nosniff`** — 防止 MIME 類型嗅探攻擊
 - **`X-Frame-Options: DENY`** — 防止點擊劫持
 - **`Referrer-Policy: no-referrer`** — 不洩漏來源頁面路徑
-- **`data/` 目錄拒絕對外存取** — 保護 `dashboard.json` 中的原始 IP 資料
 
 ## ⚙️ 設定
 

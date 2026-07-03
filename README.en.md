@@ -172,11 +172,6 @@ server {
         try_files $uri $uri/ =404;
     }
 
-    # Block direct access to raw data (protect internal IPs)
-    location /data/ {
-        deny all;
-    }
-
     add_header X-Content-Type-Options "nosniff" always;
     add_header X-Frame-Options "DENY" always;
     add_header Referrer-Policy "no-referrer" always;
@@ -193,10 +188,11 @@ server {
 ```apache
 <VirtualHost *:80>
     ServerName dashboard.example.com
-    DocumentRoot /opt/f2b-dashboard/web
 
     ServerSignature Off
     ServerTokens Prod
+
+    Alias /f2b-dashboard/ "/opt/f2b-dashboard/web/"
 
     <Directory /opt/f2b-dashboard/web>
         Options -Indexes
@@ -204,16 +200,13 @@ server {
         Require all granted
     </Directory>
 
-    # Block direct access to raw data (protect internal IPs)
-    <Directory /opt/f2b-dashboard/web/data>
-        Require all denied
-    </Directory>
-
     Header always set X-Content-Type-Options "nosniff"
     Header always set X-Frame-Options "DENY"
     Header always set Referrer-Policy "no-referrer"
 </VirtualHost>
 ```
+
+> To enable HTTPS, change `*:80` to `*:443` and add `SSLEngine on` with certificate directives.
 
 </details>
 
@@ -228,11 +221,6 @@ $HTTP["host"] == "dashboard.example.com" {
     server.tag = ""
 
     dir-listing.activate = "disable"
-
-    # Block direct access to raw data (protect internal IPs)
-    $HTTP["url"] =~ "^/data/" {
-        url.access-deny = ("")
-    }
 
     setenv.add-response-header = (
         "X-Content-Type-Options" => "nosniff",
@@ -253,7 +241,6 @@ The configurations above apply these security measures:
 - **`X-Content-Type-Options: nosniff`** — prevents MIME type sniffing
 - **`X-Frame-Options: DENY`** — prevents clickjacking
 - **`Referrer-Policy: no-referrer`** — prevents referrer leakage
-- **`data/` directory denied from external access** — protects `dashboard.json` raw IP data
 
 ## ⚙️ Configuration
 
