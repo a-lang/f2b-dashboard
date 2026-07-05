@@ -69,7 +69,11 @@ command -v curl >/dev/null 2>&1 || error_exit "curl is required but not installe
 [ -f "$DASHBOARD_JSON" ] || error_exit "Dashboard JSON not found: $DASHBOARD_JSON"
 
 # Extract unique IPs from topIPs
-ips=$(jq -r '.topIPs // [] | map(.ip) | unique | .[]' "$DASHBOARD_JSON" 2>/dev/null) || {
+ips=$(jq -r '
+  ([.topIPs // [] | .[].ip]) +
+  ([.perJail // {} | .[] | .topIPs // [] | .[].ip])
+  | unique | .[]
+' "$DASHBOARD_JSON" 2>/dev/null) || {
     error_exit "Failed to parse dashboard JSON"
 }
 
