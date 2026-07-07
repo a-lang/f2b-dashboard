@@ -802,15 +802,15 @@
     var colors = getChartColors();
     var dark = isDarkTheme();
 
-    // Day names: Mon(0) .. Sun(6) — i18n-aware
+    // Day names: Sun(0) .. Sat(6) — matches backend date +%w
     var dayNames = [
+      t('heatmap.sunday'),
       t('heatmap.monday'),
       t('heatmap.tuesday'),
       t('heatmap.wednesday'),
       t('heatmap.thursday'),
       t('heatmap.friday'),
-      t('heatmap.saturday'),
-      t('heatmap.sunday')
+      t('heatmap.saturday')
     ];
 
     // Hour labels: "00:00" .. "23:00"
@@ -979,7 +979,6 @@
    * ECharts uses names from the world.json Geo data (mostly Natural Earth).
    */
   var COUNTRY_NAME_MAP = {
-    'United States': 'United States of America',
     'The Netherlands': 'Netherlands',
     'South Korea': 'Korea',
     'Russia': 'Russia',
