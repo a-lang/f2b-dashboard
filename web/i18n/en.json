@@ -115,6 +115,9 @@
     "license": "MIT License",
     "copyright": "© 2026 alang"
   },
+  "accessibility": {
+    "skipToContent": "Skip to main content"
+  },
   "buttons": {
     "toggleTheme": "Toggle Theme",
     "toggleLanguage": "Toggle Language"

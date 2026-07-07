@@ -122,6 +122,11 @@ body {
   outline-offset: 2px;
 }
 
+.btn:active {
+  transform: scale(0.97) translateY(1px);
+  transition: transform 0.1s ease;
+}
+
 .btn--icon {
   padding: var(--space-sm);
   min-width: 36px;
@@ -1067,6 +1072,27 @@ body {
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   border: 0;
+}
+
+/* --- Skip Link --- */
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: var(--space-md);
+  z-index: 200;
+  background: var(--accent);
+  color: var(--text-inverse);
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-sm);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.skip-link:focus {
+  top: var(--space-md);
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 
 /* --- World Map Fallback --- */

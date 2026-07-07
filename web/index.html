@@ -5,10 +5,20 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Fail2Ban Live Dashboard — Real-time attack intelligence">
   <title>Fail2Ban Dashboard</title>
+  <meta property="og:title" content="Fail2Ban Dashboard">
+  <meta property="og:description" content="Real-time attack intelligence dashboard for fail2ban">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="assets/screenshot-1.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Fail2Ban Dashboard">
+  <meta name="twitter:description" content="Real-time attack intelligence dashboard for fail2ban">
+  <meta name="twitter:image" content="assets/screenshot-1.png">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath fill='%2338bdf8' d='M16 2L3 8v10c0 7.2 5.5 13.8 13 15 7.5-1.2 13-7.8 13-15V8L16 2z'/%3E%3Cpath fill='%230f1117' d='M16 11l-3.5 7h7z'/%3E%3C/svg%3E">
   <link rel="stylesheet" href="css/theme.css">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+  <a class="skip-link" href="#main-content" data-i18n="accessibility.skipToContent">Skip to main content</a>
   <div class="dashboard-container">
 
     <!-- ===== Header ===== -->
@@ -63,7 +73,7 @@
     <div id="error-banner" class="error-banner hidden" data-i18n="errors.dataUnavailable">Data unavailable</div>
 
     <!-- ===== Main Content ===== -->
-    <main class="dashboard-main">
+    <main id="main-content" class="dashboard-main">
       <div class="dashboard-grid">
 
         <!-- 1. Stats Cards -->

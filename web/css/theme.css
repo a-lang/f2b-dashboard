@@ -34,9 +34,9 @@
   /* Borders & Shadows */
   --border: #2a2d3e;
   --border-light: #1f2233;
-  --shadow: 0 1px 3px rgba(0, 0, 0, 0.4), 0 1px 2px rgba(0, 0, 0, 0.3);
-  --shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.5), 0 2px 4px rgba(0, 0, 0, 0.4);
-  --shadow-card: 0 1px 4px rgba(0, 0, 0, 0.3);
+  --shadow: 0 1px 3px rgba(6, 9, 20, 0.55), 0 1px 2px rgba(6, 9, 20, 0.4);
+  --shadow-lg: 0 4px 12px rgba(6, 9, 20, 0.65), 0 2px 4px rgba(6, 9, 20, 0.5);
+  --shadow-card: 0 1px 4px rgba(6, 9, 20, 0.4);
 
   /* Chart colors — jail palette (supports up to 8 jails) */
   --chart-jail-1: #f87171;   /* red — sshd (default) */
@@ -115,9 +115,9 @@
 
   --border: #d4d7e0;
   --border-light: #e8eaef;
-  --shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.06);
-  --shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06);
-  --shadow-card: 0 1px 4px rgba(0, 0, 0, 0.06);
+  --shadow: 0 1px 3px rgba(100, 105, 120, 0.12), 0 1px 2px rgba(100, 105, 120, 0.08);
+  --shadow-lg: 0 4px 12px rgba(100, 105, 120, 0.14), 0 2px 4px rgba(100, 105, 120, 0.08);
+  --shadow-card: 0 1px 4px rgba(100, 105, 120, 0.08);
 
   /* Chart colors — jail palette (light theme) */
   --chart-jail-1: #dc2626;   /* red — sshd */
@@ -139,20 +139,24 @@
   --scrollbar-thumb: #c4c7d4;
 }
 
-/* --- Global theme transition --- */
-html,
-html *,
-html *::before,
-html *::after {
+/* --- Global theme transition (targeted — avoids ECharts DOM performance hit) --- */
+.dashboard-container,
+.dashboard-header,
+.dashboard-footer,
+.card,
+.stat-card,
+.btn,
+.ip-table tr,
+.ip-status-badge,
+.jail-report-card,
+.jail-toggle__btn,
+.refresh-selector__select,
+.time-range-selector__select,
+.error-banner,
+.log-list__filter-input {
   transition:
     background-color var(--transition-theme),
     color var(--transition-theme),
     border-color var(--transition-theme),
     box-shadow var(--transition-theme);
-}
-
-/* Exclude ECharts containers from theme transition (they handle their own) */
-.chart-container,
-.chart-container * {
-  transition: none !important;
 }
