@@ -140,6 +140,15 @@ const i18n = {
       }
     });
 
+    // Update aria-label attributes
+    document.querySelectorAll('[data-i18n-aria-label]').forEach(element => {
+      const key = element.getAttribute('data-i18n-aria-label');
+      const translation = this.t(key);
+      if (translation !== key) {
+        element.setAttribute('aria-label', translation);
+      }
+    });
+
     // Update placeholder attributes
     document.querySelectorAll('[data-i18n-placeholder]').forEach(element => {
       const key = element.getAttribute('data-i18n-placeholder');

@@ -52,10 +52,6 @@
     "alreadyBanned": "已封鎖",
     "flushTicket": "清除票券"
   },
-  "theme": {
-    "dark": "深色",
-    "light": "淺色"
-  },
   "language": {
     "english": "English",
     "chinese": "繁體中文"
@@ -119,8 +115,7 @@
     "skipToContent": "跳到主要內容"
   },
   "buttons": {
-    "toggleTheme": "切換主題",
-    "toggleLanguage": "切換語言"
+    "toggleTheme": "切換主題"
   },
   "map": {
     "title": "攻擊來源",

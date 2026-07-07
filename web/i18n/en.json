@@ -52,10 +52,6 @@
     "alreadyBanned": "Already Banned",
     "flushTicket": "Flush Ticket"
   },
-  "theme": {
-    "dark": "Dark",
-    "light": "Light"
-  },
   "language": {
     "english": "English",
     "chinese": "繁體中文"
@@ -119,8 +115,7 @@
     "skipToContent": "Skip to main content"
   },
   "buttons": {
-    "toggleTheme": "Toggle Theme",
-    "toggleLanguage": "Toggle Language"
+    "toggleTheme": "Toggle Theme"
   },
   "map": {
     "title": "Attack Sources",
