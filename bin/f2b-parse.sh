@@ -758,6 +758,13 @@ END {
         printf "      \"totalUnbans\": %d,\n", unbans
         printf "      \"currentBanned\": %d,\n", currentBanned
 
+        uips = 0
+        for (key in jail_ip_count) {
+            split(key, parts, SUBSEP)
+            if (parts[1] == jn) uips++
+        }
+        printf "      \"uniqueIPs\": %d,\n", uips
+
         # attackTrend
         printf "      \"attackTrend\": ["
         first = 1

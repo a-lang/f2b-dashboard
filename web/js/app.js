@@ -219,7 +219,7 @@
           '<span class="jail-stat__label">' + t('perJail.banRatio') + '</span>' +
         '</div>' +
         '<div class="jail-stat">' +
-          '<span class="jail-stat__value">' + Number(jailData.totalAttacks).toLocaleString() + '</span>' +
+          '<span class="jail-stat__value">' + Number(jailData.uniqueIPs).toLocaleString() + '</span>' +
           '<span class="jail-stat__label">' + t('perJail.uniqueAttackers') + '</span>' +
         '</div>' +
         '<div class="jail-stat">' +
