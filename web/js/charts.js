@@ -987,7 +987,6 @@
     'Iran': 'Iran',
     'Czech Republic': 'Czech Rep.',
     'Hong Kong': 'China',
-    'Taiwan': 'China',
     'New Zealand': 'New Zealand'
   };
 
