@@ -1,0 +1,80 @@
+{
+  "nav": {
+    "features": "功能特色",
+    "howItWorks": "運作方式",
+    "quickStart": "快速開始",
+    "themeToggle": "切換主題",
+    "languageToggle": "切換語言"
+  },
+  "hero": {
+    "label": "開源 · 自架 · 零後端",
+    "title": "看清伺服器擋下的每次攻擊",
+    "subtitle": "即時 fail2ban 攻擊情報。無資料庫、無建置步驟，純靜態檔案。",
+    "cta": "在 GitHub 上查看",
+    "statAttacks": "已封鎖攻擊",
+    "statBans": "進行中封鎖",
+    "statCountries": "國家數"
+  },
+  "highlights": {
+    "label": "為什麼選擇 f2b-dashboard",
+    "title": "為伺服器打造，而非雲端",
+    "subtitle": "尊重你基礎設施的儀表板。無需調校容器，也無需備份資料庫。",
+    "selfHosted": "自架部署",
+    "selfHostedDesc": "所有資料留在你的伺服器上。無外部遙測，無第三方儀表板。",
+    "noDatabase": "無資料庫",
+    "noDatabaseDesc": "結果寫成靜態 JSON，由 Cron 依照你的排程重新整理。",
+    "staticWeb": "靜態網頁",
+    "staticWebDesc": "純 HTML、CSS、JavaScript。用任何靜態檔案伺服器提供，或直接開啟。",
+    "geoIp": "GeoIP 定位",
+    "geoIpDesc": "透過免費 IP-API 層，將攻擊來源對應到國家與城市。"
+  },
+  "features": {
+    "label": "功能特色",
+    "title": "地圖、時間軸與 Jail 報告",
+    "subtitle": "所有你想知道的入侵資訊，統整在一個地方。",
+    "timelineTitle": "攻擊時間軸與趨勢",
+    "timelineDesc": "透過互動式 ECharts 圖表查看攻擊量變化，並可依時間範圍篩選。",
+    "mapTitle": "依來源 IP 的世界地圖",
+    "mapDesc": "在世界地圖上定位攻擊者。一眼看出國家與地區的攻擊模式。",
+    "jailTitle": "各 Jail 分析",
+    "jailDesc": "深入每個 fail2ban jail：熱門 IP、封鎖比例、獨立攻擊者與設定。",
+    "logsTitle": "最近日誌記錄",
+    "logsDesc": "無需離開儀表板即可瀏覽與篩選最近的 fail2ban 事件。"
+  },
+  "howItWorks": {
+    "label": "運作方式",
+    "title": "四個環節，沒有魔法",
+    "subtitle": "解析器讀取日誌，GeoIP 查詢 IP 地理位置，靜態 UI 渲染 JSON。",
+    "step1": "fail2ban.log",
+    "step1Desc": "你現有的 fail2ban 日誌檔就是唯一的資料來源。",
+    "step2": "f2b-parse.sh",
+    "step2Desc": "彙整封鎖、解封、發現事件與 Jail 統計，輸出為 JSON。",
+    "step3": "f2b-geoip.sh",
+    "step3Desc": "使用 IP-API 查詢每個 IP，並在本機快取結果。",
+    "step4": "web/index.html",
+    "step4Desc": "靜態儀表板以 ECharts 渲染 enrichment 後的 JSON。"
+  },
+  "quickStart": {
+    "label": "快速開始",
+    "title": "兩分鐘內開始使用",
+    "subtitle": "將專案 clone 到 /opt，執行一次解析器並開啟儀表板。再加入 cron 排程保持資料更新。",
+    "step1": "Clone 與準備",
+    "step1Desc": "安裝到 /opt/f2b-dashboard，並賦予腳本執行權限。",
+    "step2": "解析與 enrichment",
+    "step2Desc": "從日誌產生 dashboard.json，再補上 GeoIP 資料。",
+    "step3": "加入 cron",
+    "step3Desc": "讓腳本每 5 分鐘自動重新整理。",
+    "terminalTitle": "終端機",
+    "note1": "注意：安裝在 /opt/f2b-dashboard 需要 root 權限。",
+    "note2": "請以 root 執行，或在每個指令前加上 sudo。",
+    "section1": "Clone 與準備",
+    "section2": "解析與 enrichment 一次",
+    "section3": "加入 cron（每 5 分鐘）",
+    "section4": "以任何靜態伺服器提供 web/"
+  },
+  "footer": {
+    "github": "GitHub",
+    "license": "MIT License",
+    "copyright": "© 2026 alang"
+  }
+}

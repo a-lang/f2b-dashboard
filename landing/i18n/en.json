@@ -1,0 +1,80 @@
+{
+  "nav": {
+    "features": "Features",
+    "howItWorks": "How it works",
+    "quickStart": "Quick start",
+    "themeToggle": "Toggle theme",
+    "languageToggle": "Switch language"
+  },
+  "hero": {
+    "label": "Open source · Self-hosted · Zero backend",
+    "title": "See every attack your server blocks",
+    "subtitle": "Real-time fail2ban intelligence. No database. No build step. Just static files.",
+    "cta": "View on GitHub",
+    "statAttacks": "Attacks blocked",
+    "statBans": "Active bans",
+    "statCountries": "Countries"
+  },
+  "highlights": {
+    "label": "Why f2b-dashboard",
+    "title": "Built for servers, not for clouds",
+    "subtitle": "A dashboard that respects your infrastructure. No containers to tune, no databases to back up.",
+    "selfHosted": "Self-hosted",
+    "selfHostedDesc": "All data stays on your server. No external telemetry, no third-party dashboards.",
+    "noDatabase": "No database",
+    "noDatabaseDesc": "Results are written as static JSON. Cron refreshes them on your schedule.",
+    "staticWeb": "Static web page",
+    "staticWebDesc": "Pure HTML, CSS, and JavaScript. Open it with any static file server or directly in a browser.",
+    "geoIp": "GeoIP enriched",
+    "geoIpDesc": "Attack sources are mapped to countries and cities using the free IP-API tier."
+  },
+  "features": {
+    "label": "Features",
+    "title": "Maps, timelines, and jail reports",
+    "subtitle": "Everything you want to know about incoming attacks, organized in one place.",
+    "timelineTitle": "Attack timeline & trends",
+    "timelineDesc": "See attack volume over time with interactive ECharts visualizations and time-range filtering.",
+    "mapTitle": "World map by source IP",
+    "mapDesc": "Geo-locate attackers on a world map. Spot patterns by country and region at a glance.",
+    "jailTitle": "Per-jail breakdown",
+    "jailDesc": "Dive into each fail2ban jail: top IPs, ban ratio, unique attackers, and configuration.",
+    "logsTitle": "Recent log entries",
+    "logsDesc": "Browse and filter recent fail2ban events without leaving the dashboard."
+  },
+  "howItWorks": {
+    "label": "How it works",
+    "title": "Four moving parts. Zero magic.",
+    "subtitle": "The parser reads your logs, GeoIP enriches the IPs, and the static UI renders the JSON.",
+    "step1": "fail2ban.log",
+    "step1Desc": "Your existing fail2ban log file is the only data source.",
+    "step2": "f2b-parse.sh",
+    "step2Desc": "Aggregates bans, unbans, found events, and jail stats into JSON.",
+    "step3": "f2b-geoip.sh",
+    "step3Desc": "Looks up each IP with IP-API and caches results locally.",
+    "step4": "web/index.html",
+    "step4Desc": "The static dashboard renders the enriched JSON with ECharts."
+  },
+  "quickStart": {
+    "label": "Quick start",
+    "title": "Run it in two minutes",
+    "subtitle": "Clone the repo to /opt, run the parser once, and open the dashboard. Then add a cron job to keep it fresh.",
+    "step1": "Clone and prepare",
+    "step1Desc": "Install into /opt/f2b-dashboard and make the scripts executable.",
+    "step2": "Parse and enrich",
+    "step2Desc": "Generate dashboard.json from your logs, then add GeoIP data.",
+    "step3": "Add to cron",
+    "step3Desc": "Let the scripts refresh automatically every 5 minutes.",
+    "terminalTitle": "terminal",
+    "note1": "Note: installing under /opt/f2b-dashboard requires root privileges.",
+    "note2": "Run as root, or prefix each command with sudo.",
+    "section1": "Clone and prepare",
+    "section2": "Parse and enrich once",
+    "section3": "Add to cron (every 5 minutes)",
+    "section4": "Serve web/ with any static server"
+  },
+  "footer": {
+    "github": "GitHub",
+    "license": "MIT License",
+    "copyright": "© 2026 alang"
+  }
+}

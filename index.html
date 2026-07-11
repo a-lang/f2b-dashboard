@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="f2b-dashboard — Self-hosted fail2ban attack intelligence dashboard with zero backend">
+  <title>f2b-dashboard — Fail2Ban Attack Intelligence</title>
+  <meta property="og:title" content="f2b-dashboard">
+  <meta property="og:description" content="Self-hosted fail2ban attack intelligence dashboard. No database. No build step. Just static files.">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="f2b-dashboard">
+  <meta name="twitter:description" content="Self-hosted fail2ban attack intelligence dashboard">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath fill='%23166534' d='M16 2L3 8v10c0 7.2 5.5 13.8 13 15 7.5-1.2 13-7.8 13-15V8L16 2z'/%3E%3Cpath fill='%23ffffff' d='M16 11l-3.5 7h7z'/%3E%3C/svg%3E">
+  <link rel="preload" as="image" href="landing/assets/hero-log-bg.png">
+  <link rel="stylesheet" href="landing/css/landing.css">
+</head>
+<body>
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+
+  <header class="header" id="main-header">
+    <div class="header__inner">
+      <a class="header__logo" href="#" aria-label="f2b-dashboard home">
+        <span class="header__logo-icon" aria-hidden="true">&#x1F6E1;</span>
+        <span>f2b-dashboard</span>
+      </a>
+      <nav class="header__nav" aria-label="Main navigation">
+        <div class="header__nav-links" id="header-nav-links">
+          <a href="#features" data-i18n="nav.features">Features</a>
+          <a href="#how-it-works" data-i18n="nav.howItWorks">How it works</a>
+          <a href="#quick-start" data-i18n="nav.quickStart">Quick start</a>
+        </div>
+        <div class="header__actions">
+          <button type="button" class="header__btn" id="lang-toggle" data-i18n-title="nav.languageToggle" data-i18n-aria-label="nav.languageToggle" aria-label="Switch language" title="Switch language">
+            &#127760; <span id="lang-label">EN</span>
+          </button>
+          <button type="button" class="header__btn" id="theme-toggle" data-i18n-title="nav.themeToggle" data-i18n-aria-label="nav.themeToggle" aria-label="Toggle theme" title="Toggle theme">
+            <span id="theme-icon">&#x263E;</span>
+          </button>
+        </div>
+      </nav>
+      <button type="button" class="header__mobile-toggle" id="mobile-nav-toggle" aria-expanded="false" aria-controls="header-nav-links" aria-label="Toggle navigation">
+        &#x2630;
+      </button>
+    </div>
+  </header>
+
+  <main id="main-content">
+    <!-- Hero -->
+    <section class="section hero" id="hero" aria-label="Introduction">
+      <div class="hero__bg-log" aria-hidden="true">
+        <div class="hero__bg-overlay-log"></div>
+      </div>
+      <div class="section__inner hero__content">
+        <div class="hero__label" data-i18n="hero.label">Open source · Self-hosted · Zero backend</div>
+        <h1 class="hero__title" data-i18n="hero.title">See every attack your server blocks</h1>
+        <p class="hero__subtitle" data-i18n="hero.subtitle">Real-time fail2ban intelligence. No database. No build step. Just static files.</p>
+        <div class="hero__stats" aria-label="Key metrics">
+          <div class="hero__stat">
+            <span class="hero__stat-value">12,847</span>
+            <span class="hero__stat-label" data-i18n="hero.statAttacks">Attacks blocked</span>
+          </div>
+          <div class="hero__stat-divider" aria-hidden="true"></div>
+          <div class="hero__stat">
+            <span class="hero__stat-value">142</span>
+            <span class="hero__stat-label" data-i18n="hero.statBans">Active bans</span>
+          </div>
+          <div class="hero__stat-divider" aria-hidden="true"></div>
+          <div class="hero__stat">
+            <span class="hero__stat-value">67</span>
+            <span class="hero__stat-label" data-i18n="hero.statCountries">Countries</span>
+          </div>
+        </div>
+        <a href="https://github.com/a-lang/f2b-dashboard" class="btn btn--primary btn--large" target="_blank" rel="noopener noreferrer" data-i18n="hero.cta">
+          View on GitHub <span aria-hidden="true">→</span>
+        </a>
+      </div>
+    </section>
+
+    <!-- Highlights -->
+    <section class="section highlights" id="features" aria-labelledby="highlights-title">
+      <div class="section__inner">
+        <div class="highlights__header text-center">
+          <p class="section-label" data-i18n="highlights.label">Why f2b-dashboard</p>
+          <h2 class="section-title mx-auto" id="highlights-title" data-i18n="highlights.title">Built for servers, not for clouds</h2>
+          <p class="section-subtitle mx-auto" data-i18n="highlights.subtitle">A dashboard that respects your infrastructure. No containers to tune, no databases to back up.</p>
+        </div>
+        <div class="highlights__grid">
+          <article class="highlight-card">
+            <div class="highlight-card__icon" aria-hidden="true">&#x1F3E0;</div>
+            <h3 class="highlight-card__title" data-i18n="highlights.selfHosted">Self-hosted</h3>
+            <p class="highlight-card__desc" data-i18n="highlights.selfHostedDesc">All data stays on your server. No external telemetry, no third-party dashboards.</p>
+          </article>
+          <article class="highlight-card">
+            <div class="highlight-card__icon" aria-hidden="true">&#x1F4BE;</div>
+            <h3 class="highlight-card__title" data-i18n="highlights.noDatabase">No database</h3>
+            <p class="highlight-card__desc" data-i18n="highlights.noDatabaseDesc">Results are written as static JSON. Cron refreshes them on your schedule.</p>
+          </article>
+          <article class="highlight-card">
+            <div class="highlight-card__icon" aria-hidden="true">&#x1F4C4;</div>
+            <h3 class="highlight-card__title" data-i18n="highlights.staticWeb">Static web page</h3>
+            <p class="highlight-card__desc" data-i18n="highlights.staticWebDesc">Pure HTML, CSS, and JavaScript. Open it with any static file server or directly in a browser.</p>
+          </article>
+          <article class="highlight-card">
+            <div class="highlight-card__icon" aria-hidden="true">&#x1F5FA;</div>
+            <h3 class="highlight-card__title" data-i18n="highlights.geoIp">GeoIP enriched</h3>
+            <p class="highlight-card__desc" data-i18n="highlights.geoIpDesc">Attack sources are mapped to countries and cities using the free IP-API tier.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- Features -->
+    <section class="section features" aria-labelledby="features-title">
+      <div class="section__inner">
+        <p class="section-label" data-i18n="features.label">Features</p>
+        <h2 class="section-title" id="features-title" data-i18n="features.title">Maps, timelines, and jail reports</h2>
+        <p class="section-subtitle" data-i18n="features.subtitle">Everything you want to know about incoming attacks, organized in one place.</p>
+
+        <div class="features__grid">
+          <div class="features__list">
+            <div class="feature-item">
+              <div class="feature-item__icon" aria-hidden="true">&#x1F4C8;</div>
+              <div>
+                <h3 class="feature-item__title" data-i18n="features.timelineTitle">Attack timeline & trends</h3>
+                <p class="feature-item__desc" data-i18n="features.timelineDesc">See attack volume over time with interactive ECharts visualizations and time-range filtering.</p>
+              </div>
+            </div>
+            <div class="feature-item">
+              <div class="feature-item__icon" aria-hidden="true">&#x1F5FA;</div>
+              <div>
+                <h3 class="feature-item__title" data-i18n="features.mapTitle">World map by source IP</h3>
+                <p class="feature-item__desc" data-i18n="features.mapDesc">Geo-locate attackers on a world map. Spot patterns by country and region at a glance.</p>
+              </div>
+            </div>
+            <div class="feature-item">
+              <div class="feature-item__icon" aria-hidden="true">&#x1F6E1;</div>
+              <div>
+                <h3 class="feature-item__title" data-i18n="features.jailTitle">Per-jail breakdown</h3>
+                <p class="feature-item__desc" data-i18n="features.jailDesc">Dive into each fail2ban jail: top IPs, ban ratio, unique attackers, and configuration.</p>
+              </div>
+            </div>
+            <div class="feature-item">
+              <div class="feature-item__icon" aria-hidden="true">&#x1F4CB;</div>
+              <div>
+                <h3 class="feature-item__title" data-i18n="features.logsTitle">Recent log entries</h3>
+                <p class="feature-item__desc" data-i18n="features.logsDesc">Browse and filter recent fail2ban events without leaving the dashboard.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="features__visual" aria-hidden="true">
+            <div class="dashboard-mockup">
+              <div class="dashboard-mockup__header">
+                <div class="dashboard-mockup__dot"></div>
+                <div class="dashboard-mockup__dot"></div>
+                <div class="dashboard-mockup__dot"></div>
+              </div>
+              <div class="dashboard-mockup__body">
+                <div class="stat-row">
+                  <div class="stat-card-mini">
+                    <div class="stat-card-mini__label">SSH Attacks</div>
+                    <div class="stat-card-mini__value">8,932</div>
+                  </div>
+                  <div class="stat-card-mini">
+                    <div class="stat-card-mini__label">Asterisk</div>
+                    <div class="stat-card-mini__value">3,915</div>
+                  </div>
+                  <div class="stat-card-mini">
+                    <div class="stat-card-mini__label">Banned</div>
+                    <div class="stat-card-mini__value">142</div>
+                  </div>
+                  <div class="stat-card-mini">
+                    <div class="stat-card-mini__label">Countries</div>
+                    <div class="stat-card-mini__value">67</div>
+                  </div>
+                </div>
+                <div class="chart-area">
+                  <div class="chart-bar" style="height: 35%"></div>
+                  <div class="chart-bar" style="height: 55%"></div>
+                  <div class="chart-bar" style="height: 40%"></div>
+                  <div class="chart-bar" style="height: 75%"></div>
+                  <div class="chart-bar" style="height: 60%"></div>
+                  <div class="chart-bar" style="height: 85%"></div>
+                  <div class="chart-bar" style="height: 50%"></div>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                  <div style="background: var(--bg-secondary); border-radius: 8px; padding: 14px;">
+                    <div style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 6px;">Top IP</div>
+                    <div style="font-family: var(--font-mono); font-size: 0.875rem; font-weight: 600;">185.220.101.42</div>
+                    <div style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 4px;">DE · 1,204 attacks</div>
+                  </div>
+                  <div style="background: var(--bg-secondary); border-radius: 8px; padding: 14px;">
+                    <div style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 6px;">Top Country</div>
+                    <div style="font-size: 0.875rem; font-weight: 600;">China</div>
+                    <div style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 4px;">3,842 attacks</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- How it works -->
+    <section class="section how-it-works" id="how-it-works" aria-labelledby="how-title">
+      <div class="section__inner">
+        <div class="how-it-works__header text-center">
+          <p class="section-label" data-i18n="howItWorks.label">How it works</p>
+          <h2 class="section-title mx-auto" id="how-title" data-i18n="howItWorks.title">Four moving parts. Zero magic.</h2>
+          <p class="section-subtitle mx-auto" data-i18n="howItWorks.subtitle">The parser reads your logs, GeoIP enriches the IPs, and the static UI renders the JSON.</p>
+        </div>
+        <div class="how-it-works__flow">
+          <div class="flow-step">
+            <div class="flow-step__icon" aria-hidden="true">&#x1F4DD;</div>
+            <div class="flow-step__title" data-i18n="howItWorks.step1">fail2ban.log</div>
+            <div class="flow-step__desc" data-i18n="howItWorks.step1Desc">Your existing fail2ban log file is the only data source.</div>
+          </div>
+          <div class="flow-arrow" aria-hidden="true">→</div>
+          <div class="flow-step">
+            <div class="flow-step__icon" aria-hidden="true">&#x2699;</div>
+            <div class="flow-step__title" data-i18n="howItWorks.step2">f2b-parse.sh</div>
+            <div class="flow-step__desc" data-i18n="howItWorks.step2Desc">Aggregates bans, unbans, found events, and jail stats into JSON.</div>
+          </div>
+          <div class="flow-arrow" aria-hidden="true">→</div>
+          <div class="flow-step">
+            <div class="flow-step__icon" aria-hidden="true">&#x1F310;</div>
+            <div class="flow-step__title" data-i18n="howItWorks.step3">f2b-geoip.sh</div>
+            <div class="flow-step__desc" data-i18n="howItWorks.step3Desc">Looks up each IP with IP-API and caches results locally.</div>
+          </div>
+          <div class="flow-arrow" aria-hidden="true">→</div>
+          <div class="flow-step">
+            <div class="flow-step__icon" aria-hidden="true">&#x1F4C8;</div>
+            <div class="flow-step__title" data-i18n="howItWorks.step4">web/index.html</div>
+            <div class="flow-step__desc" data-i18n="howItWorks.step4Desc">The static dashboard renders the enriched JSON with ECharts.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Quick start -->
+    <section class="section quick-start" id="quick-start" aria-labelledby="quick-title">
+      <div class="section__inner">
+        <div class="quick-start__grid">
+          <div>
+            <p class="section-label" data-i18n="quickStart.label">Quick start</p>
+            <h2 class="section-title" id="quick-title" data-i18n="quickStart.title">Run it in two minutes</h2>
+            <p class="section-subtitle" data-i18n="quickStart.subtitle">Clone the repo to /opt, run the parser once, and open the dashboard. Then add a cron job to keep it fresh.</p>
+
+            <div class="quick-start__steps">
+              <div class="quick-step">
+                <div class="quick-step__number" aria-hidden="true">1</div>
+                <div>
+                  <h3 class="quick-step__title" data-i18n="quickStart.step1">Clone and prepare</h3>
+                  <p class="quick-step__desc" data-i18n="quickStart.step1Desc">Install into /opt/f2b-dashboard and make the scripts executable.</p>
+                </div>
+              </div>
+              <div class="quick-step">
+                <div class="quick-step__number" aria-hidden="true">2</div>
+                <div>
+                  <h3 class="quick-step__title" data-i18n="quickStart.step2">Parse and enrich</h3>
+                  <p class="quick-step__desc" data-i18n="quickStart.step2Desc">Generate dashboard.json from your logs, then add GeoIP data.</p>
+                </div>
+              </div>
+              <div class="quick-step">
+                <div class="quick-step__number" aria-hidden="true">3</div>
+                <div>
+                  <h3 class="quick-step__title" data-i18n="quickStart.step3">Add to cron</h3>
+                  <p class="quick-step__desc" data-i18n="quickStart.step3Desc">Let the scripts refresh automatically every 5 minutes.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="code-block">
+            <div class="code-block__header">
+              <div class="code-block__dot code-block__dot--red"></div>
+              <div class="code-block__dot code-block__dot--yellow"></div>
+              <div class="code-block__dot code-block__dot--green"></div>
+              <span class="code-block__title" data-i18n="quickStart.terminalTitle">terminal</span>
+            </div>
+            <code><span class="comment"># <span data-i18n="quickStart.note1">Note: installing under /opt/f2b-dashboard requires root privileges.</span></span>
+<span class="comment"># <span data-i18n="quickStart.note2">Run as root, or prefix each command with sudo.</span></span>
+
+<span class="comment"># <span data-i18n="quickStart.section1">Clone and prepare</span></span>
+<span class="prompt">$</span> <span class="command">sudo git clone</span> https://github.com/a-lang/f2b-dashboard.git /opt/f2b-dashboard
+<span class="prompt">$</span> <span class="command">cd</span> /opt/f2b-dashboard
+<span class="prompt">$</span> <span class="command">mkdir -p</span> web/data
+<span class="prompt">$</span> <span class="command">chmod +x</span> bin/f2b-parse.sh bin/f2b-geoip.sh
+
+<span class="comment"># <span data-i18n="quickStart.section2">Parse and enrich once</span></span>
+<span class="prompt">$</span> <span class="command">/opt/f2b-dashboard/bin/f2b-parse.sh</span> /var/log/fail2ban.log /opt/f2b-dashboard/web/data
+<span class="prompt">$</span> <span class="command">/opt/f2b-dashboard/bin/f2b-geoip.sh</span> /opt/f2b-dashboard/web/data/dashboard.json /opt/f2b-dashboard/web/data/geo-cache.json
+
+<span class="comment"># <span data-i18n="quickStart.section3">Add to cron (every 5 minutes)</span></span>
+<span class="prompt">$</span> <span class="command">crontab -e</span>
+<span class="comment">*/5 * * * * /opt/f2b-dashboard/bin/f2b-parse.sh /var/log/fail2ban.log /opt/f2b-dashboard/web/data && /opt/f2b-dashboard/bin/f2b-geoip.sh /opt/f2b-dashboard/web/data/dashboard.json /opt/f2b-dashboard/web/data/geo-cache.json</span>
+
+<span class="comment"># <span data-i18n="quickStart.section4">Serve web/ with any static server</span></span>
+<span class="prompt">$</span> <span class="command">python3 -m http.server</span> 8080 --directory /opt/f2b-dashboard/web</code>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer__inner">
+      <div class="footer__logo">
+        <div class="footer__logo-icon" aria-hidden="true">&#x1F6E1;</div>
+        <span>f2b-dashboard</span>
+      </div>
+      <div class="footer__links">
+        <a href="https://github.com/a-lang/f2b-dashboard" target="_blank" rel="noopener noreferrer" data-i18n="footer.github">GitHub</a>
+        <a href="https://opensource.org/licenses/MIT" target="_blank" rel="noopener noreferrer" data-i18n="footer.license">MIT License</a>
+        <span data-i18n="footer.copyright">© 2026 alang</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="landing/js/i18n.js"></script>
+  <script src="landing/js/landing.js"></script>
+</body>
+</html>

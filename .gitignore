@@ -13,6 +13,7 @@ logs/
 .omo/
 .opencode/
 .agents/
+.playwright-cli/
 skills-lock.json
 
 # Node.js
