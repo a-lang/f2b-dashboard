@@ -51,6 +51,7 @@
   --chart-sshd: var(--chart-jail-1);
   --chart-asterisk: var(--chart-jail-2);
   --chart-total: #38bdf8;
+  --chart-map: #db2777;
   --chart-grid: #2a2d3e;
   --chart-text: #8b8fa3;
   --chart-bg: transparent;
@@ -131,6 +132,7 @@
   --chart-sshd: var(--chart-jail-1);
   --chart-asterisk: var(--chart-jail-2);
   --chart-total: #0284c7;
+  --chart-map: #be185d;
   --chart-grid: #d4d7e0;
   --chart-text: #5c6078;
   --chart-bg: transparent;

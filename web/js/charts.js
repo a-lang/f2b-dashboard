@@ -29,6 +29,7 @@
       sshd: getCSSVar('--chart-sshd'),
       asterisk: getCSSVar('--chart-asterisk'),
       total: getCSSVar('--chart-total'),
+      map: getCSSVar('--chart-map'),
       grid: getCSSVar('--chart-grid'),
       text: getCSSVar('--chart-text'),
       bg: getCSSVar('--chart-bg'),
@@ -1109,7 +1110,7 @@
       legendData.push(specialLabels[sp].label);
     }
 
-    var accentColor = colors.total || '#ef4444';
+    var accentColor = colors.map || '#db2777';
     var lowColor = dark ? hexToRgba(accentColor, 0.15) : hexToRgba(accentColor, 0.1);
     var highColor = accentColor;
 
