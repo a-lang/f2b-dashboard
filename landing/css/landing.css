@@ -480,8 +480,9 @@ button:focus-visible {
 }
 
 [data-theme="dark"] .hero__bg-log {
-  filter: brightness(0.22) contrast(1.1);
-  opacity: 0.9;
+  background-image: url('../assets/hero-log-bg-dark.png');
+  filter: brightness(0.95) contrast(1.05);
+  opacity: 1;
 }
 
 .hero__bg-overlay-log {
