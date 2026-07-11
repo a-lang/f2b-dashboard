@@ -290,6 +290,10 @@ button:focus-visible {
   background: var(--text-muted);
 }
 
+.dashboard-mockup__dot--red { background: #ef4444; }
+.dashboard-mockup__dot--yellow { background: #f59e0b; }
+.dashboard-mockup__dot--green { background: #10b981; }
+
 .dashboard-mockup__body {
   padding: 20px;
 }
