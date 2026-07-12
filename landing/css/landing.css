@@ -218,6 +218,7 @@ button:focus-visible {
 /* Code block */
 .code-block {
   background: var(--bg-code);
+  border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   padding: 28px;
   color: #e5e7eb;
@@ -226,6 +227,12 @@ button:focus-visible {
   line-height: 1.7;
   box-shadow: var(--shadow-lg);
   overflow-x: auto;
+  transition: border-color var(--transition);
+}
+
+[data-theme="dark"] .code-block {
+  border-color: #2f3346;
+  box-shadow: 0 0 0 1px rgba(74, 222, 128, 0.06), var(--shadow-lg);
 }
 
 .code-block__header {
