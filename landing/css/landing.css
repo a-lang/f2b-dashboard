@@ -23,6 +23,10 @@
   --accent-light: rgba(22, 101, 52, 0.08);
   --accent-glow: rgba(22, 101, 52, 0.25);
 
+  --hero-log-color: rgba(17, 24, 39, 0.06);
+  --hero-log-accent: rgba(22, 101, 52, 0.10);
+  --hero-log-notice: rgba(87, 83, 78, 0.06);
+
   --border: #e7e5e4;
   --border-light: #f5f5f4;
 
@@ -57,6 +61,10 @@
   --accent-hover: #22c55e;
   --accent-light: rgba(74, 222, 128, 0.1);
   --accent-glow: rgba(74, 222, 128, 0.25);
+
+  --hero-log-color: rgba(232, 234, 240, 0.09);
+  --hero-log-accent: rgba(74, 222, 128, 0.13);
+  --hero-log-notice: rgba(161, 161, 170, 0.09);
 
   --border: #2a2d3e;
   --border-light: #1f2233;
@@ -478,18 +486,12 @@ button:focus-visible {
   position: absolute;
   inset: 0;
   z-index: 0;
-  background-image: url('../assets/hero-log-bg.png');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
+  display: block;
+  width: 100%;
+  height: 100%;
   opacity: 1;
-  transition: opacity var(--transition), filter var(--transition);
-}
-
-[data-theme="dark"] .hero__bg-log {
-  background-image: url('../assets/hero-log-bg-dark.png');
-  filter: brightness(0.95) contrast(1.05);
-  opacity: 1;
+  pointer-events: none;
+  transition: opacity var(--transition);
 }
 
 .hero__bg-overlay-log {
@@ -499,9 +501,9 @@ button:focus-visible {
     radial-gradient(
       ellipse at center,
       var(--bg-primary) 0%,
-      rgba(250, 250, 249, 0.88) 28%,
-      rgba(250, 250, 249, 0.55) 55%,
-      rgba(250, 250, 249, 0.78) 100%
+      rgba(250, 250, 249, 0.88) 30%,
+      rgba(250, 250, 249, 0.62) 58%,
+      rgba(250, 250, 249, 0.85) 100%
     );
   z-index: 1;
   transition: background var(--transition);
@@ -512,9 +514,9 @@ button:focus-visible {
     radial-gradient(
       ellipse at center,
       var(--bg-primary) 0%,
-      rgba(15, 17, 23, 0.88) 28%,
-      rgba(15, 17, 23, 0.55) 55%,
-      rgba(15, 17, 23, 0.78) 100%
+      rgba(15, 17, 23, 0.88) 30%,
+      rgba(15, 17, 23, 0.58) 58%,
+      rgba(15, 17, 23, 0.82) 100%
     );
 }
 

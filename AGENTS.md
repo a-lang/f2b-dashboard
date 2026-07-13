@@ -33,14 +33,14 @@ The repository now also ships a root-level landing page (`index.html`) for proje
 
 ### Landing Page (root `index.html`)
 
-| File                             | Role                                                     |
-| -------------------------------- | -------------------------------------------------------- |
-| `index.html`                     | Landing page: project intro and installation guide       |
-| `landing/css/landing.css`        | Layout, components, dark/light variables                 |
-| `landing/js/landing.js`          | Theme/language toggles, mobile nav, scroll effects       |
-| `landing/js/i18n.js`             | Lightweight i18n module for the landing page             |
-| `landing/i18n/{en,zh}.json`      | Landing page translations                                |
-| `landing/assets/hero-log-bg.png` | Hero background: stylized fail2ban log stream            |
+| File                             | Role                                                       |
+| -------------------------------- | ---------------------------------------------------------- |
+| `index.html`                     | Landing page: project intro and installation guide         |
+| `landing/css/landing.css`        | Layout, components, dark/light variables                   |
+| `landing/js/landing.js`          | Theme/language toggles, mobile nav, scroll effects         |
+| `landing/js/i18n.js`             | Lightweight i18n module for the landing page               |
+| `landing/i18n/{en,zh}.json`      | Landing page translations                                  |
+| `landing/js/hero-log-stream.js`  | Hero background: canvas-based animated fail2ban log stream |
 
 
 ## i18n — Easy to Miss
@@ -86,4 +86,3 @@ The repository now also ships a root-level landing page (`index.html`) for proje
 - Do NOT run `git commit`, `git push`, `git amend`, `git rebase`, or any other mutating git operation without explicit user confirmation in the current conversation.
 - After making code changes, always show a summary of the diff and ask "是否要 commit？" before committing.
 - Approval of a plan or "OK" does NOT imply approval to commit.
-
