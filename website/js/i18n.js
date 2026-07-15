@@ -19,7 +19,7 @@ const landingI18n = {
 
   async loadTranslations(lang) {
     try {
-      const response = await fetch(`landing/i18n/${lang}.json?t=${Date.now()}`);
+      const response = await fetch(`i18n/${lang}.json?t=${Date.now()}`);
       if (!response.ok) throw new Error(`Failed to load ${lang}.json`);
       this.translations = await response.json();
     } catch (error) {

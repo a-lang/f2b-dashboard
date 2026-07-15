@@ -4,43 +4,43 @@
 
 Pure static dashboard — zero backend, zero npm, zero build step. Edit files and reload browser. No test framework.
 
-The repository now also ships a root-level landing page (`index.html`) for project introduction and installation guidance, separate from the `web/` dashboard.
+The repository ships a landing page (`website/index.html`) for project introduction and installation guidance, separate from the `dashboard/`.
 
 ## Architecture
 
-- `bin/f2b-parse.sh` reads `fail2ban.log` (inc. rotated `.1`, `.2`, ...), outputs `web/data/dashboard.json`
+- `bin/f2b-parse.sh` reads `fail2ban.log` (inc. rotated `.1`, `.2`, ...), outputs `dashboard/data/dashboard.json`
 - `bin/f2b-geoip.sh` enriches `dashboard.json` with GeoIP via IP-API (cached in `geo-cache.json`, 45 req/min limit)
 - Script self-locks via `flock`; cron runs both with `&&` to prevent overlap
 - Browser polls `dashboard.json` at `CONFIG.refreshInterval` (default 5 min)
 - Deployed by `git clone` to `/opt/f2b-dashboard`
-- Root `index.html` serves as the landing page; `web/index.html` is the actual dashboard
+- `website/index.html` serves as the landing page; `dashboard/index.html` is the actual dashboard
 
 ## Frontend
 
-### Dashboard (`web/`)
+### Dashboard (`dashboard/`)
 
-| File                  | Role                                                     |
-| --------------------- | -------------------------------------------------------- |
-| `web/index.html`      | Single page, all sections                                |
-| `web/css/theme.css`   | Dark/light CSS variables (`data-theme` attr on `<html>`) |
-| `web/css/style.css`   | Layout & components                                      |
-| `web/js/app.js`       | App controller, data fetch, state                        |
-| `web/js/charts.js`    | All ECharts rendering (~1580 lines)                      |
-| `web/js/config.js`    | `CONFIG` object: logPath, refreshInterval, etc.          |
-| `web/js/i18n.js`      | i18n: `data-i18n` attrs → `textContent` (NOT innerHTML)  |
-| `web/js/utils.js`     | Utility functions                                        |
-| `web/data/world.json` | 988KB GeoJSON for ECharts world map                      |
+| File                       | Role                                                     |
+| -------------------------- | -------------------------------------------------------- |
+| `dashboard/index.html`     | Single page, all sections                                |
+| `dashboard/css/theme.css`  | Dark/light CSS variables (`data-theme` attr on `<html>`) |
+| `dashboard/css/style.css`  | Layout & components                                      |
+| `dashboard/js/app.js`      | App controller, data fetch, state                        |
+| `dashboard/js/charts.js`   | All ECharts rendering (~1580 lines)                      |
+| `dashboard/js/config.js`   | `CONFIG` object: logPath, refreshInterval, etc.          |
+| `dashboard/js/i18n.js`     | i18n: `data-i18n` attrs → `textContent` (NOT innerHTML)  |
+| `dashboard/js/utils.js`    | Utility functions                                        |
+| `dashboard/data/world.json`| 988KB GeoJSON for ECharts world map                      |
 
-### Landing Page (root `index.html`)
+### Landing Page (`website/`)
 
-| File                             | Role                                                       |
-| -------------------------------- | ---------------------------------------------------------- |
-| `index.html`                     | Landing page: project intro and installation guide         |
-| `landing/css/landing.css`        | Layout, components, dark/light variables                   |
-| `landing/js/landing.js`          | Theme/language toggles, mobile nav, scroll effects         |
-| `landing/js/i18n.js`             | Lightweight i18n module for the landing page               |
-| `landing/i18n/{en,zh}.json`      | Landing page translations                                  |
-| `landing/js/hero-log-stream.js`  | Hero background: canvas-based animated fail2ban log stream |
+| File                         | Role                                                       |
+| ---------------------------- | ---------------------------------------------------------- |
+| `website/index.html`         | Landing page: project intro and installation guide         |
+| `website/css/landing.css`    | Layout, components, dark/light variables                   |
+| `website/js/landing.js`      | Theme/language toggles, mobile nav, scroll effects         |
+| `website/js/i18n.js`         | Lightweight i18n module for the landing page               |
+| `website/i18n/{en,zh}.json`  | Landing page translations                                  |
+| `website/js/hero-log-stream.js` | Hero background: canvas-based animated fail2ban log stream |
 
 
 ## i18n — Easy to Miss
@@ -50,12 +50,12 @@ The repository now also ships a root-level landing page (`index.html`) for proje
 - Cache-bust: `fetch('i18n/en.json?t=${Date.now()}')`
 - Language stored in `localStorage` key `f2b-lang`
 - Language switch emits `i18n:languageChanged` event on `document`
-- Translations in `web/i18n/{en,zh}.json`
+- Translations in `dashboard/i18n/{en,zh}.json`
 
 ### Landing Page i18n
 
 - Same `data-i18n` → `textContent` rule applies
-- Files: `landing/js/i18n.js` and `landing/i18n/{en,zh}.json`
+- Files: `website/js/i18n.js` and `website/i18n/{en,zh}.json`
 - Language stored in `localStorage` key `f2b-landing-lang`
 - Language switch emits `landing:i18nChanged` event on `document`
 - Toggle button label: **EN** for English, **中** for Chinese
@@ -77,7 +77,7 @@ The repository now also ships a root-level landing page (`index.html`) for proje
 ## Git
 
 - `logs/` dir (sample logs) excluded via `.gitignore`
-- `web/data/dashboard.json` and `web/data/geo-cache.json` excluded (runtime-generated)
+- `dashboard/data/dashboard.json` and `dashboard/data/geo-cache.json` excluded (runtime-generated)
 - `.playwright-cli/` excluded (playwright-cli session directory)
 - Force-push accepted (young repo, single contributor)
 

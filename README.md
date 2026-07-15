@@ -73,14 +73,14 @@ cd /opt/f2b-dashboard
 ### 初始設定
 
 ```bash
-mkdir -p web/data
+mkdir -p dashboard/data
 chmod +x bin/f2b-parse.sh bin/f2b-geoip.sh
 
 # 安裝 cron 排程（每 5 分鐘）
-(crontab -l 2>/dev/null; echo "*/5 * * * * /opt/f2b-dashboard/bin/f2b-parse.sh /var/log/fail2ban.log /opt/f2b-dashboard/web/data && /opt/f2b-dashboard/bin/f2b-geoip.sh /opt/f2b-dashboard/web/data/dashboard.json /opt/f2b-dashboard/web/data/geo-cache.json") | crontab -
+(crontab -l 2>/dev/null; echo "*/5 * * * * /opt/f2b-dashboard/bin/f2b-parse.sh /var/log/fail2ban.log /opt/f2b-dashboard/dashboard/data && /opt/f2b-dashboard/bin/f2b-geoip.sh /opt/f2b-dashboard/dashboard/data/dashboard.json /opt/f2b-dashboard/dashboard/data/geo-cache.json") | crontab -
 ```
 
-安裝完成後，以任意網頁伺服器提供`/opt/f2b-dashboard/web/`目錄，並在瀏覽器中開啟儀表板。
+安裝完成後，以任意網頁伺服器提供`/opt/f2b-dashboard/dashboard/`目錄，並在瀏覽器中開啟儀表板。
 
 ## 📖 使用方式
 
@@ -93,7 +93,7 @@ bin/f2b-parse.sh [OPTIONS] [LOG_PATH] [OUTPUT_DIR]
 | 參數 | 說明 | 預設值 |
 |------|------|--------|
 | `LOG_PATH` | fail2ban.log 路徑 | `/var/log/fail2ban.log` |
-| `OUTPUT_DIR` | dashboard.json 輸出目錄 | `web/data` |
+| `OUTPUT_DIR` | dashboard.json 輸出目錄 | `dashboard/data` |
 
 | 選項 | 說明 |
 |------|------|
@@ -115,8 +115,8 @@ bin/f2b-geoip.sh [OPTIONS] [DASHBOARD_JSON] [GEO_CACHE_JSON]
 
 | 參數 | 說明 | 預設值 |
 |------|------|--------|
-| `DASHBOARD_JSON` | dashboard.json 路徑 | `web/data/dashboard.json` |
-| `GEO_CACHE_JSON` | geo-cache.json 路徑 | `web/data/geo-cache.json` |
+| `DASHBOARD_JSON` | dashboard.json 路徑 | `dashboard/data/dashboard.json` |
+| `GEO_CACHE_JSON` | geo-cache.json 路徑 | `dashboard/data/geo-cache.json` |
 
 | 選項 | 說明 |
 |------|------|
@@ -136,19 +136,19 @@ bin/f2b-geoip.sh /path/to/dashboard.json   # 自訂路徑
 預設情況下，cron 排程每 5 分鐘執行一次：
 
 ```
-*/5 * * * * /opt/f2b-dashboard/bin/f2b-parse.sh /var/log/fail2ban.log /opt/f2b-dashboard/web/data && /opt/f2b-dashboard/bin/f2b-geoip.sh /opt/f2b-dashboard/web/data/dashboard.json /opt/f2b-dashboard/web/data/geo-cache.json
+*/5 * * * * /opt/f2b-dashboard/bin/f2b-parse.sh /var/log/fail2ban.log /opt/f2b-dashboard/dashboard/data && /opt/f2b-dashboard/bin/f2b-geoip.sh /opt/f2b-dashboard/dashboard/data/dashboard.json /opt/f2b-dashboard/dashboard/data/geo-cache.json
 ```
 
 若要調整間隔，手動修改 crontab 中的 `*/5` 部分即可。
 
 ### 檢視儀表板
 
-提供`/opt/f2b-dashboard/web/`目錄的靜態檔案服務並在瀏覽器中開啟。
+提供`/opt/f2b-dashboard/dashboard/`目錄的靜態檔案服務並在瀏覽器中開啟。
 
 #### Python（快速測試用，僅限本機或內部網路）
 
 ```bash
-python3 -m http.server 8080 --directory /opt/f2b-dashboard/web
+python3 -m http.server 8080 --directory /opt/f2b-dashboard/dashboard
 # http://localhost:8080
 ```
 
@@ -156,13 +156,13 @@ python3 -m http.server 8080 --directory /opt/f2b-dashboard/web
 
 ## ⚙️ 設定
 
-編輯專案根目錄的`web/js/config.js`以自訂設定：
+編輯專案根目錄的`dashboard/js/config.js`以自訂設定：
 
 | 欄位 | 預設值 | 說明 |
 |---|---|---|
 | `logPath` | `/var/log/fail2ban.log` | 活躍 Fail2Ban 日誌檔路徑 |
 | `refreshInterval` | `300000` | 前端輪詢間隔（毫秒，預設 5 分鐘） |
-| `dataPath` | `data/` | `web/`內資料目錄的相對路徑 |
+| `dataPath` | `data/` | `dashboard/`內資料目錄的相對路徑 |
 | `maxRotatedFiles` | `10` | 最多處理的輪替日誌檔數量（`.1`、`.2`等） |
 | `geoApiUrl` | `http://ip-api.com/json/` | GeoIP API 基礎 URL |
 | `geoApiDelay` | `1.4` | API 請求間隔秒數（免費方案每分鐘 45 次） |
@@ -174,7 +174,7 @@ python3 -m http.server 8080 --directory /opt/f2b-dashboard/web
 ├── bin/
 │   ├── f2b-parse.sh      # 日誌解析器與聚合腳本
 │   └── f2b-geoip.sh      # GeoIP 查詢（含快取）
-├── web/
+├── dashboard/
 │   ├── index.html        # 單頁儀表板
 │   ├── css/
 │   │   ├── theme.css     # 深色/淺色 CSS 變數
@@ -191,6 +191,17 @@ python3 -m http.server 8080 --directory /opt/f2b-dashboard/web
 │   └── data/
 │       ├── dashboard.json    # 生成的聚合資料
 │       └── geo-cache.json    # GeoIP 快取
+├── website/
+│   ├── index.html        # 專案介紹頁
+│   ├── css/
+│   │   └── landing.css   # 首頁樣式
+│   ├── js/
+│   │   ├── i18n.js       # 首頁 i18n 模組
+│   │   ├── hero-log-stream.js  # Hero 背景動畫
+│   │   └── landing.js    # 首頁主腳本
+│   └── i18n/
+│       ├── en.json       # 英文翻譯
+│       └── zh.json       # 繁體中文翻譯
 ├── README.md           # 說明文件（繁體中文）
 └── README.en.md        # 說明文件（英文）
 ```
@@ -211,7 +222,7 @@ fail2ban.log.2─┘                                      ├──► 瀏覽器
 1. **f2b-parse.sh** 讀取`fail2ban.log`及輪替檔案，聚合事件後以原子性寫入（先寫暫存檔再改名）寫入`dashboard.json`。
 2. **f2b-geoip.sh** 從`dashboard.json`讀取不重複 IP，向 IP-API 查詢未快取的公網 IP，再將地理定位資料注入回`dashboard.json`。
 3. **Cron** 以設定間隔執行兩支腳本，以`flock`防止重疊執行。
-4. **瀏覽器** 依`web/js/config.js`設定的間隔輪詢`dashboard.json`。
+4. **瀏覽器** 依`dashboard/js/config.js`設定的間隔輪詢`dashboard.json`。
 5. **ECharts** 直接從 JSON 資料渲染所有圖表，無需額外轉換。
 
 ## 🔧 疑難排解
@@ -241,7 +252,7 @@ Cron 排程以安裝使用者的身份執行。請確認該使用者對`/var/log
 <summary>提供儀表板時的 CORS 問題</summary>
 <br>
 
-若瀏覽器主控台出現 CORS 錯誤，請確認網頁伺服器已設定允許同源的`GET`請求。多數靜態檔案伺服器預設即處理此問題。若直接以`file://`協定開啟`index.html`，現代瀏覽器可能阻擋`fetch`請求。請始終透過 HTTP 提供`web/`目錄。
+若瀏覽器主控台出現 CORS 錯誤，請確認網頁伺服器已設定允許同源的`GET`請求。多數靜態檔案伺服器預設即處理此問題。若直接以`file://`協定開啟`index.html`，現代瀏覽器可能阻擋`fetch`請求。請始終透過 HTTP 提供`dashboard/`目錄。
 
 </details>
 
@@ -259,13 +270,13 @@ Cron 排程以安裝使用者的身份執行。請確認該使用者對`/var/log
 
 若儀表板載入但顯示「--」或「載入資料中...」，請檢查：
 
-- Fail2Ban 確實正在記錄至`web/js/config.js`中設定的路徑
+- Fail2Ban 確實正在記錄至`dashboard/js/config.js`中設定的路徑
 - Cron 排程正在運行（`crontab -l`）
-- `web/data/dashboard.json`存在且為有效 JSON（`jq . web/data/dashboard.json`）
+- `dashboard/data/dashboard.json`存在且為有效 JSON（`jq . dashboard/data/dashboard.json`）
 - 至少手動執行過一次解析：
   ```bash
-  bin/f2b-parse.sh /var/log/fail2ban.log web/data
-  bin/f2b-geoip.sh web/data/dashboard.json web/data/geo-cache.json
+  bin/f2b-parse.sh /var/log/fail2ban.log dashboard/data
+  bin/f2b-geoip.sh dashboard/data/dashboard.json dashboard/data/geo-cache.json
   ```
 
 </details>
@@ -280,8 +291,8 @@ crontab -l 2>/dev/null | grep -v "f2b-parse.sh" | grep -v "f2b-geoip.sh" | grep 
 rm -f /tmp/f2b-parse.lock
 
 # 選擇性刪除資料檔
-rm -f /opt/f2b-dashboard/web/data/dashboard.json
-rm -f /opt/f2b-dashboard/web/data/geo-cache.json
+rm -f /opt/f2b-dashboard/dashboard/data/dashboard.json
+rm -f /opt/f2b-dashboard/dashboard/data/geo-cache.json
 ```
 
 ## ⚖️ 授權條款

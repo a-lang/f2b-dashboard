@@ -52,7 +52,7 @@
     "step2Desc": "彙整封鎖、解封、發現事件與 Jail 統計，輸出為 JSON。",
     "step3": "f2b-geoip.sh",
     "step3Desc": "使用 IP-API 查詢每個 IP，並在本機快取結果。",
-    "step4": "web/index.html",
+    "step4": "dashboard/index.html",
     "step4Desc": "靜態儀表板以 ECharts 渲染 enrichment 後的 JSON。"
   },
   "quickStart": {
@@ -71,7 +71,7 @@
     "section1": "Clone 與準備",
     "section2": "解析與 enrichment 一次",
     "section3": "加入 cron（每 5 分鐘）",
-    "section4": "以任何靜態伺服器提供 web/"
+    "section4": "以任何靜態伺服器提供 dashboard/"
   },
   "footer": {
     "github": "GitHub",

@@ -52,7 +52,7 @@
     "step2Desc": "Aggregates bans, unbans, found events, and jail stats into JSON.",
     "step3": "f2b-geoip.sh",
     "step3Desc": "Looks up each IP with IP-API and caches results locally.",
-    "step4": "web/index.html",
+    "step4": "dashboard/index.html",
     "step4Desc": "The static dashboard renders the enriched JSON with ECharts."
   },
   "quickStart": {
@@ -71,7 +71,7 @@
     "section1": "Clone and prepare",
     "section2": "Parse and enrich once",
     "section3": "Add to cron (every 5 minutes)",
-    "section4": "Serve web/ with any static server"
+    "section4": "Serve dashboard/ with any static server"
   },
   "footer": {
     "github": "GitHub",

@@ -73,14 +73,14 @@ cd /opt/f2b-dashboard
 ### Initial Setup
 
 ```bash
-mkdir -p web/data
+mkdir -p dashboard/data
 chmod +x bin/f2b-parse.sh bin/f2b-geoip.sh
 
 # Install cron job (every 5 minutes)
-(crontab -l 2>/dev/null; echo "*/5 * * * * /opt/f2b-dashboard/bin/f2b-parse.sh /var/log/fail2ban.log /opt/f2b-dashboard/web/data && /opt/f2b-dashboard/bin/f2b-geoip.sh /opt/f2b-dashboard/web/data/dashboard.json /opt/f2b-dashboard/web/data/geo-cache.json") | crontab -
+(crontab -l 2>/dev/null; echo "*/5 * * * * /opt/f2b-dashboard/bin/f2b-parse.sh /var/log/fail2ban.log /opt/f2b-dashboard/dashboard/data && /opt/f2b-dashboard/bin/f2b-geoip.sh /opt/f2b-dashboard/dashboard/data/dashboard.json /opt/f2b-dashboard/dashboard/data/geo-cache.json") | crontab -
 ```
 
-After installation, serve the `/opt/f2b-dashboard/web/` directory with any web server and open the dashboard in a browser.
+After installation, serve the `/opt/f2b-dashboard/dashboard/` directory with any web server and open the dashboard in a browser.
 
 ## 📖 Usage
 
@@ -93,7 +93,7 @@ bin/f2b-parse.sh [OPTIONS] [LOG_PATH] [OUTPUT_DIR]
 | Argument | Description | Default |
 |----------|-------------|---------|
 | `LOG_PATH` | Path to fail2ban.log | `/var/log/fail2ban.log` |
-| `OUTPUT_DIR` | Output directory for dashboard.json | `web/data` |
+| `OUTPUT_DIR` | Output directory for dashboard.json | `dashboard/data` |
 
 | Option | Description |
 |--------|-------------|
@@ -115,8 +115,8 @@ bin/f2b-geoip.sh [OPTIONS] [DASHBOARD_JSON] [GEO_CACHE_JSON]
 
 | Argument | Description | Default |
 |----------|-------------|---------|
-| `DASHBOARD_JSON` | Path to dashboard.json | `web/data/dashboard.json` |
-| `GEO_CACHE_JSON` | Path to geo-cache.json | `web/data/geo-cache.json` |
+| `DASHBOARD_JSON` | Path to dashboard.json | `dashboard/data/dashboard.json` |
+| `GEO_CACHE_JSON` | Path to geo-cache.json | `dashboard/data/geo-cache.json` |
 
 | Option | Description |
 |--------|-------------|
@@ -136,14 +136,14 @@ Queries [IP-API](http://ip-api.com) for geolocation data on unique public IPs. M
 By default, the cron job runs every 5 minutes:
 
 ```
-*/5 * * * * /opt/f2b-dashboard/bin/f2b-parse.sh /var/log/fail2ban.log /opt/f2b-dashboard/web/data && /opt/f2b-dashboard/bin/f2b-geoip.sh /opt/f2b-dashboard/web/data/dashboard.json /opt/f2b-dashboard/web/data/geo-cache.json
+*/5 * * * * /opt/f2b-dashboard/bin/f2b-parse.sh /var/log/fail2ban.log /opt/f2b-dashboard/dashboard/data && /opt/f2b-dashboard/bin/f2b-geoip.sh /opt/f2b-dashboard/dashboard/data/dashboard.json /opt/f2b-dashboard/dashboard/data/geo-cache.json
 ```
 
 To change the interval, edit `*/5` in the crontab entry.
 
 ### Viewing the Dashboard
 
-Serve the `/opt/f2b-dashboard/web/` directory and open in a browser.
+Serve the `/opt/f2b-dashboard/dashboard/` directory and open in a browser.
 
 #### Python (quick test only, for local/internal network use)
 
@@ -156,13 +156,13 @@ python3 -m http.server 8080 --directory /opt/f2b-dashboard/web
 
 ## ⚙️ Configuration
 
-Edit `web/js/config.js` in the project root to customize settings:
+Edit `dashboard/js/config.js` in the project root to customize settings:
 
 | Field | Default | Description |
 |-------|---------|-------------|
 | `logPath` | `/var/log/fail2ban.log` | Active Fail2Ban log file path |
 | `refreshInterval` | `300000` | Frontend poll interval (ms, default 5 min) |
-| `dataPath` | `data/` | Relative path to data directory within `web/` |
+| `dataPath` | `data/` | Relative path to data directory within `dashboard/` |
 | `maxRotatedFiles` | `10` | Maximum rotated logs to process (`.1`, `.2`, etc.) |
 | `geoApiUrl` | `http://ip-api.com/json/` | GeoIP API base URL |
 | `geoApiDelay` | `1.4` | Seconds between API requests (free tier: 45/min) |
@@ -174,7 +174,7 @@ Edit `web/js/config.js` in the project root to customize settings:
 ├── bin/
 │   ├── f2b-parse.sh      # Log parser and aggregation script
 │   └── f2b-geoip.sh      # GeoIP lookup with caching
-├── web/
+├── dashboard/
 │   ├── index.html        # Single-page dashboard
 │   ├── css/
 │   │   ├── theme.css     # Dark/light CSS variables
@@ -191,6 +191,17 @@ Edit `web/js/config.js` in the project root to customize settings:
 │   └── data/
 │       ├── dashboard.json    # Generated aggregated data
 │       └── geo-cache.json    # GeoIP cache
+├── website/
+│   ├── index.html        # Project landing page
+│   ├── css/
+│   │   └── landing.css   # Landing page styles
+│   ├── js/
+│   │   ├── i18n.js       # Landing page i18n module
+│   │   ├── hero-log-stream.js  # Hero background animation
+│   │   └── landing.js    # Landing page main script
+│   └── i18n/
+│       ├── en.json       # English translations
+│       └── zh.json       # Traditional Chinese translations
 ├── README.md           # This file (Chinese)
 └── README.en.md        # This file (English)
 ```
@@ -211,7 +222,7 @@ fail2ban.log.2─┘                                      ├──► Browser
 1. **f2b-parse.sh** reads `fail2ban.log` and rotated files, aggregates events, and writes `dashboard.json` atomically (write to temp file, then rename).
 2. **f2b-geoip.sh** reads unique IPs from `dashboard.json`, queries IP-API for uncached public IPs, and injects geolocation data back into `dashboard.json`.
 3. **Cron** runs both scripts at the configured interval, using `flock` to prevent overlapping execution.
-4. **Browser** polls `dashboard.json` at the interval set in `web/js/config.js`.
+4. **Browser** polls `dashboard.json` at the interval set in `dashboard/js/config.js`.
 5. **ECharts** renders all charts directly from the JSON data with no additional transformation.
 
 ## 🔧 Troubleshooting
@@ -241,7 +252,7 @@ The cron job runs as the installing user. Ensure that user has read access to `/
 <summary>CORS Issues When Serving the Dashboard</summary>
 <br>
 
-If you see CORS errors in the browser console, make sure your web server allows same-origin `GET` requests. Most static file servers handle this by default. Opening `index.html` via the `file://` protocol may cause modern browsers to block `fetch` requests — always serve the `web/` directory over HTTP.
+If you see CORS errors in the browser console, make sure your web server allows same-origin `GET` requests. Most static file servers handle this by default. Opening `index.html` via the `file://` protocol may cause modern browsers to block `fetch` requests — always serve the `dashboard/` directory over HTTP.
 
 </details>
 
@@ -259,13 +270,13 @@ The free tier allows 45 requests per minute. The script enforces a 1.4-second de
 
 If the dashboard loads but shows "--" or "Loading data...", check:
 
-- Fail2Ban is actually logging to the path set in `web/js/config.js`
+- Fail2Ban is actually logging to the path set in `dashboard/js/config.js`
 - The cron job is running (`crontab -l`)
-- `web/data/dashboard.json` exists and is valid JSON (`jq . web/data/dashboard.json`)
+- `dashboard/data/dashboard.json` exists and is valid JSON (`jq . dashboard/data/dashboard.json`)
 - At least one manual parse has been run:
   ```bash
-  bin/f2b-parse.sh /var/log/fail2ban.log web/data
-  bin/f2b-geoip.sh web/data/dashboard.json web/data/geo-cache.json
+  bin/f2b-parse.sh /var/log/fail2ban.log dashboard/data
+  bin/f2b-geoip.sh dashboard/data/dashboard.json dashboard/data/geo-cache.json
   ```
 
 </details>
@@ -280,8 +291,8 @@ crontab -l 2>/dev/null | grep -v "f2b-parse.sh" | grep -v "f2b-geoip.sh" | grep 
 rm -f /tmp/f2b-parse.lock
 
 # Optionally delete data files
-rm -f /opt/f2b-dashboard/web/data/dashboard.json
-rm -f /opt/f2b-dashboard/web/data/geo-cache.json
+rm -f /opt/f2b-dashboard/dashboard/data/dashboard.json
+rm -f /opt/f2b-dashboard/dashboard/data/geo-cache.json
 ```
 
 ## ⚖️ License

@@ -22,7 +22,7 @@ Usage: f2b-parse.sh [OPTIONS] [LOG_PATH] [OUTPUT_DIR]
 
 Arguments:
   LOG_PATH    Path to fail2ban.log (default: /var/log/fail2ban.log)
-  OUTPUT_DIR  Directory for dashboard.json output (default: web/data)
+  OUTPUT_DIR  Directory for dashboard.json output (default: dashboard/data)
 
 Options:
   -h, --help  Show this help message and exit
@@ -55,7 +55,7 @@ command -v awk >/dev/null 2>&1 || { echo "ERROR: awk is required but not install
 
 # Argument defaults
 LOG_PATH="${1:-/var/log/fail2ban.log}"
-OUTPUT_DIR="${2:-web/data}"
+OUTPUT_DIR="${2:-dashboard/data}"
 OUTPUT_DIR="${OUTPUT_DIR%/}"
 OUTPUT_FILE="$OUTPUT_DIR/dashboard.json"
 LOCK_FILE="/tmp/f2b-parse.lock"

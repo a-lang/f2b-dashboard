@@ -18,8 +18,8 @@ f2b-geoip.sh - GeoIP lookup for Fail2Ban Dashboard
 Usage: f2b-geoip.sh [OPTIONS] [DASHBOARD_JSON] [GEO_CACHE_JSON]
 
 Arguments:
-  DASHBOARD_JSON  Path to dashboard.json (default: web/data/dashboard.json)
-  GEO_CACHE_JSON  Path to geo-cache.json (default: web/data/geo-cache.json)
+  DASHBOARD_JSON  Path to dashboard.json (default: dashboard/data/dashboard.json)
+  GEO_CACHE_JSON  Path to geo-cache.json (default: dashboard/data/geo-cache.json)
 
 Options:
   --dry-run   Show what would be done without making API calls
@@ -41,8 +41,8 @@ EOF
     esac
 done
 
-DASHBOARD_JSON="${1:-web/data/dashboard.json}"
-GEO_CACHE_JSON="${2:-web/data/geo-cache.json}"
+DASHBOARD_JSON="${1:-dashboard/data/dashboard.json}"
+GEO_CACHE_JSON="${2:-dashboard/data/geo-cache.json}"
 readonly GEO_API_URL="http://ip-api.com/json/"
 readonly GEO_API_DELAY=1.4
 
