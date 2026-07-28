@@ -82,6 +82,15 @@ chmod +x bin/f2b-parse.sh bin/f2b-geoip.sh
 
 安裝完成後，以任意網頁伺服器提供`/opt/f2b-dashboard/dashboard/`目錄，並在瀏覽器中開啟儀表板。
 
+### 🔄 更新
+
+```bash
+cd /opt/f2b-dashboard
+sudo git pull
+```
+
+若需更新 cron 排程，重新執行安裝步驟中的 cron 安裝命令即可。更新後在瀏覽器中以 `Ctrl+F5`（或 `Shift+Reload`）強制重新整理以清除快取，即可看到新功能。
+
 ## 📖 使用方式
 
 ### 解析日誌

@@ -82,6 +82,15 @@ chmod +x bin/f2b-parse.sh bin/f2b-geoip.sh
 
 After installation, serve the `/opt/f2b-dashboard/dashboard/` directory with any web server and open the dashboard in a browser.
 
+### 🔄 Update
+
+```bash
+cd /opt/f2b-dashboard
+sudo git pull
+```
+
+If the cron schedule has changed, re-run the cron installation command from the Installation section. After updating, press `Ctrl+F5` (or `Shift+Reload`) in the browser to force-refresh the cache and see the new features.
+
 ## 📖 Usage
 
 ### Parsing Logs
