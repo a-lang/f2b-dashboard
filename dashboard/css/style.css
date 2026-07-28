@@ -528,6 +528,54 @@ body {
   flex: 1;
 }
 
+/* --- Region Chart Height --- */
+.section-region-chart .chart-container {
+  min-height: 280px;
+  flex: 1;
+}
+
+/* --- Weekly New Mini Stats --- */
+.mini-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-md);
+  align-items: center;
+  flex: 1;
+}
+
+.mini-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--space-xs);
+  padding: var(--space-md);
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  min-height: 120px;
+  justify-content: center;
+}
+
+.mini-stat__icon {
+  font-size: var(--text-2xl);
+  line-height: 1;
+}
+
+.mini-stat__value {
+  font-size: var(--text-xl);
+  font-weight: 700;
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+  line-height: 1.2;
+}
+
+.mini-stat__label {
+  font-size: var(--text-xs);
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
 /* --- Log List --- */
 .log-list {
   max-height: 280px;

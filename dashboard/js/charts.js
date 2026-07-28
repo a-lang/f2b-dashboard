@@ -756,6 +756,12 @@
         _worldMapRenderParams.topIPs
       );
     }
+    if (_regionChartRenderParams) {
+      renderRegionChart(
+        _regionChartRenderParams.containerId,
+        _regionChartRenderParams.topIPs
+      );
+    }
     if (_jailStatsRenderParams) {
       renderJailStats(
         _jailStatsRenderParams.containerId,
@@ -1367,6 +1373,161 @@
   }
 
   // ============================================================
+  // Region Chart (Top Attack Source Countries)
+  // ============================================================
+
+  /** Store last render params for region chart re-render on theme/i18n change */
+  var _regionChartRenderParams = null;
+
+  /**
+   * Render top attack source countries as a donut chart.
+   * Only the top IPs have GeoIP-enriched country data; unknown countries are
+   * filtered out so the chart reflects the available signal rather than noise.
+   * @param {string} containerId - DOM element ID for the chart container
+   * @param {object[]} topIPs - Top attacking IPs array with country and count
+   */
+  function renderRegionChart(containerId, topIPs) {
+    // Store params for re-render on theme/i18n change
+    _regionChartRenderParams = { containerId: containerId, topIPs: topIPs };
+
+    var chart = getChartInstance(containerId);
+    if (!chart) return;
+
+    var colors = getChartColors();
+    var dark = isDarkTheme();
+
+    // Aggregate by country, filtering out unknown/missing
+    var countryMap = {};
+    var totalAttacks = 0;
+    topIPs = topIPs || [];
+    for (var i = 0; i < topIPs.length; i++) {
+      var ip = topIPs[i];
+      if (!ip || !ip.country || ip.country === 'Unknown') continue;
+      var country = ip.country;
+      var count = ip.count || 0;
+      if (!countryMap[country]) countryMap[country] = 0;
+      countryMap[country] += count;
+      totalAttacks += count;
+    }
+
+    var countries = Object.keys(countryMap);
+    var pieData = [];
+    for (var j = 0; j < countries.length; j++) {
+      var c = countries[j];
+      pieData.push({
+        name: c,
+        value: countryMap[c],
+        itemStyle: { color: getJailColor(j) }
+      });
+    }
+    pieData.sort(function (a, b) { return b.value - a.value; });
+
+    // Handle empty data
+    if (!pieData.length || totalAttacks === 0) {
+      chart.clear();
+      chart.setOption({
+        title: {
+          text: t('errors.noData'),
+          left: 'center',
+          top: 'center',
+          textStyle: { color: getCSSVar('--text-muted'), fontSize: 14 }
+        }
+      });
+      return;
+    }
+
+    var tooltipTextColor = dark ? '#e8eaf0' : '#1a1c2b';
+
+    var option = {
+      backgroundColor: 'transparent',
+      animation: false,
+
+      tooltip: Object.assign({
+        trigger: 'item',
+        padding: [10, 14],
+        formatter: function (params) {
+          return '<div style="display:flex;align-items:center;gap:6px;margin:2px 0">' +
+            '<span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:' + params.color + '"></span>' +
+            '<span>' + params.name + '</span>' +
+            '<span style="margin-left:auto;font-weight:600">' + params.value.toLocaleString() + '</span>' +
+            '</div>' +
+            '<div style="font-size:12px;color:' + tooltipTextColor + ';opacity:0.7;margin-top:2px">' +
+            params.percent + '%</div>';
+        }
+      }, getTooltipStyle(colors, dark)),
+
+      legend: {
+        orient: 'horizontal',
+        bottom: 0,
+        left: 'center',
+        textStyle: { color: colors.text, fontSize: 12 },
+        icon: 'circle',
+        itemWidth: 10,
+        itemHeight: 10,
+        itemGap: 20,
+        formatter: function (name) {
+          for (var i = 0; i < pieData.length; i++) {
+            if (pieData[i].name === name) {
+              var pct = totalAttacks > 0 ? ((pieData[i].value / totalAttacks) * 100).toFixed(1) : '0.0';
+              return name + '  ' + pct + '%';
+            }
+          }
+          return name;
+        }
+      },
+
+      graphic: [
+        {
+          type: 'text',
+          left: 'center',
+          top: '38%',
+          style: {
+            text: totalAttacks.toLocaleString(),
+            textAlign: 'center',
+            fill: colors.text,
+            fontSize: 22,
+            fontWeight: 700
+          }
+        },
+        {
+          type: 'text',
+          left: 'center',
+          top: '48%',
+          style: {
+            text: t('regionChart.totalAttacks'),
+            textAlign: 'center',
+            fill: colors.text,
+            fontSize: 11,
+            opacity: 0.7
+          }
+        }
+      ],
+
+      series: [
+        {
+          type: 'pie',
+          radius: ['40%', '70%'],
+          center: ['50%', '45%'],
+          avoidLabelOverlap: false,
+          label: { show: false },
+          labelLine: { show: false },
+          emphasis: {
+            label: { show: false },
+            itemStyle: {
+              shadowBlur: 10,
+              shadowOffsetX: 0,
+              shadowColor: 'rgba(0, 0, 0, 0.3)'
+            }
+          },
+          data: pieData
+        }
+      ]
+    };
+
+    chart.setOption(option, true);
+  }
+
+  // ============================================================
   // Jail Statistics (Donut Chart + Per-Jail Cards)
   // ============================================================
 
@@ -1521,6 +1682,7 @@
   window.renderTopIPsTable = renderTopIPsTable;
   window.renderHeatmap = renderHeatmap;
   window.renderWorldMap = renderWorldMap;
+  window.renderRegionChart = renderRegionChart;
   window.renderJailStats = renderJailStats;
   window.getChartInstance = getChartInstance;
   window.refreshChartsOnThemeChange = refreshChartsOnThemeChange;

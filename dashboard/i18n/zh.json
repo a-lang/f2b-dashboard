@@ -195,6 +195,16 @@
     "title": "Jail 統計",
     "totalAttacks": "總攻擊次數"
   },
+  "regionChart": {
+    "title": "Top 攻擊來源地區",
+    "totalAttacks": "Top 20 攻擊數"
+  },
+  "weeklyNew": {
+    "title": "近 7 日",
+    "attacks": "攻擊次數",
+    "bans": "封鎖次數",
+    "unbans": "解封次數"
+  },
   "timeUnits": {
     "minute": "分鐘",
     "minutes": "分鐘",

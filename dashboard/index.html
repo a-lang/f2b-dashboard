@@ -205,7 +205,45 @@
           </div>
         </section>
 
-        <!-- 7. Attack Heatmap -->
+        <!-- 7. Top Attack Source Regions -->
+        <section class="section-region-chart card" aria-label="Top attack source regions">
+          <div class="card__header">
+            <span class="card__icon" aria-hidden="true">&#x1F30D;</span>
+            <h2 class="card__title" data-i18n="regionChart.title">Top Attack Source Regions</h2>
+          </div>
+          <div class="card__body">
+            <div id="chart-region" class="chart-container"></div>
+          </div>
+        </section>
+
+        <!-- 8. Last 7 Days -->
+        <section class="section-weekly-new card" aria-label="Last 7 days summary">
+          <div class="card__header">
+            <span class="card__icon" aria-hidden="true">&#x1F4C5;</span>
+            <h2 class="card__title" data-i18n="weeklyNew.title">Last 7 Days</h2>
+          </div>
+          <div class="card__body">
+            <div class="mini-stats-grid">
+              <div class="mini-stat">
+                <span class="mini-stat__icon" aria-hidden="true">&#x1F4A5;</span>
+                <span class="mini-stat__value" id="weekly-attacks">--</span>
+                <span class="mini-stat__label" data-i18n="weeklyNew.attacks">Attacks</span>
+              </div>
+              <div class="mini-stat">
+                <span class="mini-stat__icon" aria-hidden="true">&#x1F6AB;</span>
+                <span class="mini-stat__value" id="weekly-bans">--</span>
+                <span class="mini-stat__label" data-i18n="weeklyNew.bans">Bans</span>
+              </div>
+              <div class="mini-stat">
+                <span class="mini-stat__icon" aria-hidden="true">&#x1F513;</span>
+                <span class="mini-stat__value" id="weekly-unbans">--</span>
+                <span class="mini-stat__label" data-i18n="weeklyNew.unbans">Unbans</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 9. Attack Heatmap -->
         <section class="section-heatmap card" aria-label="Attack heatmap">
           <div class="card__header">
             <span class="card__icon" aria-hidden="true">&#x1F525;</span>
@@ -218,7 +256,7 @@
 
         </div>
 
-        <!-- 8. Log List -->
+        <!-- 10. Log List -->
         <section class="section-log-list card" aria-label="Recent logs">
           <div class="card__header">
             <span class="card__icon" aria-hidden="true">&#x1F4CB;</span>
@@ -231,7 +269,7 @@
           </div>
         </section>
 
-        <!-- 9. Per-Jail Report -->
+        <!-- 11. Per-Jail Report -->
         <section class="section-per-jail-report card" aria-label="Per-jail report">
           <div class="card__header">
             <span class="card__icon" aria-hidden="true">&#x1F4DD;</span>

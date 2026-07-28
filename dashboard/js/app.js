@@ -135,6 +135,44 @@
     }
   }
 
+  /**
+   * Render the last 7 days summary card.
+   * Sums the last 7 daily trend entries (or fewer if unavailable) for
+   * total attacks, bans, and unbans.
+   * @param {object} data - Full dashboard JSON object
+   */
+  function renderWeeklyNew(data) {
+    var attacksEl = document.getElementById('weekly-attacks');
+    var bansEl = document.getElementById('weekly-bans');
+    var unbansEl = document.getElementById('weekly-unbans');
+    if (!attacksEl || !bansEl || !unbansEl) return;
+
+    var trends = data && data.trends;
+    if (!trends || !trends.length) {
+      attacksEl.textContent = '--';
+      bansEl.textContent = '--';
+      unbansEl.textContent = '--';
+      return;
+    }
+
+    var windowSize = Math.min(7, trends.length);
+    var startIdx = trends.length - windowSize;
+    var attacks = 0;
+    var bans = 0;
+    var unbans = 0;
+
+    for (var i = startIdx; i < trends.length; i++) {
+      var day = trends[i];
+      attacks += day.total || 0;
+      bans += day.bans || 0;
+      unbans += day.unbans || 0;
+    }
+
+    attacksEl.textContent = Number(attacks).toLocaleString();
+    bansEl.textContent = Number(bans).toLocaleString();
+    unbansEl.textContent = Number(unbans).toLocaleString();
+  }
+
   // ============================================================
   // Per-Jail Report
   // ============================================================
@@ -521,11 +559,13 @@
 
       if (data.trends && data.trends.length) {
         renderTrendChart('chart-trend', data.trends, currentTimeRange);
+        renderWeeklyNew(data);
       }
 
       if (data.topIPs && data.topIPs.length) {
         renderTopIPsTable(data.topIPs);
         renderWorldMap('chart-world-map', data.topIPs);
+        renderRegionChart('chart-region', data.topIPs);
       }
 
       if (data.heatmap && data.heatmap.grid && data.heatmap.grid.length) {
@@ -666,10 +706,12 @@
       }
       if (currentData.trends && currentData.trends.length) {
         renderTrendChart('chart-trend', currentData.trends, currentTimeRange);
+        renderWeeklyNew(currentData);
       }
       if (currentData.topIPs) {
         renderTopIPsTable(currentData.topIPs);
         renderWorldMap('chart-world-map', currentData.topIPs);
+        renderRegionChart('chart-region', currentData.topIPs);
       }
       if (currentData.heatmap) {
         renderHeatmap('chart-heatmap', currentData);

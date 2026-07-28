@@ -195,6 +195,16 @@
     "title": "Jail Statistics",
     "totalAttacks": "Total Attacks"
   },
+  "regionChart": {
+    "title": "Top Attack Source Regions",
+    "totalAttacks": "Top 20 Attacks"
+  },
+  "weeklyNew": {
+    "title": "Last 7 Days",
+    "attacks": "Attacks",
+    "bans": "Bans",
+    "unbans": "Unbans"
+  },
   "timeUnits": {
     "minute": "minute",
     "minutes": "minutes",
