@@ -25,7 +25,7 @@
 1. **統計卡片** — 一目了然的關鍵指標：總攻擊次數、活躍封禁數、不重複 IP 數、活躍 Jail 數
 2. **攻擊時間軸** — 平滑面積圖呈現攻擊頻率隨時間變化，支援依 Jail 別分類
 3. **攻擊趨勢** — 堆疊長條圖搭配 7 日移動平均線
-4. **世界地圖** — 分級設色地圖呈現攻擊來源的地理分佈
+4. **世界地圖** — 分級設色地圖 + IP 層級攻擊弧線，視覺化 Top 20 攻擊 IP 飛向本機伺服器的流向
 5. **攻擊 IP 排行** — 排名表格，含地理位置、Jail 歸屬及封禁狀態
 6. **Jail 統計** — 圓餅圖呈現各 Jail 攻擊佔比
 7. **攻擊熱力圖** — 小時 × 星期矩陣，揭示攻擊時間模式
@@ -138,7 +138,7 @@ bin/f2b-geoip.sh --dry-run                 # 預覽模式，不發送 API
 bin/f2b-geoip.sh /path/to/dashboard.json   # 自訂路徑
 ```
 
-透過 [IP-API](http://ip-api.com) 查詢不重複公網 IP 的地理定位資料。維護本機`geo-cache.json`以避免重複 API 請求。遵守免費方案每分鐘 45 次請求的限制。私有 IP 與 IPv6 地址會跳過並適當標記。
+透過 [IP-API](http://ip-api.com) 查詢不重複公網 IP 的地理定位資料，並透過 `ip.im/info` 偵測本機伺服器的公開經緯度，兩者皆寫入 `dashboard.json`。維護本機`geo-cache.json`以避免重複 API 請求。遵守免費方案每分鐘 45 次請求的限制。私有 IP 與 IPv6 地址會跳過並適當標記。
 
 ### Cron 排程設定
 
@@ -175,6 +175,8 @@ python3 -m http.server 8080 --directory /opt/f2b-dashboard/dashboard
 | `maxRotatedFiles` | `10` | 最多處理的輪替日誌檔數量（`.1`、`.2`等） |
 | `geoApiUrl` | `http://ip-api.com/json/` | GeoIP API 基礎 URL |
 | `geoApiDelay` | `1.4` | API 請求間隔秒數（免費方案每分鐘 45 次） |
+| `serverLat` | `null` | 手動指定伺服器緯度（覆蓋 `ip.im` 自動偵測） |
+| `serverLon` | `null` | 手動指定伺服器經度（覆蓋 `ip.im` 自動偵測） |
 
 ## 📁 檔案結構
 

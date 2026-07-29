@@ -25,7 +25,7 @@ This makes deployment trivial on any Linux distribution with minimal dependencie
 1. **Stat Cards** — Key metrics at a glance: total attacks, active bans, unique IPs, active Jails
 2. **Attack Timeline** — Smooth area chart showing attack frequency over time, filterable by Jail
 3. **Attack Trends** — Stacked bar chart with a 7-day moving average
-4. **World Map** — Choropleth map showing geographic distribution of attack sources
+4. **World Map** — Choropleth map with IP-level attack arcs visualizing the Top 20 attacking IPs flowing toward the host server
 5. **Top Attacking IPs** — Ranked table with geolocation, Jail assignment, and ban status
 6. **Jail Statistics** — Donut chart showing attack share per Jail
 7. **Attack Heatmap** — Hour × weekday matrix revealing attack time patterns
@@ -138,7 +138,7 @@ bin/f2b-geoip.sh --dry-run                 # Preview mode, no API calls
 bin/f2b-geoip.sh /path/to/dashboard.json   # Custom path
 ```
 
-Queries [IP-API](http://ip-api.com) for geolocation data on unique public IPs. Maintains a local `geo-cache.json` to avoid redundant API requests. Respects the free tier limit of 45 requests per minute. Private IPs and IPv6 addresses are skipped and marked appropriately.
+Queries [IP-API](http://ip-api.com) for geolocation data on unique public IPs, and detects the host server's public latitude/longitude via `ip.im/info`; both are written into `dashboard.json`. Maintains a local `geo-cache.json` to avoid redundant API requests. Respects the free tier limit of 45 requests per minute. Private IPs and IPv6 addresses are skipped and marked appropriately.
 
 ### Cron Schedule
 
@@ -157,7 +157,7 @@ Serve the `/opt/f2b-dashboard/dashboard/` directory and open in a browser.
 #### Python (quick test only, for local/internal network use)
 
 ```bash
-python3 -m http.server 8080 --directory /opt/f2b-dashboard/web
+python3 -m http.server 8080 --directory /opt/f2b-dashboard/dashboard
 # http://localhost:8080
 ```
 
@@ -175,6 +175,8 @@ Edit `dashboard/js/config.js` in the project root to customize settings:
 | `maxRotatedFiles` | `10` | Maximum rotated logs to process (`.1`, `.2`, etc.) |
 | `geoApiUrl` | `http://ip-api.com/json/` | GeoIP API base URL |
 | `geoApiDelay` | `1.4` | Seconds between API requests (free tier: 45/min) |
+| `serverLat` | `null` | Manual server latitude (overrides `ip.im` auto-detection) |
+| `serverLon` | `null` | Manual server longitude (overrides `ip.im` auto-detection) |
 
 ## 📁 File Structure
 

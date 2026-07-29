@@ -9,7 +9,7 @@ The repository ships a landing page (`website/index.html`) for project introduct
 ## Architecture
 
 - `bin/f2b-parse.sh` reads `fail2ban.log` (inc. rotated `.1`, `.2`, ...), outputs `dashboard/data/dashboard.json`
-- `bin/f2b-geoip.sh` enriches `dashboard.json` with GeoIP via IP-API (cached in `geo-cache.json`, 45 req/min limit)
+- `bin/f2b-geoip.sh` enriches `dashboard.json` with GeoIP via IP-API (cached in `geo-cache.json`, 45 req/min limit), and detects the host server's public lat/lon via `ip.im/info` (written to `dashboard.json.server`)
 - Script self-locks via `flock`; cron runs both with `&&` to prevent overlap
 - Browser polls `dashboard.json` at `CONFIG.refreshInterval` (default 5 min)
 - Deployed by `git clone` to `/opt/f2b-dashboard`
@@ -25,7 +25,7 @@ The repository ships a landing page (`website/index.html`) for project introduct
 | `dashboard/css/theme.css`  | Dark/light CSS variables (`data-theme` attr on `<html>`) |
 | `dashboard/css/style.css`  | Layout & components                                      |
 | `dashboard/js/app.js`      | App controller, data fetch, state                        |
-| `dashboard/js/charts.js`   | All ECharts rendering (~1580 lines)                      |
+| `dashboard/js/charts.js`   | All ECharts rendering (~1960 lines), including world-map attack arcs & server pin |
 | `dashboard/js/config.js`   | `CONFIG` object: logPath, refreshInterval, etc.          |
 | `dashboard/js/i18n.js`     | i18n: `data-i18n` attrs → `textContent` (NOT innerHTML)  |
 | `dashboard/js/utils.js`    | Utility functions                                        |
@@ -73,6 +73,8 @@ The repository ships a landing page (`website/index.html`) for project introduct
 - **Validation**: `python3 -m json.tool` for JSON, ShellCheck for `.sh`, HTML via `html.parser`
 - **ECharts**: loaded from CDN (`<script>` tag), colors from CSS custom properties (`--chart-*`)
 - **GeoIP API**: free IP-API tier — 45 req/min, 1.4s delay between requests
+- **Server detection**: `ip.im/info` is used to detect the host server's public location for the world-map arc target
+- **Map styling**: dedicated CSS vars `--chart-arc` and `--chart-server`; i18n keys `map.server` and `map.attacksToServer`
 
 ## Git
 
