@@ -118,11 +118,13 @@
     "toggleTheme": "切換主題"
   },
   "map": {
-    "title": "攻擊來源",
+    "title": "攻擊排行來源",
     "internalPrivate": "內部/私人網路",
     "ipv6Unavailable": "IPv6 - 地理位置不可用",
     "unknown": "未知",
-    "attacksFrom": "次攻擊來自"
+    "attacksFrom": "次攻擊來自",
+    "server": "伺服器",
+    "attacksToServer": "對本伺服器的攻擊"
   },
   "heatmap": {
     "title": "攻擊熱力圖",

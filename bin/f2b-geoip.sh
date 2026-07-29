@@ -94,10 +94,11 @@ fi
 # Temp files
 cache_tmp=$(mktemp)
 dashboard_tmp=$(mktemp)
+srv_tmp=""
 chmod 644 "$cache_tmp" "$dashboard_tmp"
 
 cleanup() {
-    rm -f "${cache_tmp:-}" "${cache_tmp:-}."* "${dashboard_tmp:-}" "${api_tmp:-}"
+    rm -f "${cache_tmp:-}" "${cache_tmp:-}."* "${dashboard_tmp:-}" "${api_tmp:-}" "${srv_tmp:-}"
 }
 trap cleanup EXIT
 
@@ -152,6 +153,53 @@ classify_ip() {
             echo "public"
             ;;
     esac
+}
+
+# Detect this server's public geo location (used by the world map to draw attack arcs
+# from attacker -> this server). Non-fatal: on any failure $server_json stays "null"
+# and the frontend auto-degrades to an attacker-only scatter layer.
+detect_server_location() {
+    server_json='null'
+    if [ "$DRY_RUN" -eq 1 ]; then
+        info "[dry-run] Would query ip.im/info for server location"
+        return 0
+    fi
+    info "Detecting server location via ip.im/info..."
+    srv_tmp=$(mktemp)
+    http_code=$(curl --silent --max-time 8 --output "$srv_tmp" --write-out "%{http_code}" "https://ip.im/info" 2>/dev/null || echo "000")
+
+    if [ "$http_code" != "200" ]; then
+        warn "  ip.im lookup failed (HTTP $http_code); server location not recorded"
+        rm -f "$srv_tmp"; srv_tmp=""
+        return 0
+    fi
+
+    srv_loc=$(grep -iE '^[[:space:]]*Loc:' "$srv_tmp" | head -n1 | sed 's/^[^:]*:[[:space:]]*//; s/[[:space:]]*$//' | tr -d '[:space:]')
+    srv_ip=$(grep -iE '^[[:space:]]*Ip:' "$srv_tmp" | head -n1 | sed 's/^[^:]*:[[:space:]]*//; s/[[:space:]]*$//')
+    srv_city=$(grep -iE '^[[:space:]]*City:' "$srv_tmp" | head -n1 | sed 's/^[^:]*:[[:space:]]*//; s/[[:space:]]*$//')
+    srv_region=$(grep -iE '^[[:space:]]*Region:' "$srv_tmp" | head -n1 | sed 's/^[^:]*:[[:space:]]*//; s/[[:space:]]*$//')
+    rm -f "$srv_tmp"; srv_tmp=""
+
+    if [ -z "$srv_loc" ]; then
+        warn "  ip.im response had no Loc field; server location not recorded"
+        return 0
+    fi
+    lat="${srv_loc%,*}"
+    lon="${srv_loc#*,}"
+
+    if ! [[ "$lat" =~ ^-?[0-9]+(\.[0-9]+)?$ ]] || ! [[ "$lon" =~ ^-?[0-9]+(\.[0-9]+)?$ ]]; then
+        warn "  ip.im Loc value unparseable ('$srv_loc'); server location not recorded"
+        return 0
+    fi
+
+    server_json=$(jq -n \
+        --argjson lat "$lat" \
+        --argjson lon "$lon" \
+        --arg country "$srv_region" \
+        --arg city "$srv_city" \
+        --arg ip "$srv_ip" \
+        '{lat: $lat, lon: $lon, country: $country, city: $city, ip: $ip}')
+    info "  Server location: ${srv_region:-?}/${srv_city:-?} ($lat,$lon)"
 }
 
 # Process IPs
@@ -242,8 +290,11 @@ fi
 cp "$cache_tmp" "${GEO_CACHE_JSON}.tmp" && mv "${GEO_CACHE_JSON}.tmp" "$GEO_CACHE_JSON"
 info "Geo cache written to: $GEO_CACHE_JSON"
 
+server_json='null'
+detect_server_location
+
 info "Updating dashboard.json with geo data..."
-jq --slurpfile cache "$GEO_CACHE_JSON" '
+jq --slurpfile cache "$GEO_CACHE_JSON" --argjson server "$server_json" '
     .topIPs |= map(
         . as $entry |
         ($cache[0][$entry.ip] // null) as $geo |
@@ -273,7 +324,8 @@ jq --slurpfile cache "$GEO_CACHE_JSON" '
                 $entry
             end
         )
-    )
+    ) |
+    .server = $server
 ' "$DASHBOARD_JSON" > "$dashboard_tmp" && mv "$dashboard_tmp" "$DASHBOARD_JSON"
 
 info "Dashboard updated: $DASHBOARD_JSON"

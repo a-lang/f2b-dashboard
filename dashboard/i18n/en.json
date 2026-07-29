@@ -118,11 +118,13 @@
     "toggleTheme": "Toggle Theme"
   },
   "map": {
-    "title": "Attack Sources",
+    "title": "Top Attack Sources",
     "internalPrivate": "Internal/Private",
     "ipv6Unavailable": "IPv6 - Geo unavailable",
     "unknown": "Unknown",
-    "attacksFrom": "attacks from"
+    "attacksFrom": "attacks from",
+    "server": "Server",
+    "attacksToServer": "attacks to server"
   },
   "heatmap": {
     "title": "Attack Heatmap",

@@ -52,6 +52,8 @@
   --chart-asterisk: var(--chart-jail-2);
   --chart-total: #38bdf8;
   --chart-map: #db2777;
+  --chart-arc: var(--chart-map);    /* world-map attack arc fallback color (jail-coded otherwise) */
+  --chart-server: var(--chart-total); /* world-map server pin (arc target) */
   --chart-grid: #2a2d3e;
   --chart-text: #8b8fa3;
   --chart-bg: transparent;
@@ -133,6 +135,8 @@
   --chart-asterisk: var(--chart-jail-2);
   --chart-total: #0284c7;
   --chart-map: #be185d;
+  --chart-arc: var(--chart-map);    /* world-map attack arc fallback color (jail-coded otherwise) */
+  --chart-server: var(--chart-total); /* world-map server pin (arc target) */
   --chart-grid: #d4d7e0;
   --chart-text: #5c6078;
   --chart-bg: transparent;

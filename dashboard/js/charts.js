@@ -30,6 +30,8 @@
       asterisk: getCSSVar('--chart-asterisk'),
       total: getCSSVar('--chart-total'),
       map: getCSSVar('--chart-map'),
+      arc: getCSSVar('--chart-arc') || getCSSVar('--chart-map'),
+      server: getCSSVar('--chart-server') || getCSSVar('--chart-total'),
       grid: getCSSVar('--chart-grid'),
       text: getCSSVar('--chart-text'),
       bg: getCSSVar('--chart-bg'),
@@ -753,7 +755,8 @@
     if (_worldMapRenderParams) {
       renderWorldMap(
         _worldMapRenderParams.containerId,
-        _worldMapRenderParams.topIPs
+        _worldMapRenderParams.topIPs,
+        _worldMapRenderParams.server
       );
     }
     if (_regionChartRenderParams) {
@@ -943,13 +946,13 @@
   var _worldMapRegistering = false;
   var _worldMapQueue = [];
 
-  function registerWorldMapAndRender(containerId, topIPs) {
+  function registerWorldMapAndRender(containerId, topIPs, server) {
     if (_worldMapRegistered) {
-      renderWorldMap(containerId, topIPs);
+      renderWorldMap(containerId, topIPs, server);
       return;
     }
 
-    _worldMapQueue.push({ containerId: containerId, topIPs: topIPs });
+    _worldMapQueue.push({ containerId: containerId, topIPs: topIPs, server: server });
 
     if (_worldMapRegistering) return;
     _worldMapRegistering = true;
@@ -966,7 +969,7 @@
         _worldMapRegistered = true;
         _worldMapRegistering = false;
         for (var i = 0; i < _worldMapQueue.length; i++) {
-          renderWorldMap(_worldMapQueue[i].containerId, _worldMapQueue[i].topIPs);
+          renderWorldMap(_worldMapQueue[i].containerId, _worldMapQueue[i].topIPs, _worldMapQueue[i].server);
         }
         _worldMapQueue = [];
       })
@@ -1065,17 +1068,44 @@
   }
 
   var _worldMapRenderParams = null;
+  var SERVER_SERIES_NAME = '__f2b_server__';
+  var ATTACKER_SERIES_NAME = '__f2b_attackers__';
 
   /**
-   * Render the world map choropleth showing attack sources by country.
-   * @param {string} containerId - DOM element ID (e.g., 'chart-world-map')
-   * @param {Array} topIPs - Array of top IP objects with country, count, isPrivate, isIPv6
+   * Resolve the server (arc target) coordinate. CONFIG.serverLat/serverLon take
+   * priority (manual override); otherwise fall back to dashboard.json.server from
+   * f2b-geoip.sh's ip.im lookup. Returns [lon, lat] for ECharts geo, or null.
+   * @param {object|null} server - {lat, lon, city, country, ip} from dashboard.json
+   * @returns {Array<number>|null} [lon, lat] or null
    */
-  function renderWorldMap(containerId, topIPs) {
-    _worldMapRenderParams = { containerId: containerId, topIPs: topIPs };
+  function resolveServerCoord(server) {
+    if (typeof CONFIG !== 'undefined' && CONFIG.serverLat != null && CONFIG.serverLon != null
+        && !isNaN(Number(CONFIG.serverLat)) && !isNaN(Number(CONFIG.serverLon))) {
+      return [Number(CONFIG.serverLon), Number(CONFIG.serverLat)];
+    }
+    if (server && server.lat != null && server.lon != null
+        && !isNaN(Number(server.lat)) && !isNaN(Number(server.lon))) {
+      return [Number(server.lon), Number(server.lat)];
+    }
+    return null;
+  }
+
+  /**
+   * Render the world map choropleth showing attack sources by country, augmented with
+   * attack arcs (attacker -> this server) when a server coordinate is available
+   * (from dashboard.json.server, detected by f2b-geoip.sh via ip.im). Absence of a
+   * server coordinate degrades gracefully to an attacker effectScatter layer (#3
+   * fallback). Hard failure to load world.json falls back to renderWorldMapFallback
+   * (country ranking table).
+   * @param {string} containerId - DOM element ID (e.g., 'chart-world-map')
+   * @param {Array} topIPs - Array of top IP objects with country, lat/lon, count, jail, ...
+   * @param {object} [server] - Optional server location {lat, lon, city, country, ip}
+   */
+  function renderWorldMap(containerId, topIPs, server) {
+    _worldMapRenderParams = { containerId: containerId, topIPs: topIPs, server: server };
 
     if (!_worldMapRegistered) {
-      registerWorldMapAndRender(containerId, topIPs);
+      registerWorldMapAndRender(containerId, topIPs, server);
       return;
     }
 
@@ -1097,7 +1127,10 @@
 
     var colors = getChartColors();
     var dark = isDarkTheme();
+    var reducedMotion = !!(typeof window !== 'undefined' && window.matchMedia
+                          && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
 
+    // --- 1. Choropleth aggregation (unchanged) ---
     var aggregated = aggregateByCountry(topIPs);
     var mapData = aggregated.mapData;
     var specialLabels = aggregated.specialLabels;
@@ -1108,6 +1141,115 @@
     }
     if (maxVal < 1) maxVal = 1;
 
+    var accentColor = colors.map || '#db2777';
+    var lowColor = dark ? hexToRgba(accentColor, 0.15) : hexToRgba(accentColor, 0.1);
+    var highColor = accentColor;
+    var serverColor = colors.server || colors.total || '#38bdf8';
+
+    // --- 2. Server coordinate (CONFIG override takes priority) ---
+    var serverCoord = resolveServerCoord(server);
+    var serverMeta = { city: '', country: '', ip: '' };
+    if (serverCoord) {
+      var usesConfigOverride = (typeof CONFIG !== 'undefined' && CONFIG.serverLat != null && CONFIG.serverLon != null);
+      if (!usesConfigOverride && server) {
+        serverMeta = { city: server.city || '', country: server.country || '', ip: server.ip || '' };
+      }
+    }
+
+    // --- 3. Stable jail color mapping (order of first appearance) ---
+    var jailIndex = {};
+    function jailColorFor(name) {
+      var key = name || '';
+      if (Object.prototype.hasOwnProperty.call(jailIndex, key)) {
+        return getJailColor(jailIndex[key]);
+      }
+      jailIndex[key] = Object.keys(jailIndex).length;
+      return getJailColor(jailIndex[key]);
+    }
+
+    // --- 4. Filter attacker points with usable lat/lon (skip private/IPv6/Unknown) ---
+    var attackerPoints = [];
+    for (var j = 0; j < topIPs.length; j++) {
+      var e = topIPs[j];
+      if (e.isPrivate || e.isIPv6) continue;
+      if (e.lat == null || e.lon == null) continue;
+      if (!e.country || e.country === 'Unknown') continue;
+      var la = Number(e.lat), lo = Number(e.lon);
+      if (isNaN(la) || isNaN(lo)) continue;
+      attackerPoints.push({
+        ip: e.ip || '', count: e.count || 0, jail: e.jail || '',
+        city: e.city || '', country: e.country || '', lat: la, lon: lo
+      });
+    }
+
+    var maxCount = 1;
+    for (var k = 0; k < attackerPoints.length; k++) {
+      if (attackerPoints[k].count > maxCount) maxCount = attackerPoints[k].count;
+    }
+    if (maxCount < 1) maxCount = 1;
+
+    function lnScale(c) {
+      if (!c || c <= 0) return 0;
+      return Math.log(c + 1) / Math.log(maxCount + 1);
+    }
+
+    // --- 5. Arc data (one per attacking IP, only when server known) ---
+    var arcData = [];
+    if (serverCoord) {
+      var curvenessPattern = [0.08, -0.15, 0.22, -0.08, 0.28, -0.22, 0.12, -0.18, 0.25, -0.12];
+      for (var m = 0; m < attackerPoints.length; m++) {
+        var a = attackerPoints[m];
+        var c = jailColorFor(a.jail) || accentColor;
+        arcData.push({
+          name: a.ip,
+          ip: a.ip,
+          count: a.count,
+          jail: a.jail,
+          city: a.city,
+          country: a.country,
+          coords: [[a.lon, a.lat], serverCoord],
+          lineStyle: {
+            color: c,
+            width: 0.75,
+            opacity: 0.35,
+            curveness: curvenessPattern[m % curvenessPattern.length],
+            type: 'solid',
+            cap: 'round'
+          }
+        });
+      }
+    }
+
+    // --- 6. Server pin data (only when server known) ---
+    var serverData = [];
+    if (serverCoord) {
+      serverData.push({
+        name: t('map.server'),
+        value: [serverCoord[0], serverCoord[1], 1]
+      });
+    }
+
+    // --- 7. Attacker scatter (only when NO server — fallback #3) ---
+    var attackerScatterData = [];
+    if (!serverCoord) {
+      for (var n = 0; n < attackerPoints.length; n++) {
+        var p = attackerPoints[n];
+        var pc = jailColorFor(p.jail) || accentColor;
+        attackerScatterData.push({
+          name: p.ip,
+          ip: p.ip,
+          count: p.count,
+          jail: p.jail,
+          city: p.city,
+          country: p.country,
+          value: [p.lon, p.lat, p.count],
+          symbolSize: 6 + lnScale(p.count) * 18,
+          itemStyle: { color: pc, shadowBlur: 6, shadowColor: pc, opacity: 0.9 }
+        });
+      }
+    }
+
+    // Unused legend was historically computed but never wired into the option; left intact for minimal diff.
     var legendData = [];
     for (var c = 0; c < mapData.length; c++) {
       legendData.push(mapData[c].name);
@@ -1116,10 +1258,113 @@
       legendData.push(specialLabels[sp].label);
     }
 
-    var accentColor = colors.map || '#db2777';
-    var lowColor = dark ? hexToRgba(accentColor, 0.15) : hexToRgba(accentColor, 0.1);
-    var highColor = accentColor;
+    var mapSeriesName = t('map.title') || 'Attacks';
 
+    // --- 8. Tooltip formatter (branches by series type/name) ---
+    function fmtAttacker(d, attacksLabel, suffix) {
+      var html = '<div style="font-weight:600">' + escapeHtml(d.ip || '--') + '</div>';
+      html += '<div style="font-size:12px">' + (d.count ? d.count.toLocaleString() : '--') +
+        ' ' + escapeHtml(attacksLabel) + '</div>';
+      var parts = [];
+      if (d.jail) parts.push(getJailLabel(d.jail));
+      var loc = (d.city || '') + ((d.city && d.country) ? ', ' : '') + (d.country || '');
+      if (loc) parts.push(loc);
+      if (parts.length) {
+        html += '<div style="font-size:12px;color:' + (dark ? '#9ca3af' : '#6b7280') + '">' +
+          escapeHtml(parts.join(' · ')) + '</div>';
+      }
+      if (suffix) {
+        html += '<div style="font-size:12px;color:' + (dark ? '#9ca3af' : '#6b7280') + '">' +
+          escapeHtml(suffix) + '</div>';
+      }
+      return html;
+    }
+
+    // --- 9. Build series array ---
+    var series = [
+      {
+        name: mapSeriesName,
+        type: 'map',
+        map: 'world',
+        geoIndex: 0,
+        data: mapData,
+        emphasis: {
+          label: { show: true, color: '#fff', fontSize: 12 },
+          itemStyle: { areaColor: accentColor, borderColor: '#fff', borderWidth: 1 }
+        },
+        itemStyle: {
+          borderColor: dark ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.08)',
+          borderWidth: 0.5,
+          areaColor: dark ? '#1e2030' : '#e8eaf0'
+        },
+        label: { show: false },
+        selectedMode: false
+      }
+    ];
+
+    if (serverCoord) {
+      if (arcData.length) {
+        series.push({
+          name: mapSeriesName,
+          type: 'lines',
+          coordinateSystem: 'geo',
+          data: arcData,
+          zlevel: 2,
+          blendMode: 'lighter',
+          effect: {
+            show: !reducedMotion,
+            period: 6,
+            trailLength: 0.4,
+            symbol: 'arrow',
+            symbolSize: 7
+          },
+          lineStyle: { type: 'solid', cap: 'round' }
+        });
+      }
+      series.push({
+        name: SERVER_SERIES_NAME,
+        type: 'effectScatter',
+        coordinateSystem: 'geo',
+        data: serverData,
+        symbol: 'pin',
+        symbolSize: 30,
+        zlevel: 3,
+        rippleEffect: { period: 3, brushType: 'stroke', scale: 5 },
+        showEffectOn: reducedMotion ? 'emphasis' : 'render',
+        label: {
+          show: true,
+          position: 'top',
+          color: dark ? '#e8eaf0' : '#1a1c2b',
+          fontSize: 11,
+          fontWeight: 600,
+          formatter: t('map.server'),
+          offset: [0, -8]
+        },
+        itemStyle: {
+          color: serverColor,
+          shadowBlur: 10,
+          shadowColor: serverColor,
+          opacity: 0.9
+        }
+      });
+    } else {
+      if (attackerScatterData.length) {
+        series.push({
+          name: ATTACKER_SERIES_NAME,
+          type: 'effectScatter',
+          coordinateSystem: 'geo',
+          data: attackerScatterData,
+          symbol: 'circle',
+          zlevel: 3,
+          rippleEffect: { period: 4, brushType: 'stroke', scale: 4 },
+          showEffectOn: reducedMotion ? 'emphasis' : 'render',
+          label: { show: false },
+          itemStyle: { opacity: 0.85 }
+        });
+      }
+    }
+
+    // --- 10. Compose option ---
     var option = {
       backgroundColor: 'transparent',
       animation: false,
@@ -1128,18 +1373,59 @@
         trigger: 'item',
         padding: [10, 14],
         formatter: function (params) {
-          if (!params.data || params.data.value == null) {
-            return params.name;
+          if (!params) return '';
+          if (params.seriesType === 'map') {
+            if (!params.data || params.data.value == null) return escapeHtml(params.name);
+            var d = params.data;
+            var html = '<div style="font-weight:600;margin-bottom:4px">' + escapeHtml(params.name) + '</div>';
+            html += '<div style="font-size:12px">' + t('map.attacksFrom') + ': <b>' +
+              d.value.toLocaleString() + '</b></div>';
+            html += '<div style="font-size:12px;color:' + (dark ? '#9ca3af' : '#6b7280') + '">' +
+              'IPs: ' + d.ipCount + '</div>';
+            return html;
           }
-          var d = params.data;
-          var html = '<div style="font-weight:600;margin-bottom:4px">' + params.name + '</div>';
-          html += '<div style="font-size:12px">' +
-            t('map.attacksFrom') + ': <b>' + d.value.toLocaleString() + '</b></div>';
-          html += '<div style="font-size:12px;color:' + (dark ? '#9ca3af' : '#6b7280') + '">' +
-            'IPs: ' + d.ipCount + '</div>';
-          return html;
+          if (params.seriesName === SERVER_SERIES_NAME) {
+            var html = '<div style="font-weight:600">' + escapeHtml(t('map.server')) + '</div>';
+            var locText = '';
+            if (serverMeta.city) locText += serverMeta.city;
+            if (serverMeta.country) locText += (locText ? ', ' : '') + serverMeta.country;
+            if (locText) html += '<div style="font-size:12px">' + escapeHtml(locText) + '</div>';
+            if (serverMeta.ip) {
+              html += '<div style="font-size:12px;color:' + (dark ? '#9ca3af' : '#6b7280') + '">' +
+                escapeHtml(serverMeta.ip) + '</div>';
+            }
+            return html;
+          }
+          if (params.seriesType === 'lines') {
+            return fmtAttacker(params.data || {}, t('map.attacksToServer'), '\u2192 ' + t('map.server'));
+          }
+          if (params.seriesName === ATTACKER_SERIES_NAME) {
+            return fmtAttacker(params.data || {}, t('map.attacksFrom'));
+          }
+          return escapeHtml(params.name || '');
         }
       }, getTooltipStyle(colors, dark)),
+
+      geo: {
+        map: 'world',
+        roam: true,
+        scaleLimit: { min: 1, max: 8 },
+        label: { show: false },
+        itemStyle: {
+          areaColor: dark ? '#1e2030' : '#e8eaf0',
+          borderColor: dark ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.08)',
+          borderWidth: 0.5
+        },
+        emphasis: {
+          label: { show: false },
+          itemStyle: {
+            areaColor: accentColor,
+            borderColor: '#fff',
+            borderWidth: 1
+          }
+        },
+        zlevel: 0
+      },
 
       visualMap: {
         min: 0,
@@ -1157,26 +1443,7 @@
         itemHeight: 120
       },
 
-      series: [
-        {
-          name: t('map.title') || 'Attacks',
-          type: 'map',
-          map: 'world',
-          roam: true,
-          data: mapData,
-          emphasis: {
-            label: { show: true, color: '#fff', fontSize: 12 },
-            itemStyle: { areaColor: accentColor, borderColor: '#fff', borderWidth: 1 }
-          },
-          itemStyle: {
-            borderColor: dark ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.08)',
-            borderWidth: 0.5,
-            areaColor: dark ? '#1e2030' : '#e8eaf0'
-          },
-          label: { show: false },
-          selectedMode: false
-        }
-      ]
+      series: series
     };
 
     chart.setOption(option, true);

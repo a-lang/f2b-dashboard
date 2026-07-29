@@ -564,7 +564,7 @@
 
       if (data.topIPs && data.topIPs.length) {
         renderTopIPsTable(data.topIPs);
-        renderWorldMap('chart-world-map', data.topIPs);
+        renderWorldMap('chart-world-map', data.topIPs, data.server);
         renderRegionChart('chart-region', data.topIPs);
       }
 
@@ -710,7 +710,7 @@
       }
       if (currentData.topIPs) {
         renderTopIPsTable(currentData.topIPs);
-        renderWorldMap('chart-world-map', currentData.topIPs);
+        renderWorldMap('chart-world-map', currentData.topIPs, currentData.server);
         renderRegionChart('chart-region', currentData.topIPs);
       }
       if (currentData.heatmap) {
