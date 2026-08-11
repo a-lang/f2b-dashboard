@@ -152,10 +152,13 @@
     "title": "Per-Jail Report",
     "selectJail": "Select Jail",
     "configCard": "Configuration",
-    "topIPs": "Top IPs",
+    "topIPs": "Attack IP Ranking",
     "timeline": "Timeline",
     "banRatio": "Ban/Unban Ratio",
-    "uniqueAttackers": "Unique Attackers"
+    "uniqueAttackers": "Unique Attackers",
+    "bannedIPs": "Currently Banned IPs",
+    "bannedEmpty": "No IPs currently banned",
+    "bannedAt": "Banned At"
   },
   "topIPs": {
     "title": "Top Attacking IPs",

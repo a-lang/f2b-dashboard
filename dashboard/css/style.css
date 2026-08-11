@@ -383,6 +383,11 @@ body {
   flex: 1;
 }
 
+.ip-table-wrapper--banned {
+  max-height: 320px;
+  overflow-y: auto;
+}
+
 .ip-table {
   width: 100%;
   border-collapse: collapse;

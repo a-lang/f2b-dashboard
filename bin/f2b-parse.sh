@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # f2b-parse.sh - Fail2ban log parser that outputs aggregated dashboard.json
-# Version: 1.1.0
+# Version: 1.2.0
 
 set -euo pipefail
 
@@ -59,7 +59,7 @@ OUTPUT_DIR="${2:-dashboard/data}"
 OUTPUT_DIR="${OUTPUT_DIR%/}"
 OUTPUT_FILE="$OUTPUT_DIR/dashboard.json"
 LOCK_FILE="/tmp/f2b-parse.lock"
-PARSER_VERSION="1.1.0"
+PARSER_VERSION="1.2.0"
 
 # Detect server timezone (IANA name + offset)
 if [ -f /etc/timezone ]; then
@@ -431,6 +431,8 @@ function add_recent_log(ts, type, ip, jail, msg) {
         jail_bans[jail]++
         ip_ban_count[ip]++
         ip_is_banned[ip] = 1
+        jail_ip_banned[jail, ip] = 1
+        jail_ip_bannedAt[jail, ip] = ts_iso
         trends_bans[date_str]++
         msg = "[" jail "] Ban " ip
         add_recent_log(ts_iso, "Ban", ip, jail, msg)
@@ -439,6 +441,7 @@ function add_recent_log(ts, type, ip, jail, msg) {
         totalUnbans++
         jail_unbans[jail]++
         ip_is_banned[ip] = 0
+        jail_ip_banned[jail, ip] = 0
         trends_unbans[date_str]++
         msg = "[" jail "] Unban " ip
         add_recent_log(ts_iso, "Unban", ip, jail, msg)
@@ -447,6 +450,8 @@ function add_recent_log(ts, type, ip, jail, msg) {
         restoredBans++
         jail_restored[jail]++
         ip_is_banned[ip] = 1
+        jail_ip_banned[jail, ip] = 1
+        jail_ip_bannedAt[jail, ip] = ts_iso
         msg = "[" jail "] Restore Ban " ip
         add_recent_log(ts_iso, "RestoreBan", ip, jail, msg)
     }
@@ -746,8 +751,28 @@ END {
         attacks = jail_attacks[jn] + 0
         bans = jail_bans[jn] + 0
         unbans = jail_unbans[jn] + 0
-        currentBanned = bans + jail_restored[jn] - unbans
-        if (currentBanned < 0) currentBanned = 0
+
+        # Currently banned IPs for this jail (state tracked from Ban/RestoreBan/Unban)
+        n_bips = 0
+        for (key in jail_ip_banned) {
+            split(key, parts, SUBSEP)
+            if (parts[1] == jn && jail_ip_banned[key] == 1) {
+                bips[++n_bips] = parts[2]
+            }
+        }
+        # Sort by last ban time descending (most recent first), tie-break by IP
+        for (i = 2; i <= n_bips; i++) {
+            tmp = bips[i]
+            j = i - 1
+            while (j >= 1 &&
+                   (jail_ip_bannedAt[jn, bips[j]] < jail_ip_bannedAt[jn, tmp] ||
+                    (jail_ip_bannedAt[jn, bips[j]] == jail_ip_bannedAt[jn, tmp] && bips[j] > tmp))) {
+                bips[j+1] = bips[j]
+                j--
+            }
+            bips[j+1] = tmp
+        }
+        currentBanned = n_bips
 
         printf "    %s: {\n", json_str(jn)
         printf "      \"banTime\": %d,\n", jail_banTime[jn]
@@ -820,6 +845,23 @@ END {
             if (!first) printf ", "
             printf "{ \"ip\": %s, \"count\": %d, \"country\": %s }",
                 json_str(ip), jail_ip_count[jn, ip], json_str(country)
+            first = 0
+        }
+        printf "],\n"
+
+        # bannedIPs for this jail (sorted by last ban time descending)
+        printf "      \"bannedIPs\": ["
+        first = 1
+        for (i = 1; i <= n_bips; i++) {
+            ip = bips[i]
+            isPriv = is_private_ip(ip) ? "true" : "false"
+            isV6 = is_ipv6(ip) ? "true" : "false"
+            if (isPriv == "true") country = "Internal/Private"
+            else if (isV6 == "true") country = "IPv6"
+            else country = "Unknown"
+            if (!first) printf ", "
+            printf "{ \"ip\": %s, \"lastBannedAt\": %s, \"country\": %s }",
+                json_str(ip), json_str(jail_ip_bannedAt[jn, ip]), json_str(country)
             first = 0
         }
         printf "]\n"

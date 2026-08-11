@@ -152,10 +152,13 @@
     "title": "各 Jail 報告",
     "selectJail": "選擇 Jail",
     "configCard": "設定值",
-    "topIPs": "熱門 IP",
+    "topIPs": "攻擊 IP 排行",
     "timeline": "時間軸",
     "banRatio": "封鎖/解除比率",
-    "uniqueAttackers": "獨立攻擊者"
+    "uniqueAttackers": "獨立攻擊者",
+    "bannedIPs": "目前封鎖中的 IP",
+    "bannedEmpty": "目前沒有封鎖中的 IP",
+    "bannedAt": "封鎖時間"
   },
   "topIPs": {
     "title": "攻擊排行 IP",

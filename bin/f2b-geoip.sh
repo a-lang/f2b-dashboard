@@ -71,7 +71,8 @@ command -v curl >/dev/null 2>&1 || error_exit "curl is required but not installe
 # Extract unique IPs from topIPs
 ips=$(jq -r '
   ([.topIPs // [] | .[].ip]) +
-  ([.perJail // {} | .[] | .topIPs // [] | .[].ip])
+  ([.perJail // {} | .[] | .topIPs // [] | .[].ip]) +
+  ([.perJail // {} | .[] | .bannedIPs // [] | .[].ip])
   | unique | .[]
 ' "$DASHBOARD_JSON" 2>/dev/null) || {
     error_exit "Failed to parse dashboard JSON"
@@ -311,6 +312,20 @@ jq --slurpfile cache "$GEO_CACHE_JSON" --argjson server "$server_json" '
     ) |
     .perJail |= with_entries(
         .value.topIPs |= map(
+            . as $entry |
+            ($cache[0][$entry.ip] // null) as $geo |
+            if $geo then
+                $entry + {
+                    country: $geo.country,
+                    city: $geo.city,
+                    lat: $geo.lat,
+                    lon: $geo.lon
+                }
+            else
+                $entry
+            end
+        ) |
+        .value.bannedIPs |= map(
             . as $entry |
             ($cache[0][$entry.ip] // null) as $geo |
             if $geo then

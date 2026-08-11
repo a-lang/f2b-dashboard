@@ -299,6 +299,35 @@
     }
     ipsHTML += '</div>';
 
+    var bannedIPs = jailData.bannedIPs || [];
+    var bannedHTML = '<div class="jail-report-card">' +
+      '<div class="jail-report-card__title"' + titleStyle + '>' + t('perJail.bannedIPs') + '</div>';
+
+    if (bannedIPs.length) {
+      bannedHTML += '<div class="ip-table-wrapper ip-table-wrapper--banned"><table class="ip-table">' +
+        '<thead><tr>' +
+          '<th>' + t('topIPs.ip') + '</th>' +
+          '<th>' + t('topIPs.country') + '</th>' +
+          '<th>' + t('perJail.bannedAt') + '</th>' +
+        '</tr></thead><tbody>';
+
+      for (var b = 0; b < bannedIPs.length; b++) {
+        var bIP = bannedIPs[b];
+        var bFlag = getCountryFlag(bIP.country);
+        var bCountry = bFlag ? bFlag + ' ' + (bIP.country || '--') : (bIP.country || '--');
+        bannedHTML += '<tr>' +
+          '<td class="ip-table__ip">' + escapeHtml(bIP.ip || '--') + '</td>' +
+          '<td class="ip-table__country">' + escapeHtml(bCountry) + '</td>' +
+          '<td class="ip-table__last-seen">' + formatLogTimestamp(bIP.lastBannedAt) + '</td>' +
+        '</tr>';
+      }
+
+      bannedHTML += '</tbody></table></div>';
+    } else {
+      bannedHTML += '<div class="empty-state">' + t('perJail.bannedEmpty') + '</div>';
+    }
+    bannedHTML += '</div>';
+
     var chartHTML = '<div class="jail-report-card">' +
       '<div class="jail-report-card__title"' + titleStyle + '>' + t('perJail.timeline') + '</div>' +
       '<div id="jail-attack-trend-chart" class="chart-container chart-container--mini"></div>' +
@@ -308,7 +337,7 @@
       disposeChartInstance('jail-attack-trend-chart');
     }
 
-    container.innerHTML = toggleHTML + configHTML + statsHTML + ipsHTML + chartHTML;
+    container.innerHTML = toggleHTML + configHTML + statsHTML + ipsHTML + bannedHTML + chartHTML;
 
     renderPerJailMiniChart(jail, data);
 
