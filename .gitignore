@@ -15,6 +15,7 @@ logs/
 .agents/
 .playwright-cli/
 skills-lock.json
+.skill-archive/
 
 # Node.js
 node_modules/

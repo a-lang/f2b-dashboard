@@ -2,6 +2,8 @@
 
 # Fail2Ban 即時儀表板
 
+![f2b-dashboard — fail2ban 攻擊情報儀表板](assets/banner-zh-dark.png)
+
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![GitHub stars](https://img.shields.io/github/stars/a-lang/f2b-dashboard.svg)](https://github.com/a-lang/f2b-dashboard)
 

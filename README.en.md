@@ -2,6 +2,8 @@
 
 # Fail2Ban Live Dashboard
 
+![f2b-dashboard — fail2ban attack intelligence dashboard](assets/banner-en-light.png)
+
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![GitHub stars](https://img.shields.io/github/stars/a-lang/f2b-dashboard.svg)](https://github.com/a-lang/f2b-dashboard)
 
